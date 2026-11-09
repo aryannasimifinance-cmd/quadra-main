@@ -175,12 +175,14 @@ class DeepFlowTest extends TestCase
     public function test_events_pairs_rules_and_desk(): void
     {
         $A = $this->adminToken();
-        $date = self::day(25);
+        // روزی بدون مسابقه‌ی دیگر (دو مسابقه‌ی هم‌زمان روی یک زمین مجاز نیست)
+        $off = collect(range(25, 90))->first(fn ($d) => ! DB::table('events')->where('date', now()->addDays($d)->format('Y-m-d'))->whereNotIn('status', ['draft', 'cancelled'])->exists());
+        $date = self::day($off);
         $ev = $this->admin('adminEventSave', [['title' => 'تست مسابقه بانوان', 'kind' => 'friday', 'date' => $date, 'start' => 9, 'dur' => 3, 'courts' => [1, 2], 'levels' => ['C', 'C+'], 'cap' => 4, 'fee' => 500000, 'gender' => 'f', 'ageMin' => 18, 'status' => 'open']], $A);
         $this->assertTrue($ev['ok'], json_encode($ev));
         $id = $ev['id'];
         // زمین‌های مسابقه در تقویم بسته‌اند
-        $this->assertFalse(\App\Domain\Availability::isFree(now()->addDays(25)->format('Y-m-d'), 1, 10, 1));
+        $this->assertFalse(\App\Domain\Availability::isFree(now()->addDays($off)->format('Y-m-d'), 1, 10, 1));
 
         [$M, $m] = $this->player('09131000010', 'آقای تست', ['gender' => 'm']);
         [$F, $f] = $this->player('09131000011', 'خانم یک', ['gender' => 'f']);

@@ -39,9 +39,10 @@ final class Availability
     {
         return DB::table('events')->where('date', $ymd)->whereNotIn('status', ['draft', 'cancelled'])
             ->when($exceptEvent, fn ($q) => $q->where('id', '!=', $exceptEvent))
-            ->get(['id', 'start', 'dur', 'courts'])
+            ->get(['id', 'start', 'dur', 'courts', 'extra'])
+            ->reject(fn ($e) => (json_decode($e->extra ?? 'null', true)['noBlock'] ?? false))
             ->map(fn ($e) => ['id' => $e->id, 'start' => (float) $e->start, 'dur' => (float) $e->dur, 'courts' => array_map('intval', json_decode($e->courts, true) ?: [])])
-            ->all();
+            ->values()->all();
     }
 
     public static function inHours(float $start, float $dur): bool

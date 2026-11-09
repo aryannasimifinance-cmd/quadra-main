@@ -51,7 +51,8 @@ php artisan config:cache && php artisan route:cache
 | `php artisan quadra:admin admin` | ساخت مدیر یا تغییر رمز مدیر (رمز تازه نشان داده می‌شود) |
 | `php artisan quadra:admin admin --disable` | غیرفعال کردن یک مدیر |
 | `php artisan quadra:demo` | **پاک کردن همه‌ی داده‌ها** و ورود داده‌ی نمایشی (فقط برای تست) |
-| `php artisan test` | اجرای تست‌های سرتاسری (روی دیتابیس `quadra_test`؛ ۲۱ گروه، حدود ۱۰ هزار بررسی) |
+| `php artisan test` | اجرای تست‌های سرتاسری (روی دیتابیس `quadra_test`؛ ۲۴ گروه، بیش از ۱۰ هزار بررسی) |
+| `npm run check:dashboard` (در frontend) | بعد از `php artisan test`: داده‌ی واقعی پنل مدیر را با همان کدهای حسابداری و داشبورد اپ بررسی می‌کند (تراز اسناد، ترازنامه، گزارش‌ها) |
 | `powershell -File tests\Stress\run.ps1 -Workers 50` | تست فشار هم‌زمانی با ۵۰ پروسس واقعی (روی دیتابیس `.env` با داده‌ی نمایشی) |
 | `php tests/Stress/volume.php fill` و `measure` | تست حجم: یک سال داده با ۲۰۰۰ عضو و اندازه‌گیری سرعت (فقط روی دیتابیس تست) |
 

@@ -283,7 +283,8 @@ final class ClubImporter
                 'courts' => self::j($e['courts'] ?? [1, 2, 3, 4]), 'levels' => self::j($e['levels'] ?? []), 'cap' => (int) ($e['cap'] ?? 16), 'fee' => (int) ($e['fee'] ?? 0),
                 'prize' => $e['prize'] ?? null, 'img' => $e['img'] ?? null, 'status' => $e['status'] ?? 'draft', 'note' => $e['note'] ?? '',
                 'teams' => self::j($e['teams'] ?? []), 'groups' => self::j($e['groups'] ?? []), 'matches' => self::j($e['matches'] ?? []), 'setup' => self::j($e['setup'] ?? null),
-                'extra' => self::j((object) array_diff_key($e, array_flip($known))), 'created_at' => $now, 'updated_at' => $now,
+                // مسابقه‌ی برگزارشده‌ی گذشته در نسخه‌ی قبل زمین‌ها را در تقویم نبسته بود؛ همان‌طور می‌ماند
+                'extra' => self::j((object) (array_diff_key($e, array_flip($known)) + (($e['status'] ?? '') === 'done' && self::d($e['date']) < now()->format('Y-m-d') ? ['noBlock' => true] : []))), 'created_at' => $now, 'updated_at' => $now,
             ]);
             $regs = [];
             foreach ($e['regs'] ?? [] as $r) {

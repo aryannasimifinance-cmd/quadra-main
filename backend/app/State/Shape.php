@@ -73,7 +73,8 @@ final class Shape
     /** زمین‌های بسته‌ی مسابقه در تقویم (همان blocksOf اپ) */
     public static function eventBlocks(object $e): array
     {
-        if (in_array($e->status, ['draft', 'cancelled'], true)) {
+        // noBlock: مسابقه‌ی گذشته‌ی واردشده از نسخه‌ی قبل که زمین‌هایش در تقویم بسته نبود
+        if (in_array($e->status, ['draft', 'cancelled'], true) || (self::j($e->extra ?? null, [])['noBlock'] ?? false)) {
             return [];
         }
         $out = [];

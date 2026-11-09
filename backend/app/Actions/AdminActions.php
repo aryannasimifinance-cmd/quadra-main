@@ -640,6 +640,16 @@ class AdminActions
                 $id = Ids::accept($ev['id'] ?? null, 'events', 'ev');
                 DB::table('events')->insert($p + ['id' => $id, 'teams' => '[]', 'groups' => '[]', 'matches' => '[]', 'courts' => $p['courts'] ?? '[1,2,3,4]', 'created_at' => now(), 'updated_at' => now()]);
             }
+            // دو مسابقه‌ی منتشرشده هم‌زمان روی یک زمین نمی‌شود (تراکنش برمی‌گردد)
+            $e = DB::table('events')->where('id', $id)->first();
+            if (in_array($e->status, ['open', 'closed', 'done'], true)) {
+                $mine = array_map('intval', json_decode($e->courts, true) ?: []);
+                foreach (Availability::eventBlocks($e->date, $id) as $o) {
+                    if (array_intersect($mine, $o['courts']) && (float) $e->start < $o['start'] + $o['dur'] && $o['start'] < (float) $e->start + (float) $e->dur) {
+                        Fail::with('busy', ['event' => $o['id']]);
+                    }
+                }
+            }
             Audit::log('event.save', $id, array_intersect_key($p, array_flip(['title', 'status', 'date'])));
             Sync::touch('events', 'bookings');
 
