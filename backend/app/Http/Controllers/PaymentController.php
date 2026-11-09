@@ -21,7 +21,10 @@ class PaymentController extends Controller
 
     public function status(Request $r, string $id)
     {
-        $p = DB::table('payments')->where('id', $id)->where('member_id', $r->user()->id)->first();
+        // مربی پرداخت‌هایی را می‌بیند که با حساب عضوِ متناظرش انجام داده
+        $u = $r->user();
+        $owner = $u instanceof \App\Models\Coach ? $u->member : $u->id;
+        $p = $owner ? DB::table('payments')->where('id', $id)->where('member_id', $owner)->first() : null;
         abort_unless($p, 404);
 
         return [

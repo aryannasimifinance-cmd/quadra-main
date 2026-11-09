@@ -2,10 +2,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import {
   BADGES, COACHES, COACH_PACKS, COURTS, DAYPARTS, DURATIONS, EVENT_KIND, LEVELS, MEMBERS, SERIES, coachById, coachPackPrice, coachPacks, courtById, dayKey, dayLabel, dayMonth, dayNum,
-  SIDES, limitsOf, coachesRanked, fa, fromKey, hourLabel, isPeak, isWeekend, levelById, levelIndex, nearLevels, nextDays, priceFor, range, short, sideById, toman, weekday, memberById,
+  SIDES, hoursOf, limitsOf, coachesRanked, fa, fromKey, hourLabel, isPeak, isWeekend, levelById, levelIndex, nearLevels, nextDays, priceFor, range, short, sideById, toman, weekday, memberById,
 } from '../../data'
 import { celebrate, chime, haptic } from '../../fx'
-import { playerRun, ME, freeStarts, isFree, memberOff, useStore } from '../../store'
+import { playerRun, ME, freeStarts, isFree, busyOn, memberOff, useStore } from '../../store'
 import { openGames, planSeries } from '../../select'
 import { appEvents, levelOk, whyNot, whyText, audienceText, AUDIENCE, GENDER } from '../../events'
 import { Avatar, Button, Chips, CountUp, CtaBar, Icon, LevelPill, Photo, Sheet, TopBar, rise, stagger } from '../../components/ui'
@@ -234,9 +234,18 @@ function StepSlot({ w, set, onNext }) {
   const coachBusy = (h) => isCoach && club.bookings.some((b) => b.coach === w.coachId && b.date === w.date && b.status !== 'cancelled' && h < b.start + b.dur && b.start < h + 1)
   const free = (c, h) => isFree(club, w.date, c, h, 1) && !coachBusy(h)
   const inSel = (c, h) => w.start != null && w.court === c && h >= w.start && h < w.start + w.dur
-  const hours = []
-  for (let h = dp.from; h < Math.min(dp.to, 24); h++) if (!today || h > nowH) hours.push(h)
-  const rows = hours.filter((h) => COURTS.some((c) => free(c.id, h) || inSel(c.id, h)))
+  // چرا یک خانه بسته است: آدینه و تعمیرات رنگ خودشان را دارند، بقیه «رزرو شده»
+  const blockKind = (c, h) => {
+    const b = busyOn(club, w.date, c).find((x) => x.type === 'block' && h < x.start + x.dur && x.start < h + 1)
+    if (!b) return null
+    if (!b.event) return 'fix'
+    return club.events?.find((e) => e.id === b.event)?.kind === 'friday' ? 'friday' : null
+  }
+  const { open, close } = hoursOf(club)
+  // همه‌ی ساعت‌های کاری بازه نشان داده می‌شوند، حتی اگر هر ۴ زمین پر باشد
+  const rows = []
+  for (let h = Math.max(dp.from, open); h < Math.min(dp.to, close, 24); h++) if (!today || h > nowH) rows.push(h)
+  const anyFree = rows.some((h) => COURTS.some((c) => free(c.id, h)))
   const showPeak = club.pricing.peak !== club.pricing.offpeak
   const maxRun = limitsOf(club).playerRun
 
@@ -273,24 +282,25 @@ function StepSlot({ w, set, onNext }) {
         ))}
       </div>
       <div className="slot-grid">
-        {rows.length === 0 && <div className="empty-card">در این بازه ساعت آزاد نیست؛ روز یا ساعت دیگری انتخاب کنید.</div>}
+        {!anyFree && <div className="empty-card">در این بازه ساعت آزاد نیست؛ روز یا ساعت دیگری انتخاب کنید.</div>}
         {rows.map((h) => (
           <div key={h} className="slot-row">
             <span className={`slot-t ${showPeak && isPeak(w.date, h, club.pricing) ? 'peak' : ''}`}>{hourLabel(h)}</span>
             {COURTS.map((c) => {
               const sel = inSel(c.id, h)
               const ok = sel || free(c.id, h)
-              const cls = sel ? `sel ${inSel(c.id, h - 1) ? 'jt' : ''} ${inSel(c.id, h + 1) ? 'jb' : ''}` : ok ? 'free' : 'busy'
+              const bk = ok ? null : blockKind(c.id, h)
+              const cls = sel ? `sel ${inSel(c.id, h - 1) ? 'jt' : ''} ${inSel(c.id, h + 1) ? 'jb' : ''}` : ok ? 'free' : `busy ${bk || ''}`
               return (
                 <button key={c.id} className={`cell ${cls}`} disabled={!ok} onClick={() => tap(c.id, h)}>
-                  {sel ? <Icon name="check" size={16} stroke={3} /> : ok ? <span>{fa(isCoach ? coachById(w.coachId).price : priceFor(w.date, h, 1, club.pricing))}</span> : null}
+                  {sel ? <Icon name="check" size={16} stroke={3} /> : ok ? <span>{fa(isCoach ? coachById(w.coachId).price : priceFor(w.date, h, 1, club.pricing))}</span> : bk === 'friday' ? <span>آدینه</span> : bk === 'fix' ? <span>تعمیرات</span> : null}
                 </button>
               )
             })}
           </div>
         ))}
       </div>
-      <p className="slot-legend"><i className="lg free" /> آزاد، {isCoach ? 'قیمت جلسه (تومان)' : 'قیمت هر ساعت زمین (تومان)'} <i className="lg sel" /> انتخاب شما <i className="lg busy" /> رزرو شده{showPeak && <> <i className="lg peak" /> پیک</>}</p>
+      <p className="slot-legend"><i className="lg free" /> آزاد، {isCoach ? 'قیمت جلسه (تومان)' : 'قیمت هر ساعت زمین (تومان)'} <i className="lg sel" /> انتخاب شما <i className="lg busy" /> رزرو شده <i className="lg friday" /> آدینه <i className="lg fix" /> تعمیرات{showPeak && <> <i className="lg peak" /> پیک</>}</p>
       <AnimatePresence>
         {w.start != null && (
           <motion.div className="sel-sum" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>

@@ -88,6 +88,98 @@ final class CoachActions
         return ['ok' => (bool) $n];
     }
 
+    /**
+     * پرداخت ساعت‌های تأییدشده‌ای که شاگرد دارند:
+     * payer=coach → از کیف پول عضوِ متناظر مربی یا آنلاین؛
+     * payer=student → به شاگرد اول هر ساعت فرستاده می‌شود تا خودش در اپ بپردازد.
+     */
+    public function coachPay(array $a): array
+    {
+        $ids = array_values(array_unique(array_filter((array) ($a['ids'] ?? []), fn ($x) => is_string($x) && $x !== '')));
+        $payer = $a['payer'] ?? null;
+        if (! $ids || count($ids) > 60 || ! in_array($payer, ['coach', 'student'], true)) {
+            Fail::with('bad');
+        }
+        $method = ($a['method'] ?? 'wallet') === 'online' ? 'online' : 'wallet';
+        $c = $this->refresh();
+
+        if ($payer === 'coach') {
+            $c = $this->walletMember($c);
+            Locks::run(['booking'], function () use ($ids, $c) {
+                foreach ($this->payable($ids, $c) as $b) {
+                    DB::table('bookings')->where('id', $b->id)->update(['pay_by' => $c->member, 'updated_at' => now()]);
+                }
+            });
+
+            return PlayerActions::forMember($c->member)->payBooking(['ids' => $ids, 'method' => $method]);
+        }
+
+        return Locks::run(['booking'], function () use ($ids, $c) {
+            $sent = [];
+            foreach ($this->payable($ids, $c) as $b) {
+                $first = DB::table('booking_players')->where('booking_id', $b->id)->orderBy('pos')->value('player');
+                if (! $first || ! Members::isMemberId($first)) {
+                    Fail::with('guest');
+                }
+                DB::table('bookings')->where('id', $b->id)->update(['pay_by' => $first, 'updated_at' => now()]);
+                $sent[$first] = ($sent[$first] ?? 0) + (int) $b->price - (int) $b->paid;
+            }
+            foreach ($sent as $m => $amt) {
+                Members::notify($m, '💳', 'پرداخت جلسه‌ی مربی', 'مربی '.$c->name.' هزینه‌ی جلسه را برای شما فرستاد: '.\App\Support\Jalali::fa(number_format($amt)).' تومان. از صفحه‌ی خانه پرداخت کنید.');
+            }
+            Sync::touch('bookings');
+
+            return ['ok' => true, 'sent' => count($sent)];
+        });
+    }
+
+    /**
+     * کیف پول مربی همان کیف پول عضوِ متناظر اوست. اگر مربی هنوز به عضوی وصل نیست:
+     * عضوی با همان موبایل پیدا و وصل می‌شود، وگرنه یک حساب عضو تازه برایش ساخته می‌شود.
+     */
+    private function walletMember(object $c): object
+    {
+        if ($c->member && DB::table('members')->where('id', $c->member)->exists()) {
+            return $c;
+        }
+
+        return DB::transaction(function () use ($c) {
+            $c = DB::table('coaches')->where('id', $c->id)->lockForUpdate()->first();
+            if ($c->member && DB::table('members')->where('id', $c->member)->exists()) {
+                return $c;
+            }
+            $mid = $c->phone ? DB::table('members')->where('phone', $c->phone)->value('id') : null;
+            if (! $mid) {
+                $mid = Ids::make('m');
+                DB::table('members')->insert([
+                    'id' => $mid, 'name' => $c->name, 'phone' => $c->phone ?: null, 'level' => $c->level ?: 'B', 'source' => 'desk',
+                    'note' => 'حساب کیف پول مربی', 'joined_at' => now(), 'created_at' => now(), 'updated_at' => now(),
+                ]);
+            }
+            DB::table('coaches')->where('id', $c->id)->update(['member' => $mid, 'updated_at' => now()]);
+            Sync::touch('coaches', 'members');
+
+            return $this->coach = DB::table('coaches')->where('id', $c->id)->first();
+        });
+    }
+
+    /** ساعت‌های همین مربی که شاگرد دارند، تمام نشده‌اند و هنوز کامل پرداخت نشده‌اند */
+    private function payable(array $ids, object $c): array
+    {
+        $rows = DB::table('bookings')->whereIn('id', $ids)->where('coach', $c->id)->whereNotNull('block')->where('status', 'ok')->get();
+        if (count($rows) !== count($ids)) {
+            Fail::with('gone');
+        }
+        foreach ($rows as $b) {
+            if ((int) $b->paid >= (int) $b->price || Dates::at($b->date, (float) $b->start + (float) $b->dur)->lte(now())
+                || ! DB::table('booking_players')->where('booking_id', $b->id)->exists()) {
+                Fail::with('gone');
+            }
+        }
+
+        return $rows->all();
+    }
+
     /** شاگردهای یک ساعتِ تأییدشده (۱ یا ۲ نفر، عضو یا مهمان) */
     public function coachSetPlayers(array $a): array
     {
@@ -107,11 +199,24 @@ final class CoachActions
             if (! $b || Dates::at($b->date, (float) $b->start + (float) $b->dur)->lte(now())) {
                 Fail::with('gone');
             }
+            // شاگردی که پول این جلسه را داده حذف نمی‌شود (سهمش برای استرداد لازم است)
+            $old = DB::table('booking_players')->where('booking_id', $b->id)->get()->keyBy('player');
+            foreach ($old as $p => $row) {
+                if ((int) $row->share > 0 && ! in_array($p, $players, true)) {
+                    Fail::with('paid');
+                }
+            }
             DB::table('booking_players')->where('booking_id', $b->id)->delete();
             foreach ($players as $i => $p) {
-                DB::table('booking_players')->insert(['booking_id' => $b->id, 'pos' => $i, 'player' => $p, 'member_id' => Members::isMemberId($p) ? $p : null, 'created_at' => now(), 'updated_at' => now()]);
+                DB::table('booking_players')->insert(['booking_id' => $b->id, 'pos' => $i, 'player' => $p, 'member_id' => Members::isMemberId($p) ? $p : null,
+                    'share' => isset($old[$p]) ? $old[$p]->share : null, 'share_method' => isset($old[$p]) ? $old[$p]->share_method : null, 'created_at' => now(), 'updated_at' => now()]);
             }
-            DB::table('bookings')->where('id', $b->id)->update(['by' => $players[0] ?? null, 'updated_at' => now()]);
+            $up = ['by' => $players[0] ?? null, 'updated_at' => now()];
+            // پرداختی که به شاگردی سپرده شده بود که دیگر در جلسه نیست، دوباره بی‌پرداخت‌کننده می‌شود
+            if ($b->pay_by && (int) $b->paid < (int) $b->price && $b->pay_by !== $c->member && ! in_array($b->pay_by, $players, true)) {
+                $up['pay_by'] = null;
+            }
+            DB::table('bookings')->where('id', $b->id)->update($up);
             Sync::touch('bookings', 'members');
 
             return ['ok' => true];

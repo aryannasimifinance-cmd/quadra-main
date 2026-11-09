@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Hash;
 final class PlayerActions
 {
     /** کارهایی که پرداخت آنلاین دارند */
-    public const PAYABLE = ['book', 'joinGame', 'bookSeries', 'registerEvent', 'buyPackage', 'checkout', 'cafeCheckout'];
+    public const PAYABLE = ['book', 'joinGame', 'bookSeries', 'registerEvent', 'buyPackage', 'checkout', 'cafeCheckout', 'payBooking'];
 
     public function __construct(private object $me) {}
 
@@ -292,6 +292,60 @@ final class PlayerActions
             Sync::touch('bookings');
 
             return $r + ['id' => $id];
+        });
+    }
+
+    // ---------- پرداخت جلسه‌ی مربی (شاگرد، یا خود مربی که پرداخت را به عهده گرفته) ----------
+    private function payPlan(array $a): array
+    {
+        $ids = array_values(array_unique(array_filter((array) ($a['ids'] ?? []), fn ($x) => is_string($x) && $x !== '')));
+        if (! $ids || count($ids) > 60) {
+            Fail::with('bad');
+        }
+        $rows = DB::table('bookings')->whereIn('id', $ids)->orderBy('date')->orderBy('start')->get();
+        if (count($rows) !== count($ids)) {
+            Fail::with('gone');
+        }
+        $total = 0;
+        foreach ($rows as $b) {
+            if ($b->pay_by !== $this->id() || $b->status !== 'ok' || $b->type !== 'coach' || (int) $b->paid >= (int) $b->price) {
+                Fail::with('gone');
+            }
+            $total += (int) $b->price - (int) $b->paid;
+        }
+
+        return ['rows' => $rows, 'total' => $total];
+    }
+
+    public function payBooking(array $a, bool $prepaid = false): array
+    {
+        $plan = $this->payPlan($a);
+        if ($go = $this->gate('payBooking', $a, $prepaid, $plan['total'], 'پرداخت جلسه‌ی مربی')) {
+            return $go;
+        }
+        $method = self::method($a);
+
+        return Locks::run(['booking'], function () use ($a, $method) {
+            $this->fresh();
+            $p = $this->payPlan($a); // دوباره داخل قفل با داده‌ی تازه
+            foreach ($p['rows'] as $b) {
+                $amt = (int) $b->price - (int) $b->paid;
+                $this->charge($amt, 'booking:'.$b->id, 'جلسه‌ی مربی');
+                // سهم پرداخت‌کننده اگر خودش در جلسه است (برای استرداد در لغو)
+                $row = DB::table('booking_players')->where('booking_id', $b->id)->where('player', $this->id())->first();
+                if ($row) {
+                    DB::table('booking_players')->where('id', $row->id)->update(['share' => (int) $row->share + $amt, 'share_method' => $method, 'updated_at' => now()]);
+                }
+                DB::table('booking_payments')->insert(['booking_id' => $b->id, 'amount' => $amt, 'method' => $method, 'at' => now(), 'actor' => 'member:'.$this->id()]);
+                DB::table('bookings')->where('id', $b->id)->update(['paid' => (int) $b->price, 'method' => $b->method ?: $method, 'updated_at' => now()]);
+            }
+            $coach = DB::table('coaches')->where('id', $p['rows'][0]->coach)->first();
+            if ($coach && $coach->member && $coach->member !== $this->id()) {
+                Members::notify($coach->member, '✅', 'جلسه پرداخت شد', $this->me->name.' هزینه‌ی '.\App\Support\Jalali::fa((string) count($p['rows'])).' جلسه را پرداخت کرد.');
+            }
+            Sync::touch('bookings', 'coaches'); // coaches: موجودی کیف پول مربی در پنلش
+
+            return ['ok' => true, 'paid' => $p['total'], 'wallet' => Wallet::balance($this->id())];
         });
     }
 

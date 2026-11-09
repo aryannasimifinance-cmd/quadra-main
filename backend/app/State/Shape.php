@@ -60,6 +60,9 @@ final class Shape
         if ($b->block) {
             $out['block'] = $b->block;
         }
+        if (! empty($b->pay_by)) {
+            $out['payBy'] = $b->pay_by;
+        }
         if ($b->note !== null && $b->note !== '') {
             $out['note'] = $b->note;
         }
@@ -184,6 +187,8 @@ final class Shape
         ];
         if ($scope === 'self') {
             $out['note'] = ''; // یادداشت مدیر برای خود مربی نشان داده نمی‌شود
+            // موجودی کیف پول عضوِ متناظر مربی (برای پرداخت جلسه‌ها توسط خودش)
+            $out['wallet'] = $c->member ? (int) \Illuminate\Support\Facades\DB::table('members')->where('id', $c->member)->value('wallet') : null;
 
             return $out;
         }

@@ -25,12 +25,12 @@ Route::get('pay/fake/{id}', [PaymentController::class, 'fake']);
 
 Route::middleware(['auth:sanctum', 'role:any'])->group(function () {
     Route::get('state', [StateController::class, 'state']);
+    Route::get('pay/{id}', [PaymentController::class, 'status']); // بازیکن، یا مربی برای پرداخت خودش
     Route::get('sync', [StateController::class, 'sync']);
 });
 
 Route::middleware(['auth:sanctum', 'role:player'])->group(function () {
     Route::post('player/{action}', [ActionController::class, 'player']);
-    Route::get('pay/{id}', [PaymentController::class, 'status']);
 });
 
 Route::middleware(['auth:sanctum', 'role:coach'])->post('coach/{action}', [ActionController::class, 'coach']);

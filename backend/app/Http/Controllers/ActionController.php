@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Log;
 class ActionController extends Controller
 {
     private const PLAYER = ['book', 'joinGame', 'declineInvite', 'cancelMine', 'registerEvent', 'bookSeries', 'buyPackage', 'topUp',
-        'checkout', 'cafeCheckout', 'claimQuest', 'addReview', 'notify', 'readAll', 'updateProfile', 'setLogin'];
+        'checkout', 'cafeCheckout', 'payBooking', 'claimQuest', 'addReview', 'notify', 'readAll', 'updateProfile', 'setLogin'];
 
-    private const COACH = ['coachReq', 'coachReqCancel', 'coachSetPlayers'];
+    private const COACH = ['coachReq', 'coachReqCancel', 'coachSetPlayers', 'coachPay'];
 
     private function respond(Request $r, callable $fn)
     {

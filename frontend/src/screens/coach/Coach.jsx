@@ -8,6 +8,7 @@ import { coachLimits, coachRun, isFree, openHours, useStore } from '../../store'
 import { dk, inPeriod, jDateFa, period, shiftPeriod } from '../../jalali'
 import { Icon, LevelPill, Sheet } from '../../components/ui'
 import { coachFile, who } from '../admin/derive'
+import { errText } from '../../api'
 import '../../coach.css'
 
 const TABS = [['home', 'خانه', 'home'], ['plan', 'برنامه', 'cal'], ['book', 'رزرو زمین', 'court'], ['students', 'شاگردها', 'users'], ['income', 'درآمد', 'wallet']]
@@ -76,14 +77,16 @@ function build(club, c, user) {
   const open = openHours(club, c.id)
   const pend = reqs.filter((r) => r.status === 'pending')
   const recent = Date.now() - 3 * 864e5
+  const due = dueOf(bk, c)
   const todo = [
     open.length && { ic: 'users', tone: 'warn', title: `${fa(open.length)} ساعت تأییدشده بدون شاگرد`, sub: 'برای هر ساعت ۱ یا ۲ شاگرد اضافه کنید', act: 'assign', block: open[0].block, btn: 'افزودن شاگرد' },
+    due.length && { ic: 'wallet', tone: 'warn', title: `${fa(due.length)} جلسه هنوز پرداخت نشده`, sub: 'خودتان پرداخت کنید یا برای شاگرد بفرستید تا زمین قطعی شود', act: 'assign', block: due[0].block, btn: 'پرداخت' },
     ...pend.map((r) => ({ ic: 'clock', tone: 'wait', title: 'درخواست رزرو منتظر تأیید مدیر', sub: `${dayTxt(r.date)}، ${hourLabel(r.start)} تا ${hourLabel(r.start + r.dur)}، ${courtById(r.court).name}`, act: 'book' })),
     ...reqs.filter((r) => r.status === 'ok' && (r.done || r.at) > recent && !open.some((b) => b.block === r.id)).map((r) => ({ ic: 'check', tone: 'ok', title: 'رزرو شما تأیید شد', sub: `${dayTxt(r.date)}، ${hourLabel(r.start)} تا ${hourLabel(r.start + r.dur)}، ${courtById(r.court).name}`, act: 'plan' })),
     ...reqs.filter((r) => r.status === 'rejected' && (r.done || r.at) > recent).map((r) => ({ ic: 'close', tone: 'bad', title: 'درخواست رزرو رد شد', sub: `${dayTxt(r.date)}، ${hourLabel(r.start)}؛ ساعت دیگری بگیرید`, act: 'book', btn: 'رزرو دوباره' })),
   ].filter(Boolean)
   return {
-    todo,
+    todo, c, due,
     f, bk, nth, share, income, reqs, open,
     pending: reqs.filter((r) => r.status === 'pending').length,
     today: bk.filter((b) => b.date === t),
@@ -93,11 +96,18 @@ function build(club, c, user) {
   }
 }
 
+// جلسه‌های بلوک تأییدشده که شاگرد دارند، تمام نشده‌اند، پرداخت نشده‌اند و هنوز برای شاگرد هم فرستاده نشده‌اند
+const unpaid = (b) => b.block && b.status !== 'cancelled' && b.players.length > 0 && !done(b) && b.paid < b.price
+const sentToStudent = (b, c) => !!b.payBy && b.payBy !== c.member
+const dueOf = (bk, c) => bk.filter((b) => unpaid(b) && !sentToStudent(b, c))
+const payState = (b, c) => (b.paid >= b.price ? ['پرداخت‌شده', 'ok'] : sentToStudent(b, c) ? ['منتظر پرداخت شاگرد', 'wait'] : ['پرداخت نشده', 'due'])
+
 // یک کلاس: ساعت و زمین، شاگردها، جلسه‌ی چندم پکیج، وضعیت
 function Ses({ b, d, showDay }) {
   const { user } = useStore()
   const n = d.nth.get(b.id)
-  const st = done(b) ? ['برگزار شد', 'mute'] : fromPack(b) || b.paid >= b.price ? ['پرداخت‌شده', 'ok'] : ['پرداخت در پذیرش', 'due']
+  const st = done(b) ? ['برگزار شد', 'mute'] : fromPack(b) || b.paid >= b.price ? ['پرداخت‌شده', 'ok'] : b.block ? payState(b, d.c)
+    : ['پرداخت در پذیرش', 'due']
   return (
     <div className={`co-ses ${done(b) ? 'past' : ''}`}>
       <div className="co-ses-t"><b>{hourLabel(b.start)}</b><small>{fa(b.dur)} ساعت</small></div>
@@ -107,6 +117,7 @@ function Ses({ b, d, showDay }) {
       </div>
       {!b.players.length && b.block && !done(b)
         ? <button className="co-tag add" onClick={() => d.assign(b.block)}>+ شاگرد</button>
+        : st[1] === 'due' && b.block ? <button className="co-tag add" onClick={() => d.assign(b.block)}>پرداخت</button>
         : <em className={`co-tag ${st[1]}`}>{st[0]}</em>}
     </div>
   )
@@ -431,13 +442,64 @@ function Assign({ c, d, block, onDone }) {
             <div className="co-asg-p">
               {b.players.map((p) => <span key={p} className="co-chip">{who(p, user)}<button onClick={() => drop(b, p)} aria-label="حذف"><Icon name="close" size={11} /></button></span>)}
               {b.players.length < 2 && <button className="co-chip add" onClick={() => setPick(b.id)}><Icon name="plus" size={12} />{b.players.length ? 'نفر دیگر' : 'شاگرد'}</button>}
+              {b.players.length > 0 && (() => { const ps = payState(b, c); return <em className={`co-pay-st ${ps[1]}`}>{ps[0]}</em> })()}
             </div>
           </div>
         ))}
       </div>
+      <PayBox c={c} hours={hours} />
       <button className="co-btn" disabled={empty.length > 0} onClick={() => { chime('success'); toast({ icon: '✅', title: 'برنامه کامل شد', body: `${fa(hours.length)} جلسه با شاگرد ثبت شد` }); onDone() }}>
         {empty.length ? `${fa(empty.length)} ساعت هنوز شاگرد ندارد` : 'تمام شد'}
       </button>
+    </div>
+  )
+}
+
+// پرداخت هزینه‌ی جلسه‌ها: خود مربی (کیف پول / کارت بانکی) یا فرستادن برای شاگرد تا در اپ خودش بپردازد
+function PayBox({ c, hours }) {
+  const { coachPay, toast, config, user } = useStore()
+  const [mode, setMode] = useState(null) // null | 'coach'
+  const [busy, setBusy] = useState(false)
+  const list = hours.filter(unpaid)
+  if (!list.length) return null
+  const sum = (xs) => xs.reduce((s, b) => s + b.price - b.paid, 0)
+  const total = sum(list)
+  const forStudent = list.filter((b) => !sentToStudent(b, c) && !b.players[0]?.startsWith('f:'))
+  const guests = list.filter((b) => b.players[0]?.startsWith('f:'))
+  const wallet = c.wallet ?? null
+  const payOn = !!config?.pay
+  const run = async (fn, ok) => {
+    if (busy) return
+    setBusy(true); haptic(10)
+    const r = await fn()
+    setBusy(false)
+    if (r?.error) { chime('alarm'); if (!r.shown) toast({ icon: '⛔', title: 'پرداخت انجام نشد', body: errText(r), duration: 6000 }); return }
+    chime('success'); toast(ok(r)); setMode(null)
+  }
+  const ids = (xs) => xs.map((b) => b.id)
+  return (
+    <div className="co-paybox">
+      <div className="co-paybox-h"><Icon name="wallet" size={18} /><span className="grow"><b>هزینه‌ی {fa(list.length)} جلسه</b><small>تا پرداخت نشود، زمین قطعی نیست</small></span><em>{toman(total)}</em></div>
+      {mode === 'coach' ? (
+        <div className="co-paybox-m">
+          <button className="co-pm" disabled={busy || wallet == null || wallet < total} onClick={() => run(() => coachPay(ids(list), 'coach', 'wallet'), () => ({ icon: '✅', title: 'پرداخت شد', body: `${fa(list.length)} جلسه از کیف پول شما پرداخت شد` }))}>
+            <Icon name="wallet" size={18} /><span className="grow"><b>کیف پول من</b><small>{wallet == null ? 'هنوز کیف پولی ندارید؛ با کارت بانکی بپردازید' : `موجودی ${toman(wallet)}${wallet < total ? '، کافی نیست' : ''}`}</small></span>
+          </button>
+          <button className="co-pm" disabled={busy || !payOn} onClick={() => run(() => coachPay(ids(list), 'coach', 'online'), () => ({ icon: '✅', title: 'پرداخت شد' }))}>
+            <Icon name="card" size={18} /><span className="grow"><b>کارت بانکی</b><small>{payOn ? 'درگاه شتاب' : 'پرداخت آنلاین هنوز فعال نیست'}</small></span>
+          </button>
+          <button className="co-link" onClick={() => setMode(null)}>→ برگشت</button>
+        </div>
+      ) : (
+        <div className="co-paybox-a">
+          <button className="co-btn" disabled={busy} onClick={() => setMode('coach')}>خودم پرداخت می‌کنم</button>
+          <button className="co-btn soft" disabled={busy || !forStudent.length} onClick={() => run(() => coachPay(ids(forStudent), 'student'), () => ({ icon: '📨', title: 'برای شاگرد فرستاده شد', body: `${[...new Set(forStudent.map((b) => who(b.players[0], user)))].join('، ')} در اپ خودش پرداخت می‌کند` }))}>
+            شاگرد پرداخت کند{forStudent.length && forStudent.length < list.length ? ` (${fa(forStudent.length)} جلسه)` : ''}
+          </button>
+          {guests.length > 0 && <p className="co-note">شاگرد مهمان (غیرعضو) نمی‌تواند در اپ پرداخت کند؛ آن جلسه‌ها را خودتان بپردازید یا در پذیرش.</p>}
+          {list.some((b) => sentToStudent(b, c)) && <p className="co-note">بعضی جلسه‌ها برای شاگرد فرستاده شده و منتظر پرداخت اوست؛ اگر بخواهید خودتان هم می‌توانید بپردازید.</p>}
+        </div>
+      )}
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { COACHES, EVENT_KIND, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, hourLabel, levelById, range, rankOf, short, toman } from '../../data'
+import { COACHES, EVENT_KIND, coachById, weekday, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, hourLabel, levelById, range, rankOf, short, toman } from '../../data'
 import { celebrate, chime } from '../../fx'
 import { ME, myPoints, useStore } from '../../store'
 import { myBookings, openGames, quests, streak, upcomingSlots } from '../../select'
-import { Avatar, Icon, LevelPill, Photo, Ring, SectionHead, Tilt, rise, stagger } from '../../components/ui'
+import { Avatar, Button, Icon, LevelPill, Photo, Ring, SectionHead, Sheet, Tilt, rise, stagger } from '../../components/ui'
 import { Logo } from '../../components/Logo'
 import { ProductImage } from '../../components/Merch'
 import { Dish } from '../../components/Dish'
@@ -73,6 +73,7 @@ export default function Home({ nav }) {
       </section>
 
       <div className="home-body">
+        <CoachDue />
         <section className="h-sec">
           <SectionHead title="رزرو سریع" sub="نزدیک‌ترین ساعت‌های آزاد، ۱ ساعت" action="همه‌ی ساعت‌ها" onAction={() => nav.start({ intent: 'court' })} />
           <motion.div className="slot-row-q" variants={stagger} initial="hidden" animate="show">
@@ -306,5 +307,52 @@ function MiniBoard({ points, name, onClick }) {
         <em>{fa(points)}</em>
       </div>
     </motion.button>
+  )
+}
+
+// جلسه‌ی مربی که مربی پرداختش را به من سپرده: با کیف پول یا کارت بانکی پرداخت می‌شود
+function CoachDue() {
+  const { club, wallet, config, payBooking, toast } = useStore()
+  const due = club.bookings.filter((b) => b.payBy === ME && b.type === 'coach' && b.status !== 'cancelled' && b.paid < b.price)
+    .sort((a, b) => fromKey(a.date) - fromKey(b.date) || a.start - b.start)
+  const total = due.reduce((s, b) => s + b.price - b.paid, 0)
+  const payOn = !!config?.pay
+  const [open, setOpen] = useState(false)
+  const [pick, setPick] = useState(null)
+  const [busy, setBusy] = useState(false)
+  if (!due.length) return null
+  const method = pick || (wallet >= total || !payOn ? 'wallet' : 'online')
+  const can = method === 'wallet' ? wallet >= total : payOn
+  const coach = coachById(due[0].coach)
+  const pay = async () => {
+    if (busy || !can) return
+    setBusy(true)
+    const r = await payBooking(due.map((b) => b.id), method)
+    setBusy(false)
+    if (r?.error) { chime('alarm'); if (!r.shown) toast({ icon: '⛔', title: 'پرداخت انجام نشد', body: r.error === 'wallet' ? 'موجودی کیف پول کافی نیست.' : 'دوباره تلاش کنید.' }); return }
+    celebrate(); chime('success'); setOpen(false)
+    toast({ icon: '✅', title: 'جلسه پرداخت شد', body: `${fa(due.length)} جلسه با ${coach?.name || 'مربی'}` })
+  }
+  return (
+    <>
+      <motion.button className="due-card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} onClick={() => setOpen(true)}>
+        <span className="due-ic">💳</span>
+        <span className="grow"><b>پرداخت {fa(due.length)} جلسه‌ی مربی</b><small>{coach?.name || 'مربی'} هزینه‌ی جلسه را برای شما فرستاده</small></span>
+        <em>{toman(total)}</em>
+      </motion.button>
+      <Sheet open={open} onClose={() => setOpen(false)} title="پرداخت جلسه‌ی مربی">
+        <div className="due-list">
+          {due.map((b) => (
+            <div key={b.id} className="due-row"><span className="grow"><b>{weekday(fromKey(b.date))} {dayMonth(fromKey(b.date))}، <bdi dir="ltr">{range(b.start, b.dur)}</bdi></b><small>{courtById(b.court).name}، {coachById(b.coach)?.name || 'مربی'}</small></span><em>{toman(b.price - b.paid)}</em></div>
+          ))}
+        </div>
+        <div className="methods">
+          {[['wallet', 'کیف پول', toman(wallet), 'wallet', wallet >= total], ['online', 'کارت بانکی', 'درگاه شتاب', 'card', payOn]].map(([id, n, sub, ic, ok]) => (
+            <button key={id} disabled={!ok} className={`method ${method === id ? 'on' : ''}`} onClick={() => setPick(id)}><Icon name={ic} /><div className="grow"><b>{n}</b><small>{ok ? sub : id === 'online' ? 'پرداخت آنلاین به‌زودی فعال می‌شود' : 'موجودی کافی نیست'}</small></div><span className={`radio ${method === id ? 'on' : ''}`} /></button>
+          ))}
+        </div>
+        <Button full variant="q" disabled={busy || !can} onClick={pay}>{busy ? 'در حال پرداخت…' : `پرداخت ${toman(total)}`}</Button>
+      </Sheet>
+    </>
   )
 }

@@ -389,6 +389,9 @@ img { display: block; }
 .lg { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
 .lg.free { background: var(--card); box-shadow: inset 0 0 0 1.5px var(--line); }
 .lg.busy { background: #E3DFD5; } .lg.peak { background: var(--clay); }
+.cell.busy.friday { background: #FBEBC0; color: #8A6400; font-size: 10.5px; }
+.cell.busy.fix { background: repeating-linear-gradient(-45deg, #F8E1DA, #F8E1DA 5px, #F0CBBF 5px, #F0CBBF 7px); color: var(--danger); font-size: 10px; }
+.lg.friday { background: #F3D27A; } .lg.fix { background: #E9A796; }
 .court-viz { position: relative; height: 330px; border-radius: 26px; background: linear-gradient(160deg, #1D5D8E, #174A73); overflow: hidden; margin-bottom: 14px; box-shadow: inset 0 0 0 6px rgba(255,255,255,.08); }
 .cv-net { position: absolute; top: 50%; left: 10px; right: 10px; height: 4px; background: rgba(255,255,255,.85); transform: translateY(-50%); box-shadow: 0 0 0 4px rgba(0,0,0,.12); }
 .cv-mid { position: absolute; left: 50%; top: 22%; bottom: 22%; width: 2px; background: rgba(255,255,255,.55); }
@@ -1230,3 +1233,13 @@ button.trn-pl:hover { background: var(--paper2); }
 .menu-dot { font-style: normal; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: #FDF0DC; color: #9A5B0B; margin-inline-start: auto; }
 .menu-list button .menu-dot + svg { margin-inline-start: 0; }
 input::-ms-reveal, input::-ms-clear { display: none; }
+
+/* پرداخت جلسه‌ی مربی در خانه‌ی بازیکن */
+.due-card { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 18px; border-radius: 20px; background: #FBEBC0; color: #5E4500; text-align: right; box-shadow: 0 6px 18px rgba(138,100,0,.12); }
+.due-card b { display: block; font-size: 14px; } .due-card small { font-size: 12px; opacity: .8; }
+.due-card em { font-style: normal; font-weight: 800; font-size: 13.5px; white-space: nowrap; }
+.due-ic { font-size: 22px; }
+.due-list { display: grid; gap: 8px; margin-bottom: 14px; }
+.due-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; background: var(--paper); }
+.due-row b { display: block; font-size: 13.5px; } .due-row small { font-size: 11.5px; color: var(--muted); }
+.due-row em { font-style: normal; font-weight: 700; font-size: 13px; }

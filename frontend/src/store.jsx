@@ -261,6 +261,8 @@ export function StoreProvider({ children }) {
         player('readAll')
       },
       paymentStatus(id) { return net.get('/pay/' + encodeURIComponent(id)) },
+      // جلسه‌ی مربی که پرداختش به من سپرده شده
+      payBooking(ids, method) { return player('payBooking', { ids, method }) },
 
       // ---------- پنل مربی ----------
       coachReq(r) { return coach('coachReq', r) },
@@ -270,6 +272,8 @@ export function StoreProvider({ children }) {
         if (r.error) await loadAll()
         return r
       },
+      // پرداخت جلسه‌ها: payer = coach (خود مربی، کیف پول یا آنلاین) | student (فرستادن برای شاگرد)
+      coachPay(ids, payer, method = 'wallet') { return coach('coachPay', { ids, payer, method }) },
       coachReqCancel(id) {
         club((c) => ({ ...c, coachReqs: (c.coachReqs || []).map((x) => (x.id === id && x.status === 'pending' ? { ...x, status: 'cancelled' } : x)) }))
         return coach('coachReqCancel', { id })

@@ -12,11 +12,11 @@ const Admin = lazy(() => import('./screens/admin/Admin'))
 const Coach = lazy(() => import('./screens/coach/Coach'))
 
 // برگشت از درگاه بانک: ?pay=شناسه — نتیجه از سرور خوانده و پیام مناسب نشان داده می‌شود
-const PAY_DONE = { book: 'رزرو ثبت شد', joinGame: 'به بازی پیوستید', bookSeries: 'پکیج رزرو شد', registerEvent: 'ثبت‌نام شد', buyPackage: 'عضویت فعال شد', checkout: 'سفارش فروشگاه ثبت شد', cafeCheckout: 'سفارش کافه ثبت شد', topup: 'کیف پول شارژ شد' }
+const PAY_DONE = { book: 'رزرو ثبت شد', joinGame: 'به بازی پیوستید', bookSeries: 'پکیج رزرو شد', registerEvent: 'ثبت‌نام شد', buyPackage: 'عضویت فعال شد', checkout: 'سفارش فروشگاه ثبت شد', cafeCheckout: 'سفارش کافه ثبت شد', payBooking: 'جلسه پرداخت شد', topup: 'کیف پول شارژ شد' }
 function usePaymentReturn() {
   const { session, paymentStatus, toast, clearCart } = useStore()
   useEffect(() => {
-    if (session?.role !== 'player') return
+    if (session?.role !== 'player' && session?.role !== 'coach') return
     const id = new URLSearchParams(window.location.search).get('pay')
     if (!id) return
     window.history.replaceState(null, '', window.location.pathname)
