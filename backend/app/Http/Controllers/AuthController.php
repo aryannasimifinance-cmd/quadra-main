@@ -28,7 +28,7 @@ class AuthController extends Controller
 {
     private static function phone($v): string
     {
-        $p = preg_replace('/\D/', '', strtr((string) $v, ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']));
+        $p = preg_replace('/\D/', '', strtr(\App\Support\In::str($v), ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']));
         if (! preg_match('/^09\d{9}$/', $p)) {
             Fail::with('phone');
         }
@@ -69,7 +69,7 @@ class AuthController extends Controller
     public function verifyOtp(Request $r)
     {
         $phone = self::phone($r->input('phone'));
-        $code = preg_replace('/\D/', '', strtr((string) $r->input('code'), ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']));
+        $code = preg_replace('/\D/', '', strtr(\App\Support\In::str($r->input('code')), ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']));
         self::throttle('verify:'.$phone, 10, 600);
         if (strlen($code) !== 4 || ! Otp::check($phone, $code)) {
             return ['error' => 'code'];
@@ -89,7 +89,7 @@ class AuthController extends Controller
     public function register(Request $r)
     {
         try {
-            $t = json_decode(Crypt::decryptString((string) $r->input('ticket')), true);
+            $t = json_decode(Crypt::decryptString(\App\Support\In::str($r->input('ticket'))), true);
         } catch (\Throwable) {
             return ['error' => 'ticket'];
         }
@@ -97,7 +97,7 @@ class AuthController extends Controller
             return ['error' => 'ticket'];
         }
         $phone = $t['phone'];
-        $name = trim((string) $r->input('name'));
+        $name = trim(\App\Support\In::str($r->input('name')));
         $level = $r->input('level');
         $side = $r->input('side');
         $gender = $r->input('gender');
@@ -106,8 +106,8 @@ class AuthController extends Controller
             || ($gender && ! in_array($gender, ['f', 'm'], true)) || ($birth && ! Rules::validBirth($birth))) {
             Fail::with('bad');
         }
-        $user = $r->input('username') ? strtolower(trim((string) $r->input('username'))) : null;
-        $pass = (string) $r->input('pass', '');
+        $user = $r->input('username') ? strtolower(trim(\App\Support\In::str($r->input('username')))) : null;
+        $pass = \App\Support\In::str($r->input('pass', ''));
         if ($user !== null) {
             if (! preg_match('/^[a-z0-9._]{3,20}$/', $user) || strlen($pass) < 6 || strlen($pass) > 72) {
                 Fail::with('bad');
@@ -152,8 +152,8 @@ class AuthController extends Controller
 
     public function password(Request $r)
     {
-        $u = strtolower(trim((string) $r->input('username')));
-        $p = (string) $r->input('password');
+        $u = strtolower(trim(\App\Support\In::str($r->input('username'))));
+        $p = \App\Support\In::str($r->input('password'));
         self::throttle('pass:'.$r->ip(), 10, 300);
         self::throttle('pass-u:'.$u, 8, 900);
         $m = $u !== '' ? Member::whereRaw('LOWER(username) = ?', [$u])->first() : null;
@@ -168,8 +168,8 @@ class AuthController extends Controller
     public function staff(Request $r)
     {
         $role = $r->input('role') === 'coach' ? 'coach' : 'admin';
-        $u = strtolower(trim((string) $r->input('username')));
-        $p = (string) $r->input('password');
+        $u = strtolower(trim(\App\Support\In::str($r->input('username'))));
+        $p = \App\Support\In::str($r->input('password'));
         self::throttle('staff:'.$r->ip(), 10, 300);
         self::throttle('staff-u:'.$role.':'.$u, 8, 900);
         if ($role === 'admin') {
@@ -197,7 +197,7 @@ class AuthController extends Controller
 
     public function usernameFree(Request $r)
     {
-        $u = strtolower(trim((string) $r->query('u')));
+        $u = strtolower(trim(\App\Support\In::str($r->query('u'))));
         $me = $r->user('sanctum');
 
         return ['taken' => $u === '' || PlayerActions::usernameTaken($u, $me instanceof Member ? $me->id : null)];

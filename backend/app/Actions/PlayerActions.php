@@ -789,7 +789,7 @@ final class PlayerActions
     {
         $target = $a['target'] ?? '';
         $stars = $a['stars'] ?? null;
-        $text = trim(mb_substr((string) ($a['text'] ?? ''), 0, 300));
+        $text = trim(mb_substr(\App\Support\In::str($a['text'] ?? ''), 0, 300));
         if (! is_string($target) || ! preg_match('/^(coach|event):([A-Za-z0-9_.-]{1,60})$/', $target, $m) || ! is_numeric($stars) || (int) $stars < 1 || (int) $stars > 5) {
             Fail::with('bad');
         }
@@ -821,7 +821,7 @@ final class PlayerActions
     // ---------- اعلان‌ها ----------
     public function notify(array $a): array
     {
-        Members::notify($this->id(), (string) ($a['icon'] ?? '🔔'), (string) ($a['title'] ?? ''), (string) ($a['body'] ?? ''));
+        Members::notify($this->id(), \App\Support\In::str($a['icon'] ?? '🔔'), \App\Support\In::str($a['title'] ?? ''), \App\Support\In::str($a['body'] ?? ''));
 
         return ['ok' => true];
     }
@@ -871,8 +871,8 @@ final class PlayerActions
 
     public function setLogin(array $a): array
     {
-        $u = strtolower(trim((string) ($a['user'] ?? '')));
-        $pass = (string) ($a['pass'] ?? '');
+        $u = strtolower(trim(\App\Support\In::str($a['user'] ?? '')));
+        $pass = \App\Support\In::str($a['pass'] ?? '');
         if (! preg_match('/^[a-z0-9._]{3,20}$/', $u) || ($pass !== '' && (strlen($pass) < 6 || strlen($pass) > 72))) {
             Fail::with('bad');
         }

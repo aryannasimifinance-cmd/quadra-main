@@ -382,7 +382,7 @@ trait AdminOpsActions
         $id = Ids::accept($p['id'] ?? null, 'payins', 'PI');
         DB::table('payins')->insert([
             'id' => $id, 'date' => Dates::today(), 'amount' => self::int($p['amount'] ?? 0, 1, 10_000_000_000), 'method' => self::deskMethod($p['method'] ?? null),
-            'acc' => isset($p['acc']) && preg_match(self::ACC_RE, (string) $p['acc']) ? $p['acc'] : '6201', 'title' => self::str($p['title'] ?? '', 255),
+            'acc' => isset($p['acc']) && preg_match(self::ACC_RE, \App\Support\In::str($p['acc'])) ? $p['acc'] : '6201', 'title' => self::str($p['title'] ?? '', 255),
             'note' => self::str($p['note'] ?? '', 255), 'by' => self::by($p['by'] ?? null), 'name' => self::str($p['name'] ?? '', 120), 'at' => now(), 'created_at' => now(), 'updated_at' => now(),
         ]);
         Audit::log('payin.add', $id, ['amount' => $p['amount'] ?? 0]);
@@ -406,7 +406,7 @@ trait AdminOpsActions
         $pay = in_array($e['pay'] ?? null, self::PAY_FROM, true) ? $e['pay'] : Fail::with('bad');
         $vendor = self::str($e['vendor'] ?? '', 120);
         DB::table('expenses')->insert([
-            'id' => $id, 'date' => self::date($e['date'] ?? Dates::todayKey()), 'acc' => preg_match(self::ACC_RE, (string) ($e['acc'] ?? '')) ? $e['acc'] : Fail::with('bad'),
+            'id' => $id, 'date' => self::date($e['date'] ?? Dates::todayKey()), 'acc' => preg_match(self::ACC_RE, \App\Support\In::str($e['acc'] ?? '')) ? $e['acc'] : Fail::with('bad'),
             'amount' => self::int($e['amount'] ?? 0, 1, 100_000_000_000), 'title' => self::str($e['title'] ?? '', 255), 'vendor' => $vendor, 'pay' => $pay,
             'invoice' => self::str($e['invoice'] ?? '', 60), 'at' => now(), 'created_at' => now(), 'updated_at' => now(),
         ]);
@@ -435,7 +435,7 @@ trait AdminOpsActions
         $dr = 0;
         $cr = 0;
         foreach ((array) ($j['lines'] ?? []) as $l) {
-            $a = (string) ($l['acc'] ?? '');
+            $a = \App\Support\In::str($l['acc'] ?? '');
             if (! preg_match(self::ACC_RE, $a)) {
                 Fail::with('bad');
             }

@@ -90,7 +90,7 @@ class AdminActions
 
     protected static function phone($v): string
     {
-        $p = strtr((string) $v, ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']);
+        $p = strtr(\App\Support\In::str($v), ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']);
         $p = preg_replace('/\D/', '', $p);
         if (! preg_match('/^09\d{9}$/', $p)) {
             Fail::with('phone');
@@ -305,8 +305,8 @@ class AdminActions
             Fail::with('gone');
         }
         $on = (bool) ($login['on'] ?? false);
-        $user = strtolower(trim((string) ($login['user'] ?? '')));
-        $pass = (string) ($login['pass'] ?? '');
+        $user = strtolower(trim(\App\Support\In::str($login['user'] ?? '')));
+        $pass = \App\Support\In::str($login['pass'] ?? '');
         $p = ['login_on' => $on, 'cap_day' => self::int($login['day'] ?? $c->cap_day, 0, 24), 'cap_week' => self::int($login['week'] ?? $c->cap_week, 0, 100)];
         if ($user !== '') {
             if (! preg_match('/^[a-z0-9._-]{3,40}$/', $user)) {

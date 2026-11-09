@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['role' => Role::class]);
+        $middleware->appendToGroup('api', \App\Http\Middleware\Compress::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // خطاهای قابل انتظار با کد خطا (همان پیام‌های اپ)

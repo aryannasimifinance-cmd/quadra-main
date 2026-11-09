@@ -49,7 +49,7 @@ final class Cafe
                 Fail::with('stock');
             }
             $big = ! empty($x['big']) && (int) $it->big > 0;
-            $note = mb_substr(trim((string) ($x['note'] ?? '')), 0, 60);
+            $note = isset($x['note']) && is_scalar($x['note']) ? mb_substr(trim((string) $x['note']), 0, 60) : '';
             $out[] = ['iid' => $iid, 'qty' => (int) $qty, 'big' => $big, 'note' => $note];
         }
 

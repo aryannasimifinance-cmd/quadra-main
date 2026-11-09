@@ -38,7 +38,7 @@ final class CoachActions
             Fail::with('bad');
         }
         [$court, $start, $dur] = [(int) $court, (float) $start, (float) $dur];
-        $note = mb_substr(trim((string) ($r['note'] ?? '')), 0, 200);
+        $note = mb_substr(trim(\App\Support\In::str($r['note'] ?? '')), 0, 200);
         $student = $r['student'] ?? null;
         if ($student !== null && ! Members::validPlayer($student)) {
             $student = null;
