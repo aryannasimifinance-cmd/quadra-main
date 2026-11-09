@@ -169,10 +169,10 @@ class AdminDayTest extends TestCase
         $this->assertSame(true, json_decode(DB::table('events')->where('id', 'evDay1')->value('extra'), true)['showResults']);
         // مسابقه‌ی دوم هم‌زمان روی زمین مشترک رد می‌شود؛ روی زمین دیگر قبول
         $clash = $this->cmd('adminEventSave', [['id' => 'evDay2', 'kind' => 'official', 'title' => 'هم‌زمان', 'date' => $date, 'start' => 10, 'dur' => 2, 'courts' => [3, 4], 'levels' => [], 'cap' => 8, 'fee' => 0, 'status' => 'open']]);
-        $this->assertSame('busy', $clash['error'] ?? null, json_encode($clash));
+        $this->assertSame('event_clash', $clash['error'] ?? null, json_encode($clash));
         $this->assertFalse(DB::table('events')->where('id', 'evDay2')->exists(), 'rolled back');
         $this->assertTrue($this->cmd('adminEventSave', [['id' => 'evDay3', 'kind' => 'official', 'title' => 'زمین ۴', 'date' => $date, 'start' => 10, 'dur' => 2, 'courts' => [4], 'levels' => [], 'cap' => 8, 'fee' => 0, 'status' => 'open']])['ok']);
-        $this->assertSame('busy', $this->cmd('adminEventSave', [['id' => 'evDay3', 'courts' => [3, 4]]])['error'] ?? null, 'editing into a clash rejected');
+        $this->assertSame('event_clash', $this->cmd('adminEventSave', [['id' => 'evDay3', 'courts' => [3, 4]]])['error'] ?? null, 'editing into a clash rejected');
         $this->assertSame([4], json_decode(DB::table('events')->where('id', 'evDay3')->value('courts'), true));
         $this->cmd('adminEventSave', [['id' => 'evDay3', 'status' => 'cancelled']]);
         // ثبت‌نام حضوری رایگان و پولی

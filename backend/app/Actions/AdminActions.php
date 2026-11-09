@@ -646,7 +646,7 @@ class AdminActions
                 $mine = array_map('intval', json_decode($e->courts, true) ?: []);
                 foreach (Availability::eventBlocks($e->date, $id) as $o) {
                     if (array_intersect($mine, $o['courts']) && (float) $e->start < $o['start'] + $o['dur'] && $o['start'] < (float) $e->start + (float) $e->dur) {
-                        Fail::with('busy', ['event' => $o['id']]);
+                        Fail::with('event_clash', ['event' => $o['id'], 'title' => (string) DB::table('events')->where('id', $o['id'])->value('title')]);
                     }
                 }
             }

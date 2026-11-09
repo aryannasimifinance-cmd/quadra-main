@@ -83,7 +83,9 @@ export const ERR = {
   sms: 'ارسال پیامک ممکن نشد؛ کمی بعد دوباره تلاش کنید.',
   limit: 'برای این شماره پیامک زیادی فرستاده شده؛ یک ساعت دیگر امتحان کنید.',
 }
-export const errText = (r) => (r?.error === 'wait' ? `لطفاً ${Number(r.sec || 60).toLocaleString('fa-IR')} ثانیه صبر کنید.` : ERR[r?.error] || 'انجام نشد؛ دوباره تلاش کنید.')
+export const errText = (r) => (r?.error === 'wait' ? `لطفاً ${Number(r.sec || 60).toLocaleString('fa-IR')} ثانیه صبر کنید.`
+  : r?.error === 'event_clash' ? `«${r.title || 'مسابقه‌ی دیگری'}» همین ساعت روی همین زمین‌هاست؛ روز، ساعت یا زمین دیگری انتخاب کنید.`
+  : ERR[r?.error] || 'انجام نشد؛ دوباره تلاش کنید.')
 
 // شناسه‌ی پیشنهادی برای ساخت چیزهای تازه در پنل مدیر (سرور اگر معتبر باشد همان را می‌پذیرد)
 export const uid = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)

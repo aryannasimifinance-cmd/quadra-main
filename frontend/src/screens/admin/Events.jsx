@@ -631,7 +631,16 @@ function JCal({ value, onChange, events }) {
     </div>
   )
 }
-function nextFriday() { const d = new Date(); d.setDate(d.getDate() + ((5 - d.getDay() + 7) % 7 || 7)); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}` }
+// اولین جمعه‌ی پیش‌رو که هنوز مسابقه‌ی منتشرشده ندارد (تا ۱۲ هفته)
+function nextFriday(events = []) {
+  const d = new Date(); d.setDate(d.getDate() + ((5 - d.getDay() + 7) % 7 || 7))
+  for (let i = 0; i < 12; i++) {
+    const k = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+    if (!events.some((e) => e.date === k && ['open', 'closed', 'done'].includes(e.status))) return k
+    d.setDate(d.getDate() + 7)
+  }
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+}
 
 // فرم مسابقه در پنج بخش مرتب؛ دکمه‌ی ذخیره همیشه پایین فرم دیده می‌شود
 const KINDS = { friday: ['☀️', 'مسابقه‌ی آدینه', 'دوستانه؛ جمعه یا هر روز دیگر'], official: ['🎉', 'ایونت ویبورا', 'دورهمی ورزشی؛ همان روال آدینه'] }
@@ -646,13 +655,16 @@ const Sec = ({ n, title, sub, children }) => (
 function EventForm({ ev, onClose }) {
   const { club, adminEventSave, toast } = useStore()
   const { open, close } = hoursOf(club)
-  const [f, setF] = useState(() => ev || { kind: 'friday', img: EV_IMG[1], ...KIND_DEF.friday, format: 'groups', date: nextFriday(), courts: [1, 2, 3, 4], status: 'open', note: '' })
+  const [f, setF] = useState(() => ev || { kind: 'friday', img: EV_IMG[1], ...KIND_DEF.friday, format: 'groups', date: nextFriday(club.events), courts: [1, 2, 3, 4], status: 'open', note: '' })
   const set = (p) => setF((x) => ({ ...x, ...p }))
   const tog = (k, v) => set({ [k]: f[k].includes(v) ? f[k].filter((x) => x !== v) : [...f[k], v].sort() })
   const same = eventAt(club.events.filter((e) => e.id !== ev?.id), fromKey(f.date).getTime() + f.start * 36e5)
   const busy = clashes(club.bookings, { ...f, id: ev?.id }).filter((b) => !b.event)
+  // مسابقه‌ی دیگری که همین ساعت روی یکی از همین زمین‌هاست (سرور دو مسابقه‌ی هم‌زمان روی یک زمین را نمی‌پذیرد)
+  const overlap = f.status === 'draft' ? null : club.events.find((e) => e.id !== ev?.id && ['open', 'closed', 'done'].includes(e.status) && !e.noBlock && e.date === f.date
+    && e.courts.some((c) => f.courts.includes(c)) && f.start < e.start + e.dur && e.start < f.start + f.dur)
   const custom = f.img && !EV_IMG.includes(f.img)
-  const ok = f.title.trim() && f.date && f.cap > 1 && f.courts.length && f.levels.length && !(f.ageMin && f.ageMax && f.ageMax < f.ageMin)
+  const ok = f.title.trim() && f.date && f.cap > 1 && f.courts.length && f.levels.length && !(f.ageMin && f.ageMax && f.ageMax < f.ageMin) && !overlap
   const save = () => {
     const s = adminEventSave({ ...f, title: f.title.trim(), id: ev?.id })
     chime('success'); toast({ icon: '🏆', title: ev ? 'مسابقه به‌روز شد' : 'مسابقه ساخته شد', body: f.status === 'draft' ? 'پیش‌نویس؛ هنوز در اپ دیده نمی‌شود' : `در اپ دیده می‌شود؛ ${courtsText(f.courts)} در تقویم رزرو شد` })
@@ -685,7 +697,9 @@ function EventForm({ ev, onClose }) {
         </div>
         <p className="ef-sum"><Icon name="cal" size={15} />{f.courts.length ? `${dayLabel(f.date)} ${jDateFa(f.date)}، ${hourLabel(f.start)} تا ${hourLabel(f.start + f.dur)}، ${courtsText(f.courts)}` : 'حداقل یک زمین انتخاب کنید.'}</p>
         {busy.length > 0 && <p className="pt-warn">{fa(busy.length)} رزرو در همین ساعت هست ({busy.slice(0, 3).map((b) => `${courtById(b.court).name} ${hourLabel(b.start)}`).join('، ')}{busy.length > 3 ? '، …' : ''})؛ بعد از ذخیره در تقویم جابه‌جا یا لغوشان کنید.</p>}
-        {same && <p className="pt-warn">در همین روز «{same.title}» هم هست.</p>}
+        {overlap
+          ? <p className="pt-warn">«{overlap.title}» همین ساعت ({hourLabel(overlap.start)} تا {hourLabel(overlap.start + overlap.dur)}) روی {courtsText(overlap.courts.filter((c) => f.courts.includes(c)))} است؛ روز، ساعت یا زمین دیگری انتخاب کنید (یا همان مسابقه را ویرایش کنید).</p>
+          : same && <p className="pt-warn">در همین روز «{same.title}» هم هست.</p>}
       </Sec>
 
       <Sec n={3} title="چه کسانی؟">
@@ -719,7 +733,7 @@ function EventForm({ ev, onClose }) {
 
       <div className="ef-foot">
         <span><b>{f.title || 'بی‌نام'}</b><small>{dayLabel(f.date)} {jDateFa(f.date)}، {fa(f.cap)} نفر، {toman(f.fee)} هر نفر</small></span>
-        <button className="adm-btn primary" disabled={!ok} onClick={save}>{ev ? 'ذخیره‌ی تغییرات' : 'ساخت مسابقه'}</button>
+        <button className="adm-btn primary" disabled={!ok} onClick={save} data-tip={overlap ? `هم‌زمان با «${overlap.title}»` : ''}>{ev ? 'ذخیره‌ی تغییرات' : 'ساخت مسابقه'}</button>
       </div>
     </div>
   )
