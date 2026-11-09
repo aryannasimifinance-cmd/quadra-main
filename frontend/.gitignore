@@ -1,0 +1,8 @@
+node_modules
+dist
+*.local
+.DS_Store
+# فایل‌های خام ارسالی (نسخه‌ی پردازش‌شده در src و public است)
+/IRANSansX-*.ttf
+/photo_*.jpg
+/vincenzo-*.jpg

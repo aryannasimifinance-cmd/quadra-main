@@ -1,0 +1,79 @@
+# QUADRA — باشگاه پدل (اپ + سرور)
+
+مونوریپوی کوادرا:
+
+| پوشه | چیست |
+|---|---|
+| `frontend/` | اپ React + Vite (همان ظاهر نسخه‌ی قبل)؛ خروجی build مستقیم در `backend/public` می‌رود |
+| `backend/` | سرور Laravel 12 + MariaDB؛ همه‌ی داده‌ها و تصمیم‌های حساس (قیمت، رزرو، کیف پول، انبار، ظرفیت) |
+
+اپ و سرور روی **یک دامنه** اجرا می‌شوند: لاراول صفحه‌ی اپ (`public/spa.html`) را سرو می‌کند و اپ از `/api` داده می‌گیرد.
+
+---
+
+## پیش‌نیازهای سرور
+- PHP **8.2 به بالا** با افزونه‌های: `pdo_mysql`, `mbstring`, `openssl`, `intl`, `curl`, `fileinfo`, `gd`
+- MariaDB **10.6 به بالا** (یا MySQL 8)
+- Composer
+- (روی هاست اشتراکی هم کار می‌کند؛ صف/کرون لازم نیست)
+
+## نصب روی سرور (یک بار)
+```bash
+cd backend
+composer install --no-dev --optimize-autoloader
+cp .env.example .env          # بعد مقادیر .env را پر کنید (دیتابیس، دامنه، …)
+php artisan key:generate
+php artisan migrate --force
+php artisan quadra:install    # زمین‌ها، اکانت مدیر و کاتالوگ اولیه — رمز مدیر را یادداشت کنید
+php artisan config:cache && php artisan route:cache
+```
+- ریشه‌ی سایت (Document Root) باید پوشه‌ی `backend/public` باشد.
+- پوشه‌های `backend/storage` و `backend/bootstrap/cache` و `backend/public/uploads` باید قابل نوشتن باشند.
+- خروجی build اپ از قبل در `backend/public` هست؛ فقط اگر فرانت را تغییر دادید دوباره build بگیرید (پایین).
+
+## وصل کردن پیامک و درگاه (هر وقت مشخص شد)
+فقط `.env` را عوض کنید و `php artisan config:cache` بزنید؛ کد لازم نیست تغییر کند.
+
+**پیامک کد ورود**
+- کاوه‌نگار: `SMS_DRIVER=kavenegar`، `KAVENEGAR_API_KEY=...`، `KAVENEGAR_TEMPLATE=` نام الگوی Verify با متغیر `%token`
+- SMS.ir: `SMS_DRIVER=smsir`، `SMSIR_API_KEY=...`، `SMSIR_TEMPLATE_ID=...` (پارامتر قالب `CODE`)
+- تا وقتی `SMS_DRIVER=log` است، کد فقط در `storage/logs/laravel.log` نوشته می‌شود.
+
+**درگاه پرداخت**
+- زرین‌پال: `PAYMENT_DRIVER=zarinpal`، `ZARINPAL_MERCHANT_ID=...` (برای تست: `ZARINPAL_SANDBOX=true`)
+- تا درگاه واقعی تنظیم نشده، روی سرور اصلی پرداخت آنلاین خاموش است و اپ فقط کیف پول را نشان می‌دهد.
+- روش پرداخت: مبلغ را سرور حساب می‌کند ← کاربر به بانک می‌رود ← بعد از تأیید، کیف پول شارژ و همان کار انجام می‌شود. اگر وسط پرداخت زمین پر شود، پول در کیف پول می‌ماند.
+- درگاه دیگر (مثلاً یک بانک): یک کلاس در `backend/app/Payments` که `Gateway` را پیاده کند و ثبت در `PaymentService::gateway()`.
+
+## دستورهای مفید
+| دستور | کار |
+|---|---|
+| `php artisan quadra:admin admin` | ساخت مدیر یا تغییر رمز مدیر (رمز تازه نشان داده می‌شود) |
+| `php artisan quadra:admin admin --disable` | غیرفعال کردن یک مدیر |
+| `php artisan quadra:demo` | **پاک کردن همه‌ی داده‌ها** و ورود داده‌ی نمایشی (فقط برای تست) |
+| `php artisan test` | اجرای تست‌های سرتاسری (روی دیتابیس `quadra_test`) |
+
+## توسعه (روی کامپیوتر)
+```bash
+# سرور
+cd backend && php artisan serve          # http://127.0.0.1:8000
+# اپ با بارگذاری زنده (درخواست‌های /api به سرور بالا می‌رود)
+cd frontend && npm install && npm run dev
+# خروجی نهایی اپ (در backend/public)
+cd frontend && npm run build
+# بازسازی داده‌ی نمایشی/کاتالوگ از کد اپ
+cd frontend && npm run seed:export
+```
+
+## نقش‌ها
+- **بازیکن**: ورود با کد پیامکی یا نام کاربری و رمز؛ فقط داده‌ی خودش و اطلاعات عمومی (بدون موبایل اعضا، بدون حسابداری).
+- **مربی**: نام کاربری و رمز را مدیر می‌دهد؛ فقط کلاس‌ها، شاگردها و درآمد خودش. بستن دسترسی = خروج فوری.
+- **مدیر**: همه‌چیز. رمزها رمزنگاری‌شده (bcrypt) ذخیره می‌شوند و تلاش‌های ورود محدود است.
+
+## ساختار سرور (برای برنامه‌نویس)
+- `app/Actions` — کارهای بازیکن، مربی و مدیر (همان نام توابع store اپ)
+- `app/State` — ساخت داده‌ی هر نقش به شکل JSON اپ
+- `app/Domain` — قیمت، خالی بودن زمین، کیف پول، کافه، فروشگاه، قواعد مسابقه
+- `app/Support/Locks.php` — قفل‌های نام‌دار؛ هر عملیات حساس داخل تراکنش و پشت قفل اجرا می‌شود
+- `app/Payments`, `app/Sms` — درگاه و پیامک قابل تعویض
+- `database/migrations` — جدول‌ها؛ `database/seed` — کاتالوگ و داده‌ی نمایشی

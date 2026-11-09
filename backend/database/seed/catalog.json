@@ -1,0 +1,2923 @@
+{
+ "products": [
+  {
+   "id": "r1",
+   "cat": "racket",
+   "brand": "Wilson",
+   "name": "راکت Wilson Bela Pro",
+   "price": 14900000,
+   "was": 16900000,
+   "img": "./img/shop-wilson-racket.jpg",
+   "rating": 4.9,
+   "reviews": 64,
+   "tag": "پرفروش",
+   "gender": "unisex",
+   "level": "پیشرفته",
+   "desc": "راکت امضای فرناندو بلاستگین؛ قاب کربن و تعادل بالا برای ضربه‌های قدرتی، اسمش و ویبورا.",
+   "specs": [
+    [
+     "وزن",
+     "۳۶۵ گرم"
+    ],
+    [
+     "شکل",
+     "الماسی"
+    ],
+    [
+     "هسته",
+     "EVA سخت"
+    ],
+    [
+     "تعادل",
+     "بالا"
+    ]
+   ],
+   "code": "11001",
+   "active": true,
+   "cost": 9540000,
+   "variants": [
+    {
+     "sku": "11001-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "r2",
+   "cat": "racket",
+   "brand": "Nox",
+   "name": "راکت Nox ML10 Pro Cup",
+   "price": 9800000,
+   "img": "./img/shop-nox-racket.jpg",
+   "rating": 4.7,
+   "reviews": 41,
+   "gender": "unisex",
+   "level": "متوسط",
+   "desc": "سر گرد و نقطه‌ی شیرین بزرگ؛ کنترل و دقت، محبوب‌ترین راکت Nox.",
+   "specs": [
+    [
+     "وزن",
+     "۳۵۵ گرم"
+    ],
+    [
+     "شکل",
+     "گرد"
+    ],
+    [
+     "هسته",
+     "EVA نرم"
+    ],
+    [
+     "تعادل",
+     "پایین"
+    ]
+   ],
+   "code": "11002",
+   "active": true,
+   "cost": 6270000,
+   "variants": [
+    {
+     "sku": "11002-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "r3",
+   "cat": "racket",
+   "brand": "Adidas",
+   "name": "راکت Adidas Match",
+   "price": 7400000,
+   "was": 8200000,
+   "img": "./img/shop-adidas-racket.jpg",
+   "rating": 4.6,
+   "reviews": 28,
+   "tag": "تخفیف",
+   "gender": "unisex",
+   "level": "مبتدی",
+   "desc": "سبک و بخشنده؛ بهترین شروع برای سال اول پدل.",
+   "specs": [
+    [
+     "وزن",
+     "۳۴۵ گرم"
+    ],
+    [
+     "شکل",
+     "قطره‌ای"
+    ],
+    [
+     "هسته",
+     "فوم"
+    ],
+    [
+     "تعادل",
+     "متوسط"
+    ]
+   ],
+   "code": "11003",
+   "active": true,
+   "cost": 4740000,
+   "variants": [
+    {
+     "sku": "11003-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "r4",
+   "cat": "racket",
+   "brand": "Nox",
+   "name": "راکت Nox SET",
+   "price": 12600000,
+   "img": "./img/shop-nox-racket-white.jpg",
+   "rating": 4.8,
+   "reviews": 19,
+   "tag": "جدید",
+   "gender": "unisex",
+   "level": "پیشرفته",
+   "desc": "نسخه‌ی سفید و طلایی؛ سطح زبر برای اسپین بیشتر.",
+   "specs": [
+    [
+     "وزن",
+     "۳۶۰ گرم"
+    ],
+    [
+     "شکل",
+     "قطره‌ای"
+    ],
+    [
+     "هسته",
+     "EVA"
+    ],
+    [
+     "سطح",
+     "زبر 3D"
+    ]
+   ],
+   "code": "11004",
+   "active": true,
+   "cost": 8060000,
+   "variants": [
+    {
+     "sku": "11004-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "r5",
+   "cat": "racket",
+   "brand": "Head",
+   "name": "راکت Head Delta Pro",
+   "price": 8900000,
+   "img": "./img/racket-orange.jpg",
+   "rating": 4.5,
+   "reviews": 22,
+   "gender": "unisex",
+   "level": "متوسط",
+   "desc": "تعادل همه‌کاره بین قدرت و کنترل؛ انتخاب حرفه‌ای‌های Head.",
+   "specs": [
+    [
+     "وزن",
+     "۳۵۸ گرم"
+    ],
+    [
+     "شکل",
+     "قطره‌ای"
+    ],
+    [
+     "هسته",
+     "EVA"
+    ],
+    [
+     "تعادل",
+     "متوسط"
+    ]
+   ],
+   "code": "11005",
+   "active": true,
+   "cost": 5700000,
+   "variants": [
+    {
+     "sku": "11005-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "s1",
+   "cat": "shoes",
+   "brand": "Wilson",
+   "name": "کفش Wilson Rush Pro",
+   "price": 8600000,
+   "img": "./img/shop-wilson-shoes.jpg",
+   "rating": 4.8,
+   "reviews": 37,
+   "tag": "پرفروش",
+   "gender": "unisex",
+   "sizes": [
+    "۳۹",
+    "۴۰",
+    "۴۱",
+    "۴۲",
+    "۴۳",
+    "۴۴",
+    "۴۵"
+   ],
+   "desc": "زیره‌ی هرینگ‌بون برای چمن مصنوعی و شن؛ ثبات در حرکات جانبی.",
+   "specs": [
+    [
+     "زیره",
+     "هرینگ‌بون"
+    ],
+    [
+     "کاربرد",
+     "چمن / شن"
+    ],
+    [
+     "وزن",
+     "۳۶۰ گرم"
+    ]
+   ],
+   "code": "12001",
+   "active": true,
+   "cost": 5330000,
+   "variants": [
+    {
+     "sku": "12001-39-00",
+     "size": "۳۹",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12001-40-00",
+     "size": "۴۰",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12001-41-00",
+     "size": "۴۱",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12001-42-00",
+     "size": "۴۲",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12001-43-00",
+     "size": "۴۳",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12001-44-00",
+     "size": "۴۴",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12001-45-00",
+     "size": "۴۵",
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "cat": "shoes",
+   "brand": "Asics",
+   "name": "کفش Asics Gel-Court Bella",
+   "price": 7900000,
+   "was": 8900000,
+   "img": "./img/shop-asics-shoes.jpg",
+   "rating": 4.7,
+   "reviews": 52,
+   "tag": "تخفیف",
+   "gender": "women",
+   "sizes": [
+    "۳۹",
+    "۴۰",
+    "۴۱",
+    "۴۲",
+    "۴۳"
+   ],
+   "desc": "ژل ضربه‌گیر پاشنه و رویه‌ی تنفسی؛ سبک برای بازی‌های طولانی.",
+   "specs": [
+    [
+     "زیره",
+     "Omni"
+    ],
+    [
+     "ضربه‌گیر",
+     "GEL"
+    ],
+    [
+     "وزن",
+     "۳۱۰ گرم"
+    ]
+   ],
+   "code": "12002",
+   "active": true,
+   "cost": 4900000,
+   "variants": [
+    {
+     "sku": "12002-39-00",
+     "size": "۳۹",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12002-40-00",
+     "size": "۴۰",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12002-41-00",
+     "size": "۴۱",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12002-42-00",
+     "size": "۴۲",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12002-43-00",
+     "size": "۴۳",
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "cat": "shoes",
+   "brand": "Bullpadel",
+   "name": "کفش Bullpadel Vertex Grip",
+   "price": 6400000,
+   "img": "./img/shoe-black.jpg",
+   "rating": 4.5,
+   "reviews": 18,
+   "gender": "men",
+   "sizes": [
+    "۴۱",
+    "۴۲",
+    "۴۳",
+    "۴۴",
+    "۴۵"
+   ],
+   "desc": "چسبندگی بالا روی کورت شنی؛ پنجه‌ی تقویت‌شده.",
+   "specs": [
+    [
+     "زیره",
+     "Clay"
+    ],
+    [
+     "کاربرد",
+     "شن"
+    ],
+    [
+     "وزن",
+     "۳۸۰ گرم"
+    ]
+   ],
+   "code": "12003",
+   "active": true,
+   "cost": 3970000,
+   "variants": [
+    {
+     "sku": "12003-41-00",
+     "size": "۴۱",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12003-42-00",
+     "size": "۴۲",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12003-43-00",
+     "size": "۴۳",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12003-44-00",
+     "size": "۴۴",
+     "color": null,
+     "stock": 0
+    },
+    {
+     "sku": "12003-45-00",
+     "size": "۴۵",
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "a1",
+   "cat": "apparel",
+   "brand": "Quadra",
+   "name": "تی‌شرت کوادرا Club",
+   "price": 1900000,
+   "art": {
+    "type": "tee",
+    "color": "#141413"
+   },
+   "colors": [
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    },
+    {
+     "n": "سفید",
+     "c": "#F4F2EC"
+    },
+    {
+     "n": "فیروزه‌ای",
+     "c": "#19C9C1"
+    }
+   ],
+   "rating": 4.9,
+   "reviews": 88,
+   "tag": "جدید",
+   "gender": "unisex",
+   "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "desc": "پارچه‌ی دری‌فیت سبک با لوگوی کوادرا؛ لباس رسمی باشگاه.",
+   "specs": [
+    [
+     "جنس",
+     "پلی‌استر دری‌فیت"
+    ],
+    [
+     "فرم",
+     "Regular"
+    ]
+   ],
+   "code": "13001",
+   "active": true,
+   "cost": 800000,
+   "variants": [
+    {
+     "sku": "13001-S-BK",
+     "size": "S",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13001-S-WH",
+     "size": "S",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13001-S-TQ",
+     "size": "S",
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13001-M-BK",
+     "size": "M",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13001-M-WH",
+     "size": "M",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13001-M-TQ",
+     "size": "M",
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13001-L-BK",
+     "size": "L",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13001-L-WH",
+     "size": "L",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13001-L-TQ",
+     "size": "L",
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13001-XL-BK",
+     "size": "XL",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13001-XL-WH",
+     "size": "XL",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13001-XL-TQ",
+     "size": "XL",
+     "color": "فیروزه‌ای",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "a2",
+   "cat": "apparel",
+   "brand": "Quadra",
+   "name": "پولو کوادرا Pro",
+   "price": 2400000,
+   "art": {
+    "type": "polo",
+    "color": "#F4F2EC"
+   },
+   "colors": [
+    {
+     "n": "سفید",
+     "c": "#F4F2EC"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    }
+   ],
+   "rating": 4.7,
+   "reviews": 31,
+   "gender": "men",
+   "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "desc": "یقه‌دار، خنک و رسمی برای تورنمنت‌ها.",
+   "specs": [
+    [
+     "جنس",
+     "پنبه + الاستان"
+    ],
+    [
+     "فرم",
+     "Slim"
+    ]
+   ],
+   "code": "13002",
+   "active": true,
+   "cost": 1010000,
+   "variants": [
+    {
+     "sku": "13002-S-WH",
+     "size": "S",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13002-S-BK",
+     "size": "S",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13002-M-WH",
+     "size": "M",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13002-M-BK",
+     "size": "M",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13002-L-WH",
+     "size": "L",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13002-L-BK",
+     "size": "L",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13002-XL-WH",
+     "size": "XL",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13002-XL-BK",
+     "size": "XL",
+     "color": "مشکی",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "a3",
+   "cat": "apparel",
+   "brand": "Quadra",
+   "name": "شلوارک کوادرا Court",
+   "price": 1600000,
+   "art": {
+    "type": "shorts",
+    "color": "#24344F"
+   },
+   "colors": [
+    {
+     "n": "سرمه‌ای",
+     "c": "#24344F"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    }
+   ],
+   "rating": 4.6,
+   "reviews": 26,
+   "gender": "men",
+   "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "desc": "جیب توپ کناری و کش راحت.",
+   "specs": [
+    [
+     "جنس",
+     "پلی‌استر"
+    ],
+    [
+     "جیب",
+     "دو جیب توپ"
+    ]
+   ],
+   "code": "13003",
+   "active": true,
+   "cost": 670000,
+   "variants": [
+    {
+     "sku": "13003-S-NV",
+     "size": "S",
+     "color": "سرمه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13003-S-BK",
+     "size": "S",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13003-M-NV",
+     "size": "M",
+     "color": "سرمه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13003-M-BK",
+     "size": "M",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13003-L-NV",
+     "size": "L",
+     "color": "سرمه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13003-L-BK",
+     "size": "L",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13003-XL-NV",
+     "size": "XL",
+     "color": "سرمه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13003-XL-BK",
+     "size": "XL",
+     "color": "مشکی",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "a4",
+   "cat": "apparel",
+   "brand": "Quadra",
+   "name": "دامن‌شلوارک کوادرا",
+   "price": 1750000,
+   "art": {
+    "type": "skirt",
+    "color": "#19C9C1"
+   },
+   "colors": [
+    {
+     "n": "فیروزه‌ای",
+     "c": "#19C9C1"
+    },
+    {
+     "n": "سفید",
+     "c": "#F4F2EC"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    }
+   ],
+   "rating": 4.8,
+   "reviews": 34,
+   "gender": "women",
+   "sizes": [
+    "S",
+    "M",
+    "L"
+   ],
+   "desc": "شلوارک داخلی با جیب توپ؛ حرکت آزاد.",
+   "specs": [
+    [
+     "جنس",
+     "پلی‌استر + اسپندکس"
+    ]
+   ],
+   "code": "13004",
+   "active": true,
+   "cost": 740000,
+   "variants": [
+    {
+     "sku": "13004-S-TQ",
+     "size": "S",
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13004-S-WH",
+     "size": "S",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13004-S-BK",
+     "size": "S",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13004-M-TQ",
+     "size": "M",
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13004-M-WH",
+     "size": "M",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13004-M-BK",
+     "size": "M",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13004-L-TQ",
+     "size": "L",
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "13004-L-WH",
+     "size": "L",
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13004-L-BK",
+     "size": "L",
+     "color": "مشکی",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "a5",
+   "cat": "apparel",
+   "brand": "Quadra",
+   "name": "هودی کوادرا Night",
+   "price": 3200000,
+   "was": 3600000,
+   "art": {
+    "type": "hoodie",
+    "color": "#141413"
+   },
+   "colors": [
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    },
+    {
+     "n": "طوسی",
+     "c": "#9A988F"
+    }
+   ],
+   "rating": 4.9,
+   "reviews": 47,
+   "tag": "تخفیف",
+   "gender": "unisex",
+   "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "desc": "هودی گرم برای بعد از بازی‌های شبانه‌ی زمین ۴.",
+   "specs": [
+    [
+     "جنس",
+     "پنبه ۸۰٪"
+    ],
+    [
+     "فرم",
+     "Oversize"
+    ]
+   ],
+   "code": "13005",
+   "active": true,
+   "cost": 1340000,
+   "variants": [
+    {
+     "sku": "13005-S-BK",
+     "size": "S",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13005-S-GR",
+     "size": "S",
+     "color": "طوسی",
+     "stock": 0
+    },
+    {
+     "sku": "13005-M-BK",
+     "size": "M",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13005-M-GR",
+     "size": "M",
+     "color": "طوسی",
+     "stock": 0
+    },
+    {
+     "sku": "13005-L-BK",
+     "size": "L",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13005-L-GR",
+     "size": "L",
+     "color": "طوسی",
+     "stock": 0
+    },
+    {
+     "sku": "13005-XL-BK",
+     "size": "XL",
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13005-XL-GR",
+     "size": "XL",
+     "color": "طوسی",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "a6",
+   "cat": "apparel",
+   "brand": "Quadra",
+   "name": "کلاه کوادرا Cap",
+   "price": 900000,
+   "art": {
+    "type": "cap",
+    "color": "#F4F2EC"
+   },
+   "colors": [
+    {
+     "n": "سفید",
+     "c": "#F4F2EC"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    },
+    {
+     "n": "فیروزه‌ای",
+     "c": "#19C9C1"
+    }
+   ],
+   "rating": 4.6,
+   "reviews": 52,
+   "gender": "unisex",
+   "desc": "نقاب سبک و تنفسی، بند قابل تنظیم.",
+   "specs": [
+    [
+     "جنس",
+     "پلی‌استر سوراخ‌دار"
+    ]
+   ],
+   "code": "13006",
+   "active": true,
+   "cost": 380000,
+   "variants": [
+    {
+     "sku": "13006-00-WH",
+     "size": null,
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "13006-00-BK",
+     "size": null,
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "13006-00-TQ",
+     "size": null,
+     "color": "فیروزه‌ای",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "b1",
+   "cat": "balls",
+   "brand": "Babolat",
+   "name": "توپ Babolat Padel+ — قوطی ۳تایی",
+   "price": 650000,
+   "img": "./img/shop-babolat-balls.jpg",
+   "rating": 4.8,
+   "reviews": 120,
+   "tag": "پرفروش",
+   "gender": "unisex",
+   "desc": "توپ رسمی تورنمنت‌های کوادرا؛ فشار پایدار و دوام بالا.",
+   "specs": [
+    [
+     "تعداد",
+     "۳ عدد"
+    ],
+    [
+     "فشار",
+     "استاندارد"
+    ]
+   ],
+   "code": "14001",
+   "active": true,
+   "cost": 430000,
+   "variants": [
+    {
+     "sku": "14001-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "b2",
+   "cat": "balls",
+   "brand": "Head",
+   "name": "توپ Head Padel Pro",
+   "price": 520000,
+   "img": "./img/shop-head-balls.jpg",
+   "rating": 4.5,
+   "reviews": 44,
+   "gender": "unisex",
+   "desc": "سرعت بیشتر برای زمین‌های سرپوشیده.",
+   "specs": [
+    [
+     "تعداد",
+     "۳ عدد"
+    ],
+    [
+     "کاربرد",
+     "سرپوشیده"
+    ]
+   ],
+   "code": "14002",
+   "active": true,
+   "cost": 340000,
+   "variants": [
+    {
+     "sku": "14002-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "b3",
+   "cat": "balls",
+   "brand": "Wilson",
+   "name": "کارتن توپ Wilson — ۲۴ قوطی",
+   "price": 13900000,
+   "was": 15600000,
+   "img": "./img/shop-wilson-ball.jpg",
+   "rating": 4.9,
+   "reviews": 12,
+   "tag": "تخفیف",
+   "gender": "unisex",
+   "desc": "برای تیم‌ها و مربی‌ها؛ ۷۲ توپ.",
+   "specs": [
+    [
+     "تعداد",
+     "۷۲ عدد"
+    ]
+   ],
+   "code": "14003",
+   "active": true,
+   "cost": 9170000,
+   "variants": [
+    {
+     "sku": "14003-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "g1",
+   "cat": "bags",
+   "brand": "Quadra",
+   "name": "ساک راکت کوادرا Tour",
+   "price": 4200000,
+   "art": {
+    "type": "bag",
+    "color": "#141413"
+   },
+   "colors": [
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    },
+    {
+     "n": "فیروزه‌ای",
+     "c": "#19C9C1"
+    }
+   ],
+   "rating": 4.8,
+   "reviews": 29,
+   "tag": "جدید",
+   "gender": "unisex",
+   "desc": "جای ۳ راکت، جیب حرارتی و جای کفش جدا.",
+   "specs": [
+    [
+     "ظرفیت",
+     "۳ راکت"
+    ],
+    [
+     "جیب کفش",
+     "دارد"
+    ]
+   ],
+   "code": "15001",
+   "active": true,
+   "cost": 2100000,
+   "variants": [
+    {
+     "sku": "15001-00-BK",
+     "size": null,
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "15001-00-TQ",
+     "size": null,
+     "color": "فیروزه‌ای",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "g2",
+   "cat": "bags",
+   "brand": "Quadra",
+   "name": "کوله کوادرا Daily",
+   "price": 2600000,
+   "art": {
+    "type": "backpack",
+    "color": "#9A988F"
+   },
+   "colors": [
+    {
+     "n": "طوسی",
+     "c": "#9A988F"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    }
+   ],
+   "rating": 4.6,
+   "reviews": 15,
+   "gender": "unisex",
+   "desc": "کوله‌ی روزمره با جای یک راکت.",
+   "specs": [
+    [
+     "ظرفیت",
+     "۲۵ لیتر"
+    ]
+   ],
+   "code": "15002",
+   "active": true,
+   "cost": 1300000,
+   "variants": [
+    {
+     "sku": "15002-00-GR",
+     "size": null,
+     "color": "طوسی",
+     "stock": 0
+    },
+    {
+     "sku": "15002-00-BK",
+     "size": null,
+     "color": "مشکی",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "g3",
+   "cat": "bags",
+   "brand": "Wilson",
+   "name": "ساک Wilson Super Tour",
+   "price": 5600000,
+   "img": "./img/shop-wilson-bag.jpg",
+   "rating": 4.8,
+   "reviews": 21,
+   "tag": "جدید",
+   "gender": "unisex",
+   "desc": "ساک دو جیب بزرگ برای ۶ راکت، جیب حرارتی و جای کفش جدا.",
+   "specs": [
+    [
+     "ظرفیت",
+     "۶ راکت"
+    ],
+    [
+     "جیب کفش",
+     "دارد"
+    ]
+   ],
+   "code": "15003",
+   "active": true,
+   "cost": 2800000,
+   "variants": [
+    {
+     "sku": "15003-00-00",
+     "size": null,
+     "color": null,
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "x1",
+   "cat": "acc",
+   "brand": "Head",
+   "name": "اورگریپ Head Prime — بسته ۳تایی",
+   "price": 380000,
+   "art": {
+    "type": "grip",
+    "color": "#19C9C1"
+   },
+   "colors": [
+    {
+     "n": "فیروزه‌ای",
+     "c": "#19C9C1"
+    },
+    {
+     "n": "سفید",
+     "c": "#F4F2EC"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    }
+   ],
+   "rating": 4.7,
+   "reviews": 96,
+   "gender": "unisex",
+   "desc": "جذب عرق و چسبندگی بالا.",
+   "specs": [
+    [
+     "تعداد",
+     "۳ عدد"
+    ]
+   ],
+   "code": "16001",
+   "active": true,
+   "cost": 170000,
+   "variants": [
+    {
+     "sku": "16001-00-TQ",
+     "size": null,
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "16001-00-WH",
+     "size": null,
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "16001-00-BK",
+     "size": null,
+     "color": "مشکی",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "x2",
+   "cat": "acc",
+   "brand": "Quadra",
+   "name": "مچ‌بند کوادرا — جفت",
+   "price": 290000,
+   "art": {
+    "type": "band",
+    "color": "#141413"
+   },
+   "colors": [
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    },
+    {
+     "n": "فیروزه‌ای",
+     "c": "#19C9C1"
+    }
+   ],
+   "rating": 4.5,
+   "reviews": 40,
+   "gender": "unisex",
+   "desc": "حوله‌ای نرم با لوگوی بافته‌شده.",
+   "specs": [
+    [
+     "تعداد",
+     "۲ عدد"
+    ]
+   ],
+   "code": "16002",
+   "active": true,
+   "cost": 130000,
+   "variants": [
+    {
+     "sku": "16002-00-BK",
+     "size": null,
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "16002-00-TQ",
+     "size": null,
+     "color": "فیروزه‌ای",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "x3",
+   "cat": "acc",
+   "brand": "Quadra",
+   "name": "قمقمه‌ی حرارتی کوادرا",
+   "price": 850000,
+   "art": {
+    "type": "bottle",
+    "color": "#19C9C1"
+   },
+   "colors": [
+    {
+     "n": "فیروزه‌ای",
+     "c": "#19C9C1"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    },
+    {
+     "n": "سفید",
+     "c": "#F4F2EC"
+    }
+   ],
+   "rating": 4.9,
+   "reviews": 58,
+   "tag": "پرفروش",
+   "gender": "unisex",
+   "desc": "۷۵۰ میلی‌لیتر؛ ۱۲ ساعت سرد.",
+   "specs": [
+    [
+     "حجم",
+     "۷۵۰ml"
+    ],
+    [
+     "جنس",
+     "استیل"
+    ]
+   ],
+   "code": "16003",
+   "active": true,
+   "cost": 380000,
+   "variants": [
+    {
+     "sku": "16003-00-TQ",
+     "size": null,
+     "color": "فیروزه‌ای",
+     "stock": 0
+    },
+    {
+     "sku": "16003-00-BK",
+     "size": null,
+     "color": "مشکی",
+     "stock": 0
+    },
+    {
+     "sku": "16003-00-WH",
+     "size": null,
+     "color": "سفید",
+     "stock": 0
+    }
+   ]
+  },
+  {
+   "id": "x4",
+   "cat": "acc",
+   "brand": "Quadra",
+   "name": "حوله‌ی ورزشی کوادرا",
+   "price": 690000,
+   "art": {
+    "type": "towel",
+    "color": "#F4F2EC"
+   },
+   "colors": [
+    {
+     "n": "سفید",
+     "c": "#F4F2EC"
+    },
+    {
+     "n": "مشکی",
+     "c": "#141413"
+    }
+   ],
+   "rating": 4.6,
+   "reviews": 21,
+   "gender": "unisex",
+   "desc": "میکروفایبر، سریع‌خشک.",
+   "specs": [
+    [
+     "ابعاد",
+     "۴۰×۸۰"
+    ]
+   ],
+   "code": "16004",
+   "active": true,
+   "cost": 310000,
+   "variants": [
+    {
+     "sku": "16004-00-WH",
+     "size": null,
+     "color": "سفید",
+     "stock": 0
+    },
+    {
+     "sku": "16004-00-BK",
+     "size": null,
+     "color": "مشکی",
+     "stock": 0
+    }
+   ]
+  }
+ ],
+ "cafeItems": [
+  {
+   "id": "espresso",
+   "code": "31001",
+   "name": "اسپرسو",
+   "cat": "hotcoffee",
+   "price": 85000,
+   "big": 35000,
+   "emoji": "☕",
+   "img": "./img/cafe/espresso.jpg",
+   "prep": 3,
+   "desc": "شات ۱۸ گرمی؛ سایز بزرگ دبل",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "americano",
+   "code": "31002",
+   "name": "آمریکانو",
+   "cat": "hotcoffee",
+   "price": 95000,
+   "big": 30000,
+   "emoji": "☕",
+   "img": "./img/cafe/americano.jpg",
+   "prep": 3,
+   "desc": "اسپرسو و آب داغ",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "cappuccino",
+   "code": "31003",
+   "name": "کاپوچینو",
+   "cat": "hotcoffee",
+   "price": 125000,
+   "big": 35000,
+   "emoji": "☕",
+   "img": "./img/cafe/cappuccino.jpg",
+   "prep": 4,
+   "desc": "اسپرسو، شیر بخارداده و فوم غلیظ",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "milk",
+     150
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "پرفروش",
+   "active": true
+  },
+  {
+   "id": "latte",
+   "code": "31004",
+   "name": "کافه لاته",
+   "cat": "hotcoffee",
+   "price": 135000,
+   "big": 35000,
+   "emoji": "🥛",
+   "img": "./img/cafe/latte.jpg",
+   "prep": 4,
+   "desc": "اسپرسو با شیر زیاد و فوم نرم",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "milk",
+     220
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "mocha",
+   "code": "31005",
+   "name": "موکا",
+   "cat": "hotcoffee",
+   "price": 155000,
+   "big": 35000,
+   "emoji": "🍫",
+   "img": "./img/cafe/mocha.jpg",
+   "prep": 5,
+   "desc": "اسپرسو، شکلات و شیر",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "milk",
+     180
+    ],
+    [
+     "cocoa",
+     10
+    ],
+    [
+     "choc",
+     20
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "caramelm",
+   "code": "31006",
+   "name": "کارامل ماکیاتو",
+   "cat": "hotcoffee",
+   "price": 160000,
+   "big": 35000,
+   "emoji": "🍮",
+   "img": "./img/cafe/caramelm.jpg",
+   "prep": 5,
+   "desc": "شیر وانیلی، اسپرسو و سس کارامل",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "milk",
+     200
+    ],
+    [
+     "vanilla",
+     10
+    ],
+    [
+     "caramel",
+     20
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "iceamericano",
+   "code": "32001",
+   "name": "آیس آمریکانو",
+   "cat": "coldcoffee",
+   "price": 110000,
+   "big": 30000,
+   "emoji": "🧊",
+   "img": "./img/cafe/iceamericano.jpg",
+   "prep": 3,
+   "desc": "اسپرسو، آب خنک و یخ",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "ice",
+     150
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "پرفروش",
+   "active": true
+  },
+  {
+   "id": "icelatte",
+   "code": "32002",
+   "name": "آیس لاته",
+   "cat": "coldcoffee",
+   "price": 145000,
+   "big": 35000,
+   "emoji": "🥤",
+   "img": "./img/cafe/icelatte.jpg",
+   "prep": 4,
+   "desc": "اسپرسو، شیر سرد و یخ",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "milk",
+     200
+    ],
+    [
+     "ice",
+     120
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "coldbrew",
+   "code": "32003",
+   "name": "کلد برو",
+   "cat": "coldcoffee",
+   "price": 150000,
+   "big": 35000,
+   "emoji": "🥃",
+   "img": "./img/cafe/coldbrew.jpg",
+   "prep": 2,
+   "desc": "دم سرد ۱۸ ساعته، کم‌تلخ و خوش‌عطر",
+   "recipe": [
+    [
+     "beans",
+     30
+    ],
+    [
+     "ice",
+     120
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "affogato",
+   "code": "32004",
+   "name": "آفوگاتو",
+   "cat": "coldcoffee",
+   "price": 165000,
+   "big": 0,
+   "emoji": "🍨",
+   "img": "./img/cafe/affogato.jpg",
+   "prep": 3,
+   "desc": "یک اسکوپ بستنی وانیلی زیر شات اسپرسو",
+   "recipe": [
+    [
+     "beans",
+     18
+    ],
+    [
+     "icecream",
+     100
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "tea",
+   "code": "33001",
+   "name": "چای",
+   "cat": "hotdrink",
+   "price": 55000,
+   "big": 20000,
+   "emoji": "☕",
+   "img": "./img/cafe/tea.jpg",
+   "prep": 4,
+   "desc": "چای ایرانی دم‌کشیده",
+   "recipe": [
+    [
+     "tea",
+     5
+    ],
+    [
+     "sugar",
+     10
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "greentea",
+   "code": "33002",
+   "name": "چای سبز و عسل",
+   "cat": "hotdrink",
+   "price": 70000,
+   "big": 20000,
+   "emoji": "🍃",
+   "img": "./img/cafe/greentea.jpg",
+   "prep": 4,
+   "desc": "چای سبز با عسل طبیعی",
+   "recipe": [
+    [
+     "gtea",
+     4
+    ],
+    [
+     "honey",
+     12
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "hotchoc",
+   "code": "33003",
+   "name": "هات چاکلت",
+   "cat": "hotdrink",
+   "price": 130000,
+   "big": 35000,
+   "emoji": "🍫",
+   "img": "./img/cafe/hotchoc.jpg",
+   "prep": 4,
+   "desc": "کاکائوی غلیظ با شیر داغ",
+   "recipe": [
+    [
+     "cocoa",
+     25
+    ],
+    [
+     "milk",
+     220
+    ],
+    [
+     "choc",
+     15
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "matcha",
+   "code": "33004",
+   "name": "ماچا لاته",
+   "cat": "hotdrink",
+   "price": 175000,
+   "big": 40000,
+   "emoji": "🍵",
+   "img": "./img/cafe/matcha.jpg",
+   "prep": 5,
+   "desc": "ماچای ژاپنی، شیر جو دوسر و عسل",
+   "recipe": [
+    [
+     "matcha",
+     4
+    ],
+    [
+     "oat",
+     220
+    ],
+    [
+     "honey",
+     10
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "جدید",
+   "active": true
+  },
+  {
+   "id": "water",
+   "code": "34001",
+   "name": "آب معدنی",
+   "cat": "colddrink",
+   "price": 25000,
+   "big": 0,
+   "emoji": "💧",
+   "img": "./img/cafe/water.jpg",
+   "prep": 1,
+   "desc": "۵۰۰ سی‌سی",
+   "recipe": [
+    [
+     "water",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "cola",
+   "code": "34002",
+   "name": "نوشابه",
+   "cat": "colddrink",
+   "price": 45000,
+   "big": 0,
+   "emoji": "🥤",
+   "img": "./img/cafe/cola.jpg",
+   "prep": 1,
+   "desc": "قوطی ۳۳۰ سی‌سی",
+   "recipe": [
+    [
+     "cola",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "energy",
+   "code": "34003",
+   "name": "نوشیدنی انرژی‌زا",
+   "cat": "colddrink",
+   "price": 110000,
+   "big": 0,
+   "emoji": "⚡",
+   "img": "./img/cafe/energy.jpg",
+   "prep": 1,
+   "desc": "قوطی ۲۵۰ سی‌سی",
+   "recipe": [
+    [
+     "energy",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "oj",
+   "code": "34004",
+   "name": "آب پرتقال طبیعی",
+   "cat": "colddrink",
+   "price": 140000,
+   "big": 50000,
+   "emoji": "🍊",
+   "img": "./img/cafe/oj.jpg",
+   "prep": 4,
+   "desc": "همان لحظه گرفته می‌شود",
+   "recipe": [
+    [
+     "orange",
+     3
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "lemonade",
+   "code": "34005",
+   "name": "لیموناد",
+   "cat": "colddrink",
+   "price": 95000,
+   "big": 30000,
+   "emoji": "🍋",
+   "img": "./img/cafe/lemonade.jpg",
+   "prep": 3,
+   "desc": "لیموی تازه، شکر و یخ",
+   "recipe": [
+    [
+     "lemon",
+     2
+    ],
+    [
+     "sugar",
+     30
+    ],
+    [
+     "ice",
+     150
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "mojito",
+   "code": "35001",
+   "name": "موهیتو",
+   "cat": "mocktail",
+   "price": 150000,
+   "big": 40000,
+   "emoji": "🍹",
+   "img": "./img/cafe/mojito.jpg",
+   "prep": 5,
+   "desc": "لیمو، نعناع تازه و سودا",
+   "recipe": [
+    [
+     "lemon",
+     1
+    ],
+    [
+     "mint",
+     10
+    ],
+    [
+     "sugar",
+     20
+    ],
+    [
+     "sodaw",
+     1
+    ],
+    [
+     "ice",
+     150
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "پرفروش",
+   "active": true
+  },
+  {
+   "id": "strawfizz",
+   "code": "35002",
+   "name": "توت‌فرنگی فیزی",
+   "cat": "mocktail",
+   "price": 165000,
+   "big": 40000,
+   "emoji": "🍓",
+   "img": "./img/cafe/strawfizz.jpg",
+   "prep": 5,
+   "desc": "پوره‌ی توت‌فرنگی، لیمو و سودا",
+   "recipe": [
+    [
+     "straw",
+     80
+    ],
+    [
+     "lemon",
+     1
+    ],
+    [
+     "sugar",
+     15
+    ],
+    [
+     "sodaw",
+     1
+    ],
+    [
+     "ice",
+     120
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "sunrise",
+   "code": "35003",
+   "name": "سان‌رایز",
+   "cat": "mocktail",
+   "price": 160000,
+   "big": 40000,
+   "emoji": "🌅",
+   "img": "./img/cafe/sunrise.jpg",
+   "prep": 5,
+   "desc": "آب پرتقال تازه و شربت انار",
+   "recipe": [
+    [
+     "orange",
+     2
+    ],
+    [
+     "grenadine",
+     30
+    ],
+    [
+     "ice",
+     120
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "quadracool",
+   "code": "35004",
+   "name": "کوادرا کول",
+   "cat": "mocktail",
+   "price": 175000,
+   "big": 40000,
+   "emoji": "🎾",
+   "img": "./img/cafe/quadracool.jpg",
+   "prep": 5,
+   "desc": "نوشیدنی امضای باشگاه؛ لیمو، نعناع، عسل و سودا",
+   "recipe": [
+    [
+     "lemon",
+     1
+    ],
+    [
+     "mint",
+     8
+    ],
+    [
+     "honey",
+     15
+    ],
+    [
+     "sodaw",
+     1
+    ],
+    [
+     "ice",
+     150
+    ],
+    [
+     "cup",
+     1
+    ]
+   ],
+   "tag": "جدید",
+   "active": true
+  },
+  {
+   "id": "chickensand",
+   "code": "36001",
+   "name": "ساندویچ مرغ گریل",
+   "cat": "sandwich",
+   "price": 280000,
+   "big": 0,
+   "emoji": "🥪",
+   "img": "./img/cafe/chickensand.jpg",
+   "prep": 10,
+   "desc": "باگت، فیله‌ی مرغ گریل، چدار و سبزیجات",
+   "recipe": [
+    [
+     "baguette",
+     1
+    ],
+    [
+     "chicken",
+     150
+    ],
+    [
+     "cheddar",
+     30
+    ],
+    [
+     "veg",
+     60
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "پرفروش",
+   "active": true
+  },
+  {
+   "id": "hamsand",
+   "code": "36002",
+   "name": "ساندویچ ژامبون و پنیر",
+   "cat": "sandwich",
+   "price": 240000,
+   "big": 0,
+   "emoji": "🥖",
+   "img": "./img/cafe/hamsand.jpg",
+   "prep": 7,
+   "desc": "باگت، ژامبون، چدار و سبزیجات",
+   "recipe": [
+    [
+     "baguette",
+     1
+    ],
+    [
+     "ham",
+     80
+    ],
+    [
+     "cheddar",
+     40
+    ],
+    [
+     "veg",
+     40
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "tunasand",
+   "code": "36003",
+   "name": "ساندویچ تن ماهی",
+   "cat": "sandwich",
+   "price": 260000,
+   "big": 0,
+   "emoji": "🐟",
+   "img": "./img/cafe/tunasand.jpg",
+   "prep": 7,
+   "desc": "چاباتا، تن ماهی و سبزیجات",
+   "recipe": [
+    [
+     "ciabatta",
+     1
+    ],
+    [
+     "tuna",
+     1
+    ],
+    [
+     "veg",
+     60
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "panini",
+   "code": "36004",
+   "name": "پنینی سبزیجات",
+   "cat": "sandwich",
+   "price": 210000,
+   "big": 0,
+   "emoji": "🧀",
+   "img": "./img/cafe/panini.jpg",
+   "prep": 8,
+   "desc": "چاباتای تست‌شده، موزارلا و سبزیجات",
+   "recipe": [
+    [
+     "ciabatta",
+     1
+    ],
+    [
+     "mozz",
+     60
+    ],
+    [
+     "veg",
+     100
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "alfredo",
+   "code": "37001",
+   "name": "پاستا آلفردو مرغ",
+   "cat": "food",
+   "price": 380000,
+   "big": 0,
+   "emoji": "🍝",
+   "img": "./img/cafe/alfredo.jpg",
+   "prep": 15,
+   "desc": "پنه، مرغ، سس خامه و پنیر",
+   "recipe": [
+    [
+     "pasta",
+     120
+    ],
+    [
+     "chicken",
+     120
+    ],
+    [
+     "cream",
+     100
+    ],
+    [
+     "mozz",
+     30
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "bolognese",
+   "code": "37002",
+   "name": "پاستا بولونز",
+   "cat": "food",
+   "price": 360000,
+   "big": 0,
+   "emoji": "🍝",
+   "img": "./img/cafe/bolognese.jpg",
+   "prep": 15,
+   "desc": "پنه با سس گوشت و گوجه",
+   "recipe": [
+    [
+     "pasta",
+     120
+    ],
+    [
+     "mince",
+     120
+    ],
+    [
+     "veg",
+     80
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "fries",
+   "code": "37003",
+   "name": "سیب‌زمینی سرخ‌کرده",
+   "cat": "food",
+   "price": 150000,
+   "big": 60000,
+   "emoji": "🍟",
+   "img": "./img/cafe/fries.jpg",
+   "prep": 8,
+   "desc": "سایز بزرگ برای دو نفر",
+   "recipe": [
+    [
+     "potato",
+     250
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  },
+  {
+   "id": "caesar",
+   "code": "37004",
+   "name": "سالاد سزار مرغ",
+   "cat": "food",
+   "price": 320000,
+   "big": 0,
+   "emoji": "🥗",
+   "img": "./img/cafe/caesar.jpg",
+   "prep": 10,
+   "desc": "کاهو، مرغ گریل، پنیر و سس سزار",
+   "recipe": [
+    [
+     "chicken",
+     120
+    ],
+    [
+     "veg",
+     180
+    ],
+    [
+     "cheddar",
+     25
+    ],
+    [
+     "box",
+     1
+    ]
+   ],
+   "tag": "",
+   "active": true
+  }
+ ],
+ "cafeIngs": [
+  {
+   "id": "beans",
+   "code": "21001",
+   "name": "دانه‌ی قهوه‌ی اسپرسو (۷۰ عربیکا)",
+   "cat": "coffee",
+   "unit": "g",
+   "cost": 2600,
+   "min": 2000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "tea",
+   "code": "21002",
+   "name": "چای سیاه ایرانی",
+   "cat": "coffee",
+   "unit": "g",
+   "cost": 950,
+   "min": 500,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "gtea",
+   "code": "21003",
+   "name": "چای سبز",
+   "cat": "coffee",
+   "unit": "g",
+   "cost": 1300,
+   "min": 200,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "cocoa",
+   "code": "21004",
+   "name": "پودر کاکائو",
+   "cat": "coffee",
+   "unit": "g",
+   "cost": 1600,
+   "min": 300,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "matcha",
+   "code": "21005",
+   "name": "پودر ماچا",
+   "cat": "coffee",
+   "unit": "g",
+   "cost": 9500,
+   "min": 100,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "milk",
+   "code": "22001",
+   "name": "شیر پرچرب",
+   "cat": "dairy",
+   "unit": "ml",
+   "cost": 62,
+   "min": 6000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "oat",
+   "code": "22002",
+   "name": "شیر جو دوسر",
+   "cat": "dairy",
+   "unit": "ml",
+   "cost": 240,
+   "min": 2000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "cream",
+   "code": "22003",
+   "name": "خامه‌ی قنادی",
+   "cat": "dairy",
+   "unit": "ml",
+   "cost": 260,
+   "min": 1000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "icecream",
+   "code": "22004",
+   "name": "بستنی وانیلی",
+   "cat": "dairy",
+   "unit": "g",
+   "cost": 320,
+   "min": 1000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "cheddar",
+   "code": "22005",
+   "name": "پنیر چدار ورقه‌ای",
+   "cat": "dairy",
+   "unit": "g",
+   "cost": 680,
+   "min": 600,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "mozz",
+   "code": "22006",
+   "name": "پنیر پیتزا موزارلا",
+   "cat": "dairy",
+   "unit": "g",
+   "cost": 720,
+   "min": 600,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "caramel",
+   "code": "23001",
+   "name": "سیروپ کارامل",
+   "cat": "syrup",
+   "unit": "ml",
+   "cost": 950,
+   "min": 300,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "vanilla",
+   "code": "23002",
+   "name": "سیروپ وانیل",
+   "cat": "syrup",
+   "unit": "ml",
+   "cost": 950,
+   "min": 300,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "choc",
+   "code": "23003",
+   "name": "سس شکلات",
+   "cat": "syrup",
+   "unit": "ml",
+   "cost": 720,
+   "min": 300,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "honey",
+   "code": "23004",
+   "name": "عسل",
+   "cat": "syrup",
+   "unit": "g",
+   "cost": 1250,
+   "min": 300,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "sugar",
+   "code": "23005",
+   "name": "شکر",
+   "cat": "syrup",
+   "unit": "g",
+   "cost": 65,
+   "min": 2000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "grenadine",
+   "code": "23006",
+   "name": "شربت انار",
+   "cat": "syrup",
+   "unit": "ml",
+   "cost": 480,
+   "min": 300,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "lemon",
+   "code": "24001",
+   "name": "لیموترش تازه",
+   "cat": "fruit",
+   "unit": "pc",
+   "cost": 14000,
+   "min": 20,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "mint",
+   "code": "24002",
+   "name": "نعناع تازه",
+   "cat": "fruit",
+   "unit": "g",
+   "cost": 380,
+   "min": 100,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "orange",
+   "code": "24003",
+   "name": "پرتقال آب‌گیری",
+   "cat": "fruit",
+   "unit": "pc",
+   "cost": 22000,
+   "min": 20,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "straw",
+   "code": "24004",
+   "name": "توت‌فرنگی",
+   "cat": "fruit",
+   "unit": "g",
+   "cost": 360,
+   "min": 500,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "veg",
+   "code": "24005",
+   "name": "سبزیجات (کاهو، گوجه، خیارشور)",
+   "cat": "fruit",
+   "unit": "g",
+   "cost": 160,
+   "min": 2000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "potato",
+   "code": "24006",
+   "name": "سیب‌زمینی خلالی منجمد",
+   "cat": "fruit",
+   "unit": "g",
+   "cost": 140,
+   "min": 3000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "baguette",
+   "code": "25001",
+   "name": "نان باگت",
+   "cat": "bakery",
+   "unit": "pc",
+   "cost": 28000,
+   "min": 15,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "ciabatta",
+   "code": "25002",
+   "name": "نان چاباتا",
+   "cat": "bakery",
+   "unit": "pc",
+   "cost": 32000,
+   "min": 15,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "chicken",
+   "code": "26001",
+   "name": "فیله‌ی مرغ",
+   "cat": "protein",
+   "unit": "g",
+   "cost": 460,
+   "min": 2000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "ham",
+   "code": "26002",
+   "name": "ژامبون گوشت ۹۰٪",
+   "cat": "protein",
+   "unit": "g",
+   "cost": 980,
+   "min": 600,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "mince",
+   "code": "26003",
+   "name": "گوشت چرخ‌کرده‌ی گوساله",
+   "cat": "protein",
+   "unit": "g",
+   "cost": 880,
+   "min": 1500,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "tuna",
+   "code": "26004",
+   "name": "کنسرو تن ماهی",
+   "cat": "protein",
+   "unit": "pc",
+   "cost": 135000,
+   "min": 10,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "pasta",
+   "code": "27001",
+   "name": "پاستا پنه",
+   "cat": "dry",
+   "unit": "g",
+   "cost": 180,
+   "min": 2000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "water",
+   "code": "28001",
+   "name": "آب معدنی ۵۰۰ سی‌سی",
+   "cat": "drinks",
+   "unit": "pc",
+   "cost": 9000,
+   "min": 48,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "cola",
+   "code": "28002",
+   "name": "نوشابه‌ی قوطی",
+   "cat": "drinks",
+   "unit": "pc",
+   "cost": 24000,
+   "min": 24,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "sodaw",
+   "code": "28003",
+   "name": "آب گازدار (سودا)",
+   "cat": "drinks",
+   "unit": "pc",
+   "cost": 28000,
+   "min": 24,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "energy",
+   "code": "28004",
+   "name": "نوشیدنی انرژی‌زا",
+   "cat": "drinks",
+   "unit": "pc",
+   "cost": 68000,
+   "min": 12,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "ice",
+   "code": "28005",
+   "name": "یخ",
+   "cat": "drinks",
+   "unit": "g",
+   "cost": 6,
+   "min": 10000,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "cup",
+   "code": "29001",
+   "name": "لیوان کاغذی با درب",
+   "cat": "pack",
+   "unit": "pc",
+   "cost": 5500,
+   "min": 200,
+   "stock": 0,
+   "active": true
+  },
+  {
+   "id": "box",
+   "code": "29002",
+   "name": "ظرف یک‌بار مصرف غذا",
+   "cat": "pack",
+   "unit": "pc",
+   "cost": 8500,
+   "min": 100,
+   "stock": 0,
+   "active": true
+  }
+ ],
+ "coaches": [
+  {
+   "id": "k1",
+   "name": "فراز گلچین",
+   "title": "سرمربی باشگاه",
+   "level": "A",
+   "exp": 10,
+   "rating": 4.9,
+   "price": 2000000,
+   "img": "./img/overhead.jpg",
+   "record": [
+    "۱۰ سال سابقه‌ی مربیگری پدل",
+    "مدرک مربیگری فدراسیون",
+    "دارنده‌ی مدال مسابقات کشوری"
+   ],
+   "bio": "سرمربی کوادرا؛ برنامه‌ی تمرینی مرحله‌به‌مرحله برای بازیکن‌های همه‌ی سطح‌ها.",
+   "active": true,
+   "packs": {
+    "one": true,
+    "five": true,
+    "ten": true,
+    "group": true
+   },
+   "prices": {},
+   "member": null,
+   "phone": "09121234501",
+   "since": "1400/06/01",
+   "share": 60,
+   "note": "قرارداد سالانه؛ تمدید در شهریور"
+  },
+  {
+   "id": "k2",
+   "name": "سهیل سهرابی",
+   "title": "مربی پیشرفته و مسابقه",
+   "level": "B+",
+   "exp": 8,
+   "rating": 4.9,
+   "price": 1900000,
+   "img": "./img/action.jpg",
+   "record": [
+    "۸ سال سابقه‌ی مربیگری",
+    "سابقه‌ی بازی در لیگ کشوری",
+    "دارنده‌ی مدال تورنمنت‌های باشگاهی"
+   ],
+   "bio": "آماده‌سازی بازیکن‌ها برای تورنمنت‌ها و رنکینگ.",
+   "active": true,
+   "packs": {
+    "one": true,
+    "five": true,
+    "ten": true,
+    "group": true
+   },
+   "prices": {},
+   "member": null,
+   "phone": "09121234502",
+   "since": "1401/02/15",
+   "share": 55,
+   "note": ""
+  },
+  {
+   "id": "k3",
+   "name": "کیمیا دانشفر",
+   "title": "مربی بانوان",
+   "level": "B+",
+   "exp": 7,
+   "rating": 5,
+   "price": 1800000,
+   "img": "./img/coach-b.jpg",
+   "record": [
+    "۷ سال سابقه‌ی مربیگری بانوان",
+    "مدرک مربیگری فدراسیون",
+    "دارنده‌ی مدال مسابقات بانوان"
+   ],
+   "bio": "کلاس‌های خصوصی و گروهی بانوان از پایه تا پیشرفته.",
+   "active": true,
+   "packs": {
+    "one": true,
+    "five": true,
+    "ten": true,
+    "group": true
+   },
+   "prices": {},
+   "member": null,
+   "phone": "09121234503",
+   "since": "1401/09/01",
+   "share": 55,
+   "note": "فقط کلاس بانوان"
+  },
+  {
+   "id": "k4",
+   "name": "زهرا کهریزی",
+   "title": "مربی پایه و نوجوانان",
+   "level": "A",
+   "exp": 5,
+   "rating": 4.8,
+   "price": 1400000,
+   "img": "./img/coach-a.jpg",
+   "record": [
+    "۵ سال سابقه‌ی مربیگری",
+    "مدرک مربیگری فدراسیون",
+    "سابقه‌ی حضور در مسابقات کشوری"
+   ],
+   "bio": "بهترین انتخاب برای شروع پدل و آموزش نوجوانان.",
+   "active": true,
+   "packs": {
+    "one": true,
+    "five": true,
+    "ten": true,
+    "group": true
+   },
+   "prices": {},
+   "member": null,
+   "phone": "09121234504",
+   "since": "1402/07/01",
+   "share": 50,
+   "note": "کلاس‌های نوجوانان عصرها"
+  }
+ ]
+}
