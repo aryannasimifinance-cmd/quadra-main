@@ -6,6 +6,7 @@ import { StoreProvider } from './store'
 import './styles.css'
 import './theme.css'
 import './brand.css'
+import './quests.css'
 import { installTapFx } from './fx'
 
 installTapFx()

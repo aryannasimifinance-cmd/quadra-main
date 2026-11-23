@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
-import { MEMBERS, hash, coachById, courtById, dayKey, dayLabel, dayNum, fa, nextDays, range, toman } from '../../data'
+import { MEMBERS, hash, coachById, courtById, dayKey, dayLabel, dayNum, fa, nextDays, levelsText, range, toman, clubNowMs } from '../../data'
 import { chime, haptic } from '../../fx'
 import { ME, useStore } from '../../store'
 import { isUpcoming, myBookings, myInvites, openGames, startsAt } from '../../select'
@@ -103,7 +103,7 @@ function GameSheet({ id, onClose }) {
   const [confirm, setConfirm] = useState(false)
   if (!b) return <Sheet open={false} onClose={onClose} />
   const c = courtById(b.court)
-  const hoursLeft = (startsAt(b) - Date.now()) / 36e5
+  const hoursLeft = (startsAt(b) - clubNowMs()) / 36e5
   const cancel = async () => {
     setConfirm(false)
     const r = await cancelMine(b.id)
@@ -129,7 +129,8 @@ function GameSheet({ id, onClose }) {
         <div className="gs-rows">
           <div><span>نوع</span><b>{b.type === 'open' ? 'بازی باز' : b.type === 'coach' ? 'کلاس مربی' : 'رزرو خصوصی'}</b></div>
           <div><span>مبلغ کل</span><b>{toman(b.price)}</b></div>
-          {b.levels && <div><span>سطح‌ها</span><b>{b.levels.join('، ')}</b></div>}
+          {b.shares?.[ME] != null && b.shares[ME] !== b.price && <div><span>سهم پرداختی شما</span><b>{toman(b.shares[ME])}</b></div>}
+          {b.levels && <div><span>سطح‌ها</span><b>{levelsText(b.levels, '، ')}</b></div>}
           <div><span>کد رزرو</span><b dir="ltr">{refCode(b.id)}</b></div>
         </div>
         <div className="gs-cta">

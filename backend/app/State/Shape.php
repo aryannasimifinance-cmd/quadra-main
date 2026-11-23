@@ -163,7 +163,7 @@ final class Shape
         $created = $m->joined_at ?? $m->created_at;
 
         return $base + [
-            'phone' => $m->phone, 'source' => $m->source, 'member' => $m->vip_now ?? $m->vip, 'note' => $m->note ?? '',
+            'phone' => $m->phone, 'wallet' => (int) $m->wallet, 'source' => $m->source, 'member' => $m->vip_now ?? $m->vip, 'note' => $m->note ?? '',
             'joined' => $created ? (int) floor((time() - strtotime($created)) / 86400) : 0, 'at' => Dates::ms($m->created_at),
             'username' => $m->username,
         ];

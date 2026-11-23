@@ -21,6 +21,7 @@ import { CafeAdmin } from './CafeAdmin'
 import { Events } from './Events'
 import { Accounting } from './Accounting'
 import { Hr } from './Hr'
+import { QuestsAdmin } from './Quests'
 import { LiveCourts, TYPE_CLS, Timeline } from './Live'
 import { Card, Guide, Kpi, MASK, Money, RevealToggle, Status, TipLayer, setReveal, useReveal } from './kit'
 import { upcoming } from '../../events'
@@ -48,7 +49,10 @@ const NAV = [
     { id: 'coachpanel', name: 'پنل مربی‌ها', icon: 'lock', tip: 'نام کاربری و رمز مربی‌ها، تأیید دسترسی و درخواست‌های رزرو زمین' },
     { id: 'hr', name: 'منابع انسانی', icon: 'shield', tip: 'پرسنل، شیفت، حضور و غیاب، مرخصی و حقوق' },
   ] },
-  { group: 'باشگاه', items: [{ id: 'settings', name: 'تنظیمات', icon: 'cog', tip: 'قیمت ساعت‌ها و فعال یا غیرفعال کردن زمین' }] },
+  { group: 'باشگاه', items: [
+    { id: 'settings', name: 'تنظیمات', icon: 'cog', tip: 'قیمت ساعت‌ها و فعال یا غیرفعال کردن زمین' },
+    { id: 'quests', name: 'چالش‌ها و امتیاز', icon: 'target', tip: 'چالش‌هایی که بازیکن‌ها در اپ می‌بینند و با آن XP می‌گیرند' },
+  ] },
 ]
 const ITEMS = NAV.flatMap((g) => g.items)
 const GUIDES = {
@@ -59,6 +63,7 @@ const GUIDES = {
   coachpanel: 'هر مربی با نام کاربری و رمزی که این‌جا می‌دهید وارد پنل خودش می‌شود. درخواست‌های رزرو زمینِ مربی‌ها هم این‌جا تأیید یا رد می‌شود.',
   hr: 'پرسنل، شیفت، حضور و غیاب، مرخصی و حقوق. مربی‌ها هم اگر کارمند باشند این‌جا تعریف می‌شوند.',
   settings: 'قیمت ساعت‌های عادی و پیک، و باز یا بسته کردن هر زمین.',
+  quests: 'چالش‌های بازیکن‌ها: چه فعالیتی، چند بار، در چه بازه‌ای و چند XP جایزه. چالش خاموش در اپ نشان داده نمی‌شود.',
 }
 const BOOKING_SECS = ['overview', 'calendar', 'bookings']
 
@@ -86,7 +91,7 @@ export default function Admin() {
   // هر بار زدن یک بخش، آن بخش از صفحه‌ی اولش باز می‌شود (مثلاً از جزئیات یک آدینه به فهرست)
   const [visit, setVisit] = useState(0)
   const ctx = { go: (s) => { setSec(s); setVisit((v) => v + 1); window.scrollTo(0, 0) }, open: setDrawer }
-  const S = { overview: Overview, calendar: Calendar, bookings: Bookings, payments: Payments, shop: ShopAdmin, cafe: CafeAdmin, accounting: Accounting, coaches: Coaches, coachpanel: CoachPanel, events: Events, members: Members, hr: Hr, settings: Settings }[sec]
+  const S = { overview: Overview, calendar: Calendar, bookings: Bookings, payments: Payments, shop: ShopAdmin, cafe: CafeAdmin, accounting: Accounting, coaches: Coaches, coachpanel: CoachPanel, events: Events, members: Members, hr: Hr, settings: Settings, quests: QuestsAdmin }[sec]
   const badges = { shop: club.orders.filter((o) => o.status === 'new').length, cafe: club.cafeOrders.filter((o) => o.status !== 'delivered').length, hr: club.leaves.filter((l) => l.status === 'pending').length, coachpanel: (club.coachReqs || []).filter((r) => r.status === 'pending').length }
   return (
     <div className="adm" dir="rtl">
@@ -408,7 +413,7 @@ function NewBooking({ d, onClose }) {
         </>) : <label>توضیح<input placeholder="مثلاً تعویض چمن" value={f.note} onChange={(e) => set({ note: e.target.value })} /></label>}
       </div>
       <div className="dr-total"><span>{where || 'زمینی انتخاب نشده'}، {range(S, D)}</span><b>{f.type === 'friday' ? 'ورودی با ثبت‌نام' : toman(price)}</b></div>
-      {!free && <p className="cancelled">{coachClash ? `${coachById(f.coach).name} در این ساعت کلاس دیگری دارد.` : !courts.length ? 'حداقل یک زمین انتخاب کنید.' : !fresh.length ? 'این زمین‌ها از قبل مال همین آدینه‌اند.' : S < open || S + D > close ? `خارج از ساعت کاری مجموعه است (${hourLabel(open)} تا ${hourLabel(close)}).` : `این بازه روی ${taken.map((c) => courtById(c).name).join('، ')} آزاد نیست.`}</p>}
+      {!free && <p className="cancelled">{coachClash ? `${coachById(f.coach).name} در این ساعت کلاس دیگری دارد.` : !courts.length ? 'حداقل یک زمین انتخاب کنید.' : !fresh.length ? 'این زمین‌ها از قبل مال همین آدینه‌اند.' : S < open || S + D > close ? `خارج از ساعت کاری مجموعه است (${hourLabel(open)} تا ${hourLabel(close)}).` : taken.every((c) => club.off?.[c]) ? `${taken.map((c) => courtById(c).name).join('، ')} خاموش است (در تعمیر)؛ از تنظیمات روشنش کنید یا زمین دیگری انتخاب کنید.` : `این بازه روی ${taken.map((c) => courtById(c).name).join('، ')} آزاد نیست.`}</p>}
       {free && f.date === todayKey() && S + D <= new Date().getHours() && <p className="pt-warn">این ساعت امروز گذشته است؛ فقط برای ثبت بازی‌ای که انجام شده استفاده کنید.</p>}
       <button className="adm-btn primary full" disabled={!free} onClick={save}>{f.type === 'friday' ? (target ? 'افزودن زمین به آدینه' : 'ساخت آدینه') : f.type === 'event' ? 'ثبت ایونت' : 'ثبت رزرو'}</button>
     </div>

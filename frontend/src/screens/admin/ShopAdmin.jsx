@@ -277,7 +277,7 @@ function ProductForm({ p, onClose, onRecv }) {
 
 // ---------- ورود کالا ----------
 function VariantPick({ p, value, onChange }) {
-  return <select value={value} onChange={(e) => onChange(e.target.value)}>{p.variants.map((v) => <option key={v.sku} value={v.sku}>{[v.size, v.color].filter(Boolean).join(' / ') || 'تک'} ({v.sku})، موجودی {fa(v.stock)}</option>)}</select>
+  return <select value={value} onChange={(e) => onChange(e.target.value)}>{p.variants.map((v) => <option key={v.sku} value={v.sku}>{[v.size, v.color].filter(Boolean).join(' / ') || 'تک'} ({'⁦' + v.sku + '⁩'})، موجودی {fa(v.stock)}</option>)}</select>
 }
 function Receive({ preset, onClose }) {
   const { club, adminReceive, toast } = useStore()

@@ -125,7 +125,7 @@ final class CoachActions
                 $sent[$first] = ($sent[$first] ?? 0) + (int) $b->price - (int) $b->paid;
             }
             foreach ($sent as $m => $amt) {
-                Members::notify($m, '💳', 'پرداخت جلسه‌ی مربی', 'مربی '.$c->name.' هزینه‌ی جلسه را برای شما فرستاد: '.\App\Support\Jalali::fa(number_format($amt)).' تومان. از صفحه‌ی خانه پرداخت کنید.');
+                Members::notify($m, '💳', 'پرداخت جلسه‌ی مربی', 'مربی '.$c->name.' هزینه‌ی جلسه را برای شما فرستاد: '.\App\Support\Jalali::fa(number_format($amt, 0, '.', '٬')).' تومان. از صفحه‌ی خانه پرداخت کنید.');
             }
             Sync::touch('bookings');
 

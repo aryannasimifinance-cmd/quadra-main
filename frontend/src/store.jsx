@@ -1,10 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { addDays, fromKey, limitsOf, hoursOf, COURTS, PACKAGES, DEFAULT_PRICING, levelById, productById, stockOf, setCatalog, setCoaches, setCourts, setMembers, todayKey, variantOf } from './data'
+import { addDays, fromKey, limitsOf, hoursOf, COURTS, PACKAGES, DEFAULT_PRICING, levelById, productById, stockOf, setCatalog, setCoaches, setCourts, setMembers, todayKey, variantOf, clubNow, clubNowMs } from './data'
 import { makeVariants, nextCode } from './catalog'
 import { nextIngCode, nextItemCode, receiveInto } from './cafe'
 import { jMonthLabel } from './jalali'
 import { payroll } from './hr'
 import { syncBlocks } from './events'
+import { DEFAULT_QUESTS } from './quests'
 import * as net from './api'
 
 // داده‌ها روی سرور (لاراول) هستند؛ این‌جا فقط تصویر آن‌ها برای نمایش نگه داشته می‌شود.
@@ -32,7 +33,7 @@ export const useStore = () => useContext(Ctx)
 
 // شنبه‌ی همین هفته به تاریخ محلی (همان کلید چالش‌های سرور)
 export const weekKey = () => {
-  const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 1) % 7))
+  const d = clubNow(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 1) % 7))
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
@@ -490,6 +491,16 @@ export function StoreProvider({ children }) {
       adminHours(h) { club((c) => ({ ...c, hours: h })); send('adminHours', [h]) },
       adminPricing(p) { club((c) => ({ ...c, pricing: { ...c.pricing, ...p } })); send('adminPricing', [p]) },
       adminWelcome(w) { club((c) => ({ ...c, welcome: w })); send('adminWelcome', [w]) },
+      // چالش‌ها و امتیاز: ساخت/ویرایش با شناسه؛ q = null یعنی حذف
+      adminQuest(id, q) {
+        club((c) => {
+          const list = Array.isArray(c.quests) ? c.quests : DEFAULT_QUESTS
+          const at = list.findIndex((x) => x.id === id)
+          const next = q ? (at < 0 ? [...list, { ...q, id }] : list.map((x) => (x.id === id ? { ...q, id } : x))) : list.filter((x) => x.id !== id)
+          return { ...c, quests: next }
+        })
+        return send('adminQuest', [id, q])
+      },
       adminCourtEdit(id, edit) { club((c) => ({ ...c, courtEdits: { ...c.courtEdits, [id]: edit } })); send('adminCourtEdit', [id, edit || null]) },
       adminCourt(id, off) { club((c) => ({ ...c, off: { ...c.off, [id]: off } })); send('adminCourt', [id, !!off]) },
       // ---------- حسابداری ----------
@@ -585,7 +596,7 @@ export function coachRun(club, co, date, start, dur) {
   return z - a
 }
 // ساعت‌های تأییدشده‌ی مربی که هنوز شاگرد ندارند (کلاس آموزشی نباید بی‌شاگرد بماند)
-export const openHours = (club, coachId) => club.bookings.filter((b) => b.coach === coachId && b.block && b.status !== 'cancelled' && !b.players.length && fromKey(b.date).getTime() + (b.start + b.dur) * 36e5 > Date.now())
+export const openHours = (club, coachId) => club.bookings.filter((b) => b.coach === coachId && b.block && b.status !== 'cancelled' && !b.players.length && fromKey(b.date).getTime() + (b.start + b.dur) * 36e5 > clubNowMs())
 // طول بلوک پشت‌سرهمِ رزروهای خود بازیکن در آن روز (روی هر زمینی) اگر این بازه اضافه شود
 export function playerRun(club, date, start, dur) {
   const spans = club.bookings.filter((b) => b.date === date && b.status !== 'cancelled' && b.type !== 'coach' && (b.by === ME || b.players?.includes(ME))).map((b) => [b.start, b.start + b.dur])
@@ -604,7 +615,7 @@ export function isFree(club, date, court, start, dur) {
 }
 export function freeStarts(club, date, court, dur, from = 0, to = 24) {
   const { open, close } = hoursOf(club)
-  const now = new Date(), today = date === todayKey()
+  const now = clubNow(), today = date === todayKey()
   const out = []
   for (let h = Math.max(open, from); h + dur <= close && h < to; h += 1) {
     if (today && h <= now.getHours() + now.getMinutes() / 60) continue

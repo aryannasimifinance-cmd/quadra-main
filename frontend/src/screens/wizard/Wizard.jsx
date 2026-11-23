@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import {
   BADGES, COACHES, COACH_PACKS, COURTS, DAYPARTS, DURATIONS, EVENT_KIND, LEVELS, MEMBERS, SERIES, coachById, coachPackPrice, coachPacks, courtById, dayKey, dayLabel, dayMonth, dayNum,
-  SIDES, hoursOf, limitsOf, coachesRanked, fa, fromKey, hourLabel, isPeak, isWeekend, levelById, levelIndex, nearLevels, nextDays, priceFor, range, short, sideById, toman, weekday, memberById,
+  SIDES, hoursOf, limitsOf, coachesRanked, fa, fromKey, hourLabel, isPeak, isWeekend, levelById, levelIndex, levelsText, nearLevels, todayKey, clubHour, nextDays, priceFor, range, short, sideById, toman, weekday, memberById,
 } from '../../data'
 import { celebrate, chime, haptic } from '../../fx'
 import { playerRun, ME, freeStarts, isFree, busyOn, memberOff, useStore } from '../../store'
@@ -33,7 +33,7 @@ const INTENTS = [
 export default function Wizard({ preset = {}, onClose, onDone, onStep }) {
   const { user } = useStore()
   const [w, setW] = useState(() => ({
-    intent: preset.intent || null, date: preset.date || dayKey(new Date()), daypart: 'any', dur: preset.dur || 1, series: preset.series || 'single', court: preset.court || null, start: preset.start ?? null,
+    intent: preset.intent || null, date: preset.date || todayKey(), daypart: 'any', dur: preset.dur || 1, series: preset.series || 'single', court: preset.court || null, start: preset.start ?? null,
     players: [{ id: ME, name: user.name, level: user.level, me: true }, null, null, null],
     missing: preset.series && preset.series !== 'single' ? 0 : 1, open: !(preset.series && preset.series !== 'single'), wantSide: 'any', visibility: 'public', invited: [], levels: nearLevels(user.level, 1), gameId: preset.gameId || null, coachId: preset.coachId || null, pack: 'one', eventId: preset.eventId || null,
   }))
@@ -70,7 +70,7 @@ export default function Wizard({ preset = {}, onClose, onDone, onStep }) {
           {step === 'coach' && <StepCoach w={w} set={set} onNext={next} />}
           {step === 'event' && <StepEvent w={w} set={set} onNext={next} />}
           {step === 'partner' && <StepPartner w={w} set={set} onNext={next} />}
-          {step === 'pay' && <StepPay w={w} set={set} onDone={setDone} />}
+          {step === 'pay' && <StepPay w={w} set={set} onDone={setDone} onLost={(name) => { const k = flow.indexOf(name); if (k < 0 || k < startAt) return; if (name === 'slot') set({ start: null }); setDir(-1); setI(k); scrollTop() }} />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -255,7 +255,7 @@ function StepSlot({ w, set, onNext }) {
   const { club, toast } = useStore()
   const dp = DAYPARTS.find((d) => d.id === w.daypart)
   const isCoach = w.intent === 'coach'
-  const now = new Date(), today = w.date === dayKey(now), nowH = now.getHours() + now.getMinutes() / 60
+  const today = w.date === todayKey(), nowH = clubHour()
   const coachBusy = (h) => isCoach && club.bookings.some((b) => b.coach === w.coachId && b.date === w.date && b.status !== 'cancelled' && h < b.start + b.dur && b.start < h + 1)
   const free = (c, h) => isFree(club, w.date, c, h, 1) && !coachBusy(h)
   const inSel = (c, h) => w.start != null && w.court === c && h >= w.start && h < w.start + w.dur
@@ -486,7 +486,7 @@ function AddPlayer({ onAdd, exclude, noPhone, levels, allow }) {
           <label className="search"><Icon name="search" size={18} /><input placeholder="جستجوی اعضا" value={q} onChange={(e) => setQ(e.target.value)} /></label>
           <Chips id="sd" small value={side} onChange={setSide} options={[{ id: 'all', name: 'همه' }, { id: 'right', name: 'سمت راست' }, { id: 'left', name: 'سمت چپ' }]} />
           <div className="member-list">
-            {levels && <p className="muted small">فقط اعضایی که شرایط این رویداد را دارند نشان داده می‌شوند (سطح {levels.join(' / ')}).</p>}
+            {levels && <p className="muted small">فقط اعضایی که شرایط این رویداد را دارند نشان داده می‌شوند (سطح {levelsText(levels)}).</p>}
             {list.length === 0 && <p className="muted">عضوی با این مشخصات پیدا نشد.</p>}
             {list.map((m) => (
               <button key={m.id} className="member-row" onClick={() => onAdd({ id: m.id, name: m.name, level: m.level, gender: m.gender, birth: m.birth })}>
@@ -616,7 +616,7 @@ function StepEvent({ w, set, onNext }) {
                 <div className="ev-txt">
                   <span className={`pill-q ${kind === 'official' ? 'gold' : ''}`}>{dayLabel(e.date)} {dayMonth(fromKey(e.date))}، {hourLabel(e.start)}</span>
                   <b>{e.title}</b>
-                  <small>{e.format}، سطح {e.levels.join(' / ')}{audienceText(e) && `، ${audienceText(e)}`}</small>
+                  <small>{e.format}، سطح {levelsText(e.levels)}{audienceText(e) && `، ${audienceText(e)}`}</small>
                   <div className="ev-cap"><div className="bar"><i style={{ width: `${(e.taken / e.cap) * 100}%` }} /></div><span>{fa(e.taken)}/{fa(e.cap)}</span></div>
                 </div>
                 <em>{has ? 'ثبت‌نام شدید' : full ? 'تکمیل' : e.status !== 'open' ? 'بسته' : why === 'level' ? 'سطح شما نیست' : why ? whyText(e, why) : short(e.fee)}</em>
@@ -639,8 +639,8 @@ function StepPartner({ w, set, onNext }) {
   const exclude = [ME, ...ev.regs.map((r) => r.by)]
   return (
     <div className="partner-pick">
-      <div className="pp-ev"><b>{ev.title}</b><small>{dayLabel(ev.date)}، {hourLabel(ev.start)}، سطح {ev.levels.join(' / ')}</small></div>
-      <p className="hint">🎾 مسابقه دونفره است و فقط سطح {ev.levels.join(' / ')}{audienceText(ev) && ` (${audienceText(ev)})`} می‌توانند شرکت کنند (یار مهمان هم باید همین شرایط را داشته باشد). یارتان را انتخاب کنید؛ ورودی هر دو نفر ({toman(ev.fee)} × ۲) را شما یک‌جا پرداخت می‌کنید و از اول هم‌تیمی هستید.</p>
+      <div className="pp-ev"><b>{ev.title}</b><small>{dayLabel(ev.date)}، {hourLabel(ev.start)}، سطح {levelsText(ev.levels)}</small></div>
+      <p className="hint">🎾 مسابقه دونفره است و فقط سطح {levelsText(ev.levels)}{audienceText(ev) && ` (${audienceText(ev)})`} می‌توانند شرکت کنند (یار مهمان هم باید همین شرایط را داشته باشد). یارتان را انتخاب کنید؛ ورودی هر دو نفر ({toman(ev.fee)} × ۲) را شما یک‌جا پرداخت می‌کنید و از اول هم‌تیمی هستید.</p>
       {p ? (
         <motion.div className="pp-chosen" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
           <Avatar name={p.name} size={44} />
@@ -703,7 +703,7 @@ function CoachPlan({ w, set, count, plan, total }) {
 }
 
 // ---------- پرداخت ----------
-function StepPay({ w, set, onDone }) {
+function StepPay({ w, set, onDone, onLost }) {
   const s = useStore()
   const { club, wallet } = s
   const off = memberOff(s)
@@ -786,6 +786,9 @@ function StepPay({ w, set, onDone }) {
         : r.error === 'run' ? { icon: '⏱', title: `حداکثر ${fa(r.run)} ساعت پشت هم`, body: 'با رزروهای قبلی خودتان در همین روز از سقف بیشتر می‌شود' }
         : r.error === 'full' ? { icon: '⛔', title: 'این بازی همین الان پر شد', body: 'یک بازی دیگر انتخاب کنید' }
         : { icon: '⛔', title: 'یکی از ساعت‌ها همین الان پر شد', body: 'برنامه به‌روز شد؛ دوباره بررسی و پرداخت کنید' })
+      // ساعت یا بازی دیگر در دسترس نیست: برگرد به انتخاب تا روی همان صفحه‌ی پرداخت گیر نکند
+      if (r.error === 'busy') onLost?.('slot')
+      else if (r.error === 'full') onLost?.('games')
       return
     }
     chime('success'); celebrate(); haptic([20, 40, 20, 40, 80])

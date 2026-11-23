@@ -47,12 +47,21 @@ final class Catalog
 
     public const BADGES = ['first', 'host', 'social', 'squad', 'quad', 'early', 'night', 'student', 'champ', 'shopper', 'loyal'];
 
-    /** چالش‌های هفتگی: هدف و جایزه */
-    public const QUESTS = [
-        'play2' => ['goal' => 2, 'xp' => 60],
-        'social' => ['goal' => 1, 'xp' => 40],
-        'coach' => ['goal' => 1, 'xp' => 40],
+    /** چالش‌های پیش‌فرض (تا وقتی مدیر چالش‌ها را عوض نکرده) — شناسه‌ها همان شناسه‌های قبلی‌اند تا جایزه‌های گرفته‌شده بمانند */
+    public const DEFAULT_QUESTS = [
+        ['id' => 'play2', 'icon' => '🎾', 'name' => 'هفته‌ی پرکار', 'desc' => 'این هفته ۲ بار به زمین بیایید (رزرو، بازی باز یا کلاس)', 'metric' => 'play', 'goal' => 2, 'xp' => 60, 'period' => 'week', 'active' => true],
+        ['id' => 'social', 'icon' => '🤝', 'name' => 'یار جدید', 'desc' => 'یک بازی باز بسازید یا به بازی باز دیگران بپیوندید', 'metric' => 'open', 'goal' => 1, 'xp' => 40, 'period' => 'week', 'active' => true],
+        ['id' => 'coach', 'icon' => '🧢', 'name' => 'جلسه‌ی هفته', 'desc' => 'این هفته یک جلسه با یکی از مربی‌ها داشته باشید', 'metric' => 'coach', 'goal' => 1, 'xp' => 40, 'period' => 'week', 'active' => true],
     ];
+
+    /** فعالیت‌هایی که چالش می‌شمارد (سرور و اپ هر دو از داده‌ی خود بازیکن می‌شمارند) */
+    public const QUEST_METRICS = ['play', 'open', 'coach', 'event', 'shop', 'cafe'];
+
+    /** بازه‌ی چالش: هفته (از شنبه)، ماه شمسی، یک‌بار برای همیشه */
+    public const QUEST_PERIODS = ['week', 'month', 'once'];
+
+    /** کلید ثابت ردیف جایزه‌ی چالش‌های یک‌باره در ستون week */
+    public const QUEST_ONCE = '2000-01-01';
 
     public const BOOKING_TYPES = ['private', 'open', 'coach', 'event', 'block'];
 

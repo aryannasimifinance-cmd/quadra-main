@@ -1,6 +1,6 @@
 // پنل مربی‌ها (سمت مدیر): درخواست‌های رزرو زمینِ مربی‌ها برای تأیید، دسترسی هر مربی و سقف‌های رزرو
 import { useState } from 'react'
-import { COACHES, courtById, dayMonth, fa, fromKey, limitsOf, range, todayKey, weekday } from '../../data'
+import { COACHES, courtById, dayMonth, fa, fromKey, reqLive, limitsOf, range, todayKey, weekday } from '../../data'
 import { chime } from '../../fx'
 import { coachCaps, coachLimits, isFree, openHours, useStore } from '../../store'
 import { Icon } from '../../components/ui'
@@ -8,7 +8,7 @@ import { who } from './derive'
 import { Card, Empty, Seg } from './kit'
 
 const day = (k) => `${weekday(fromKey(k))} ${dayMonth(fromKey(k))}`
-const ST = { pending: ['در انتظار', 'warn'], ok: ['تأیید شد', 'ok'], rejected: ['رد شد', 'bad'], cancelled: ['لغو مربی', 'mute'] }
+const ST = { pending: ['منقضی شد', 'mute'], ok: ['تأیید شد', 'ok'], rejected: ['رد شد', 'bad'], cancelled: ['لغو مربی', 'mute'] }
 const Step = ({ value, set, min = 0, max = 40, unit = 'ساعت' }) => (
   <span className="num-step"><button type="button" onClick={() => set(Math.max(min, value - 1))} aria-label="کمتر"><Icon name="minus" size={13} /></button><b>{fa(value)} {unit}</b><button type="button" onClick={() => set(Math.min(max, value + 1))} aria-label="بیشتر"><Icon name="plus" size={13} /></button></span>
 )
@@ -16,8 +16,8 @@ const Step = ({ value, set, min = 0, max = 40, unit = 'ساعت' }) => (
 export function CoachPanel() {
   const { club } = useStore()
   const reqs = club.coachReqs || []
-  const pending = reqs.filter((r) => r.status === 'pending').sort((a, b) => fromKey(a.date) - fromKey(b.date) || a.start - b.start)
-  const past = reqs.filter((r) => r.status !== 'pending').sort((a, b) => (b.done || b.at) - (a.done || a.at)).slice(0, 12)
+  const pending = reqs.filter(reqLive).sort((a, b) => fromKey(a.date) - fromKey(b.date) || a.start - b.start)
+  const past = reqs.filter((r) => !reqLive(r)).sort((a, b) => (b.done || b.at) - (a.done || a.at)).slice(0, 12)
   return (
     <div className="stack">
       <Card title="درخواست‌های رزرو زمین" sub={pending.length ? `${fa(pending.length)} درخواست منتظر تأیید شما` : 'درخواست منتظری نیست'}>

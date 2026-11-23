@@ -200,6 +200,7 @@ function MemberFile({ m, onEdit }) {
         <div><small>حضور</small><b>{fa(m.visits)}</b></div><div><small>مجموع خرید</small><b>{short(m.spent)}</b></div>
         <div><small>کلاس با مربی</small><b>{fa(classes.length)}</b></div><div><small>آدینه</small><b>{fa(evs.length)}</b></div>
       </div>
+      <WalletAdjust m={m} />
       <Tabs value={tab} onChange={setTab} tabs={tabs.map(([k, n, c]) => [k, n, c || null])} />
       {tab === 'book' && <MiniTable empty="رزروی ندارد." head={['تاریخ', 'ساعت', 'زمین', 'نوع', 'پرداخت']} rows={bookings.slice(0, 30).map((b) => [`${dayLabel(b.date)} ${dayMonth(fromKey(b.date))}`, range(b.start, b.dur), courtById(b.court).name, TYPE_NAME[b.type], <Status s={payState(b)} />])} />}
       {tab === 'class' && (<>
@@ -212,6 +213,41 @@ function MemberFile({ m, onEdit }) {
     </div>
   )
 }
+// شارژ یا کسر دستی کیف پول عضو (مثلاً پول نقدی در پذیرش، جبران خسارت، اصلاح اشتباه)؛ هر تغییر در دفتر کیف پول و گزارش رویدادها ثبت می‌شود
+function WalletAdjust({ m }) {
+  const { adminWalletAdjust, toast } = useStore()
+  const [mode, setMode] = useState('add')
+  const [amt, setAmt] = useState('')
+  const [note, setNote] = useState('')
+  const [busy, setBusy] = useState(false)
+  const n = Math.round(+String(amt).replace(/[^\d]/g, '') || 0)
+  const bal = m.wallet ?? null
+  const ok = n >= 1000 && n <= 100_000_000 && note.trim().length >= 2 && !busy && (mode === 'add' || bal == null || n <= bal)
+  const go = async () => {
+    if (!ok) return
+    const sign = mode === 'add' ? 1 : -1
+    if (!window.confirm(`${mode === 'add' ? 'شارژ' : 'کسر'} ${toman(n)} ${mode === 'add' ? 'به' : 'از'} کیف پول ${m.name}؟`)) return
+    setBusy(true)
+    const r = await adminWalletAdjust(m.id, sign * n, note.trim())
+    setBusy(false)
+    if (r?.error) return
+    chime('success'); toast({ icon: '💳', title: mode === 'add' ? 'کیف پول شارژ شد' : 'از کیف پول کسر شد', body: `${m.name}، ${toman(n)}` })
+    setAmt(''); setNote('')
+  }
+  return (
+    <div className="mf-wallet">
+      <div className="row-between"><b>کیف پول</b>{bal != null && <span>موجودی: <b>{toman(bal)}</b></span>}</div>
+      <Seg value={mode} onChange={setMode} options={{ add: 'شارژ (+)', sub: 'کسر (−)' }} />
+      <div className="form">
+        <label>مبلغ (تومان)<input inputMode="numeric" dir="ltr" value={amt} onChange={(e) => setAmt(e.target.value.replace(/[^\d]/g, ''))} placeholder="500000" /></label>
+        <label>علت (در دفتر ثبت می‌شود)<input value={note} maxLength={200} onChange={(e) => setNote(e.target.value)} placeholder="مثلاً پرداخت نقدی در پذیرش" /></label>
+      </div>
+      {mode === 'sub' && bal != null && n > bal && <p className="login-why">بیشتر از موجودی عضو است.</p>}
+      <button className={`adm-btn ${mode === 'add' ? 'primary' : 'danger'} sm`} disabled={!ok} onClick={go}>{busy ? 'در حال ثبت…' : mode === 'add' ? 'شارژ کیف پول' : 'کسر از کیف پول'}</button>
+    </div>
+  )
+}
+
 const MiniTable = ({ head, rows, empty }) => (rows.length
   ? <div className="tbl-wrap"><table className="tbl"><thead><tr>{head.map((h) => <th key={h}>{h}</th>)}</tr></thead><tbody>{rows.map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j}>{c}</td>)}</tr>)}</tbody></table></div>
   : empty ? <Empty>{empty}</Empty> : null)
@@ -534,7 +570,9 @@ export function Settings() {
   const { club, adminPricing, resetDemo, toast, config } = useStore()
   const [p, setP] = useState(club.pricing)
   const ex = (h) => priceFor(todayKey(), h, 1, p)
-  const save = () => { adminPricing({ offpeak: +p.offpeak, peak: +p.peak, peakFrom: +p.peakFrom }); chime('success'); toast({ icon: '💾', title: 'نرخ‌ها ذخیره شد', body: 'در اپ بازیکن‌ها هم اعمال شد' }) }
+  // سرور نرخ زیر ۱۰۰۰ تومان را رد می‌کند؛ این‌جا هم جلوی خالی و صفر گرفته می‌شود تا پیام «ذخیره شد» دروغ نباشد
+  const priceOk = [p.offpeak, p.peak].every((v) => String(v).trim() !== '' && Number.isFinite(+v) && +v >= 1000)
+  const save = () => { if (!priceOk) return; adminPricing({ offpeak: +p.offpeak, peak: +p.peak, peakFrom: +p.peakFrom }); chime('success'); toast({ icon: '💾', title: 'نرخ‌ها ذخیره شد', body: 'در اپ بازیکن‌ها هم اعمال شد' }) }
   return (
     <div className="two">
       <Card title="نرخ زمین" sub="هر ساعت، کل زمین (۴ نفر)">
@@ -547,7 +585,8 @@ export function Settings() {
             <div><small>۱ ساعت، ساعت ۱۰ (امروز)</small><b>{toman(ex(10))}</b><small>هر نفر {toman(ex(10) / 4)}</small></div>
             <div><small>۱ ساعت، ساعت ۲۰ (امروز)</small><b>{toman(ex(20))}</b><small>هر نفر {toman(ex(20) / 4)}</small></div>
           </div>
-          <button className="adm-btn primary" onClick={save} data-tip="قیمت تازه فقط برای رزروهای بعدی اعمال می‌شود">ذخیره‌ی نرخ‌ها</button>
+          {!priceOk && <p className="login-why">نرخ عادی و پیک باید عدد و دست‌کم ۱٬۰۰۰ تومان باشد.</p>}
+          <button className="adm-btn primary" disabled={!priceOk} onClick={save} data-tip="قیمت تازه فقط برای رزروهای بعدی اعمال می‌شود">ذخیره‌ی نرخ‌ها</button>
         </div>
       </Card>
       <div className="stack">

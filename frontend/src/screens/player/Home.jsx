@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { COACHES, EVENT_KIND, coachById, weekday, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, levelById, range, rankOf, short, toman } from '../../data'
+import { COACHES, EVENT_KIND, coachById, weekday, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, levelById, range, rankOf, short, toman, clubNow, clubNowMs } from '../../data'
 import { celebrate, chime } from '../../fx'
 import { ME, myPoints, useStore } from '../../store'
 import { myBookings, openGames, quests, streak } from '../../select'
@@ -17,7 +17,7 @@ export default function Home({ nav }) {
   const { user, xp, club, notifications, wallet } = s
   const rank = rankOf(xp)
   const unread = notifications.filter((n) => !n.read).length
-  const mine = myBookings(club).filter((b) => fromKey(b.date).getTime() + (b.start + b.dur) * 36e5 > Date.now())
+  const mine = myBookings(club).filter((b) => fromKey(b.date).getTime() + (b.start + b.dur) * 36e5 > clubNowMs())
   const games = openGames(club, user.level).filter((g) => !g.mine).slice(0, 6)
   const qs = quests(s)
   const st = streak(s)
@@ -27,7 +27,7 @@ export default function Home({ nav }) {
   const champEv = finished(club).find(champOn)
   const pod = champEv && podium(champEv)
   const first = user.name.split(' ')[0]
-  const h = new Date().getHours()
+  const h = clubNow().getHours()
   const hello = h < 12 ? 'صبح بخیر' : h < 17 ? 'روز بخیر' : 'عصر بخیر'
 
   return (
@@ -135,12 +135,12 @@ export default function Home({ nav }) {
           </div>
         </section>
 
-        <section className="h-sec">
-          <SectionHead title="چالش‌های این هفته" sub="هر شنبه تازه می‌شوند، جایزه: XP" />
+        {qs.length > 0 && <section className="h-sec">
+          <SectionHead title="چالش‌ها" sub="جایزه: XP؛ چالش‌های هفتگی هر شنبه تازه می‌شوند" />
           <div className="quests">
             {qs.map((q) => <Quest key={q.id} q={q} />)}
           </div>
-        </section>
+        </section>}
 
         {champEv && <section className="h-sec"><SectionHead title="قهرمان‌ها" action="همه‌ی نتیجه‌ها" onAction={() => nav.open('events')} />
           <motion.button className="champ-card" whileTap={{ scale: 0.98 }} onClick={() => nav.open('events')}>
@@ -204,7 +204,7 @@ const memberName = (id) => id?.startsWith('f:') ? id.slice(2) : MEMBERS.find((m)
 
 export function NextTicket({ b, onClick }) {
   const c = courtById(b.court)
-  const mins = Math.round((fromKey(b.date).getTime() + b.start * 36e5 - Date.now()) / 6e4)
+  const mins = Math.round((fromKey(b.date).getTime() + b.start * 36e5 - clubNowMs()) / 6e4)
   const left = mins < 60 ? `${fa(Math.max(0, mins))} دقیقه دیگه` : mins < 1440 ? `${fa(Math.floor(mins / 60))} ساعت دیگه` : `${fa(Math.floor(mins / 1440))} روز دیگه`
   return (
     <motion.button className="ticket" whileTap={{ scale: 0.98 }} onClick={onClick} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
@@ -222,7 +222,8 @@ export function NextTicket({ b, onClick }) {
 }
 
 // نقشه‌ی ساده‌ی زمین پدل از بالا
-function Quest({ q }) {
+// کارت چالش (پیش‌نمایش پنل مدیر هم همین را نشان می‌دهد)
+export function Quest({ q }) {
   const { claimQuest, toast } = useStore()
   const p = Math.min(1, q.have / q.goal)
   const [busy, setBusy] = useState(false)
@@ -241,6 +242,7 @@ function Quest({ q }) {
       <div className="grow">
         <b>{q.name}</b>
         <small className="quest-desc">{q.desc}</small>
+        <span className="quest-meta"><i>{q.when}</i><em>+{fa(q.xp)} XP</em></span>
         <div className="bar"><motion.i initial={{ width: 0 }} animate={{ width: `${p * 100}%` }} transition={{ duration: 0.9 }} /></div>
       </div>
       {q.ready ? (

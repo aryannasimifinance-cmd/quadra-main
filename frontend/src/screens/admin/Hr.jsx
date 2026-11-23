@@ -6,7 +6,7 @@ import {
   CONTRACTS, DOCS, HR_CFG, LEAVE_KIND, ROLES, SHIFTS, SHIFT_CYCLE, WEEK, attStats, contractAlert, dayStatus, fromHHMM, hhmm,
   leaveBalance, leaveDays, payroll, seniority, shiftOn,
 } from '../../hr'
-import { jDate, jDateFa, jMonthDays, jMonthKey, jMonthLabel, ord, recentMonths } from '../../jalali'
+import { J_MONTHS, faDigits, jDate, jDateFa, jMonthDays, jMonthKey, jMonthLabel, jParts, ord, recentMonths } from '../../jalali'
 import { downloadXlsx, table } from '../../xlsx'
 import { chime } from '../../fx'
 import { useStore } from '../../store'
@@ -15,8 +15,27 @@ import { Badge, Card, Empty, Field, Kpi, Money, Search, Seg, Side, Tabs, XlsxBtn
 
 const TONE = { ok: 'ok', in: 'ok', late: 'warn', absent: 'bad', leave: 'mute', off: 'mute', wait: 'mute' }
 const ROLE_C = { manager: '#141413', reception: '#0E9F98', shop: '#B44C9A', service: '#3DA57E', security: '#24344F', tech: '#E07B39', accountant: '#5B6CF0', coach: '#C9A227' }
-const iso = (k) => { const [y, m, d] = k.split('-'); return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}` }
-const unIso = (s) => s.split('-').map(Number).join('-')
+// انتخاب تاریخ شمسی (روز / ماه / سال)؛ مقدار ورودی و خروجی همان کلید میلادی اپ (y-m-d) است
+const pad2 = (n) => String(n).padStart(2, '0')
+function JDateInput({ value, onChange, empty }) {
+  const cur = value ? jParts(value) : null
+  const ty = jParts(todayKey()).y
+  const pick = (y, m, d) => {
+    if (!y || !m || !d) return
+    const days = jMonthDays(`${y}-${pad2(m)}`)
+    onChange(days[Math.min(d, days.length) - 1])
+  }
+  const y = cur?.y || '', m = cur?.m || '', d = cur?.d || ''
+  const base = cur || { y: ty, m: jParts(todayKey()).m, d: 1 }
+  return (
+    <div className="jdate">
+      <select value={d} onChange={(e) => pick(base.y, base.m, +e.target.value)}>{!cur && <option value="">روز</option>}{Array.from({ length: 31 }, (_, i) => <option key={i} value={i + 1}>{fa(i + 1)}</option>)}</select>
+      <select value={m} onChange={(e) => pick(base.y, +e.target.value, base.d)}>{!cur && <option value="">ماه</option>}{J_MONTHS.map((n, i) => <option key={n} value={i + 1}>{n}</option>)}</select>
+      <select value={y} onChange={(e) => pick(+e.target.value, base.m, base.d)}>{!cur && <option value="">سال</option>}{Array.from({ length: 31 }, (_, i) => ty - 20 + i).map((v) => <option key={v} value={v}>{faDigits(v)}</option>)}</select>
+      {empty && cur && <button type="button" className="adm-btn ghost sm" onClick={() => onChange(null)}>{empty}</button>}
+    </div>
+  )
+}
 const Av = ({ s, size = '' }) => <span className={`hr-av ${size}`} style={{ '--c': ROLE_C[s.role] }}>{s.name[0]}</span>
 const hmL = (h) => hhmm(h).replace(/[۰-۹]/g, (x) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(x))
 const nowH = () => { const n = new Date(); return Math.round((n.getHours() + n.getMinutes() / 60) * 60) / 60 }
@@ -165,8 +184,8 @@ function StaffForm({ s, onDone }) {
         <Field label="شبا"><input dir="ltr" value={f.iban} onChange={(e) => set({ iban: e.target.value.toUpperCase() })} /></Field>
       </div>
       <div className="form-2">
-        <Field label="شروع همکاری"><input type="date" value={iso(f.start)} onChange={(e) => e.target.value && set({ start: unIso(e.target.value) })} /></Field>
-        <Field label="پایان قرارداد"><input type="date" value={f.contractEnd ? iso(f.contractEnd) : ''} onChange={(e) => set({ contractEnd: e.target.value ? unIso(e.target.value) : null })} /></Field>
+        <Field label="شروع همکاری"><JDateInput value={f.start} onChange={(k) => k && set({ start: k })} /></Field>
+        <Field label="پایان قرارداد"><JDateInput value={f.contractEnd || null} onChange={(k) => set({ contractEnd: k || null })} empty="بدون پایان" /></Field>
       </div>
       <Field label="تحصیلات"><input value={f.edu || ''} onChange={(e) => set({ edu: e.target.value })} /></Field>
       <div className="form-2">

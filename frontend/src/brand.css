@@ -164,3 +164,35 @@ body, .sting-word { font-family: 'QFont', system-ui, sans-serif; }
           mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
 }
 .app .app-scroll { z-index: 1; }
+
+/* ============================================================
+   جدا شدن باکس‌ها از پس‌زمینه: کادر روشن + سایه‌ی نرم دو لایه
+   ============================================================ */
+.app { --lift: 0 1px 3px rgba(15,20,18,.08), 0 10px 24px -6px rgba(15,20,18,.22); --lift-sm: 0 1px 2px rgba(15,20,18,.08), 0 5px 14px -4px rgba(15,20,18,.18); }
+
+/* بازی‌های من: کادر پررنگ‌تر و سایه؛ فشردن = کمی پایین رفتن */
+.app .my-game { border: 1.5px solid var(--line-strong) !important; box-shadow: var(--lift) !important; background: var(--card); transition: transform .15s, box-shadow .15s; }
+.app .my-game:active { transform: translateY(1px); box-shadow: var(--lift-sm) !important; }
+.app .my-game.past { box-shadow: none !important; border-style: dashed !important; }
+
+/* صفحه‌ی خانه: هر بخش و کارت‌های داخلش سایه دارند */
+.app .home .h-sec { box-shadow: var(--lift) !important; border-left: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.app .home :is(.og-card, .quest, .mini-board, .ticket, .event-banner, .coach-card, .p-card, .pack-promo, .champ-card, .cafe-item, .rk-row) { box-shadow: var(--lift-sm) !important; }
+.app .home .hero-me, .app .home .cta-main { box-shadow: 0 8px 24px -6px rgba(0,0,0,.45) !important; }
+
+/* پنل مدیر: شارژ/کسر دستی کیف پول در پرونده‌ی عضو */
+.mf-wallet { display: grid; gap: 10px; margin: 12px 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.mf-wallet .form { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
+@media (max-width: 640px) { .mf-wallet .form { grid-template-columns: 1fr; } }
+.mf-wallet .adm-btn { justify-self: start; }
+/* پنل مدیر: انتخاب تاریخ شمسی سه‌قسمتی */
+.jdate { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.jdate select { flex: 1 1 70px; min-width: 0; }
+
+/* پنل مدیر در موبایل: تیتر یک‌خطی، راهنمای تقویم بیرون از نوار افقی و نشانه‌ی «بکشید» */
+@media (max-width: 640px) {
+  .adm-top h1 { font-size: 22px !important; white-space: nowrap; }
+  .tl-legend { position: sticky; right: 0; width: calc(100vw - 72px); max-width: 100%; }
+  .tl { -webkit-mask-image: linear-gradient(to left, #000 85%, rgba(0,0,0,.35)); mask-image: linear-gradient(to left, #000 85%, rgba(0,0,0,.35)); }
+  .tl::before { content: '← برای ساعت‌های بعد بکشید'; font-size: 11px; color: var(--muted); position: sticky; right: 0; }
+}

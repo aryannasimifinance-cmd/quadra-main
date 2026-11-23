@@ -54,7 +54,8 @@ export default function Gate() {
     return false
   }
   const progress = { phone: 0, otp: 1, name: 2, about: 3, level: 4, side: 5, cred: 6 }[step]
-  const numbered = progress != null
+  // در ورود (نه عضویت) حلقه و نوار ۷ مرحله‌ای نشان داده نمی‌شود
+  const numbered = progress != null && !(mode === 'login' && ['phone', 'otp'].includes(step))
   const isLogin = step === 'userlogin' || (mode === 'login' && ['phone', 'otp'].includes(step))
 
   return (
@@ -481,7 +482,7 @@ function SideStep({ value, onChange, onNext }) {
           </button>
         ))}
       </div>
-      <Button full variant="q" disabled={!value} onClick={onNext}>تموم شد!</Button>
+      <Button full variant="q" disabled={!value} onClick={onNext}>ادامه</Button>
     </div>
   )
 }

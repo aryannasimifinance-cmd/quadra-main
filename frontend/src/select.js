@@ -1,9 +1,11 @@
-import { COURTS, PACKAGES, addDays, fromKey, isPeak, levelIndex, priceFor, todayKey } from './data'
+import { COURTS, PACKAGES, XP_GUIDE, addDays, fa, fromKey, isPeak, levelIndex, priceFor, todayKey, clubNow, clubNowMs } from './data'
+import { jParts } from './jalali'
+import { DEFAULT_QUESTS, QUEST_METRICS, QUEST_PERIODS } from './quests'
 import { ME, freeStarts, isFree, weekKey } from './store'
 
-const nowH = () => { const n = new Date(); return n.getHours() + n.getMinutes() / 60 }
+const nowH = () => { const n = clubNow(); return n.getHours() + n.getMinutes() / 60 }
 export const startsAt = (b) => fromKey(b.date).getTime() + b.start * 36e5
-export const isUpcoming = (b) => startsAt(b) + b.dur * 36e5 > Date.now()
+export const isUpcoming = (b) => startsAt(b) + b.dur * 36e5 > clubNowMs()
 export const sortByTime = (a, b) => startsAt(a) - startsAt(b)
 
 // بازی‌های باز آینده که جای خالی دارند — با فاصله‌ی سطح از کاربر
@@ -71,16 +73,44 @@ export function planSeries(club, { court, date, start, dur, count, coach, days }
   return { sessions: out, skipped, complete: out.length === count }
 }
 
+// ---------- چالش‌ها و امتیاز ----------
+// تعریف‌ها را مدیر می‌سازد (club.quests)؛ ثابت‌ها در quests.js
+export { DEFAULT_QUESTS, QUEST_METRICS, QUEST_PERIODS }
+export const QUEST_ONCE = '2000-01-01'
+const ymd = (k) => k.split('-').map((x, i) => (i ? x.padStart(2, '0') : x)).join('-')
+// کلید بازه همان کلید سرور: شنبه‌ی هفته، روز اول ماه شمسی، یا کلید ثابت یک‌باره
+export function questKey(period) {
+  if (period === 'once') return QUEST_ONCE
+  if (period === 'month') { const t = todayKey(); return ymd(addDays(t, -(jParts(t).d - 1))) }
+  return weekKey()
+}
+export const questDefs = (club) => (Array.isArray(club.quests) ? club.quests : DEFAULT_QUESTS)
+
+function questHave(s, metric, from) {
+  const c = s.club, since = (x) => from == null || x.at >= from
+  if (metric === 'event') return (c.events || []).filter((e) => e.status !== 'cancelled' && e.status !== 'draft').reduce((n, e) => n + (e.regs || []).filter((r) => r.by === ME && since(r)).length, 0)
+  if (metric === 'shop') return (c.orders || []).filter((o) => o.by === ME && since(o)).length
+  if (metric === 'cafe') return (c.cafeOrders || []).filter((o) => o.by === ME && since(o)).length
+  const mine = c.bookings.filter((b) => (b.by === ME || b.players?.includes(ME)) && b.status === 'ok' && since(b))
+  return metric === 'play' ? mine.length : mine.filter((b) => b.type === metric).length
+}
+
 export function quests(s) {
-  const wk = weekKey()
-  const from = fromKey(wk.split('-').map(Number).join('-')).getTime()
-  const mine = s.club.bookings.filter((b) => (b.by === ME || b.players?.includes(ME)) && b.status === 'ok' && b.at >= from)
-  const done = s.quests[wk] || []
-  return [
-    { id: 'play2', icon: '🎾', name: 'هفته‌ی پرکار', desc: 'این هفته ۲ بار به زمین بیایید (رزرو، بازی باز یا کلاس)', goal: 2, have: mine.length, xp: 60 },
-    { id: 'social', icon: '🤝', name: 'یار جدید', desc: 'یک بازی باز بسازید یا به بازی باز دیگران بپیوندید', goal: 1, have: mine.filter((b) => b.type === 'open').length, xp: 40 },
-    { id: 'coach', icon: '🧢', name: 'جلسه‌ی هفته', desc: 'این هفته یک جلسه با یکی از مربی‌ها داشته باشید', goal: 1, have: mine.filter((b) => b.type === 'coach').length, xp: 40 },
-  ].map((q) => ({ ...q, ready: q.have >= q.goal && !done.includes(q.id), claimed: done.includes(q.id) }))
+  return questDefs(s.club).filter((q) => q.active).map((q) => {
+    const key = questKey(q.period)
+    const from = q.period === 'once' ? null : fromKey(key.split('-').map(Number).join('-')).getTime()
+    const done = (s.quests || {})[key] || []
+    const claimed = done.includes(q.id)
+    const have = questHave(s, q.metric, from)
+    return { ...q, have, when: QUEST_PERIODS[q.period] || '', ready: have >= q.goal && !claimed, claimed }
+  })
+}
+
+// ردیف چالش‌ها در راهنمای XP: بازه‌ی جایزه‌ی چالش‌های فعال
+export function xpGuide(club) {
+  const xs = questDefs(club).filter((q) => q.active).map((q) => q.xp)
+  const lo = Math.min(...xs), hi = Math.max(...xs)
+  return XP_GUIDE.map(([k, v]) => (k.startsWith('چالش') ? [k, xs.length ? (lo === hi ? fa(lo) : `${fa(lo)} تا ${fa(hi)}`) : 'فعلاً چالشی نیست'] : [k, v]))
 }
 
 // تعداد هفته‌های پشت‌سرهم با حداقل یک بازی

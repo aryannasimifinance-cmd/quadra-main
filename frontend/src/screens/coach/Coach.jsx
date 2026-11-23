@@ -2,7 +2,7 @@
 // و می‌تواند تا سقف ساعت هفتگی زمین رزرو کند؛ هر رزرو بعد از تأیید مدیر در تقویم ثبت می‌شود.
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
-import { COACH_PACKS, COURTS, MEMBERS, addDays, coachPackPrice, courtById, dayMonth, fa, fromKey, hourLabel, hoursOf, range, ratingOf, shownReviews, toman, todayKey, weekday, weekdayShort } from '../../data'
+import { COACH_PACKS, COURTS, MEMBERS, addDays, coachPackPrice, courtById, dayMonth, fa, fromKey, reqLive, clubNowMs, clubHour, hourLabel, hoursOf, range, ratingOf, shownReviews, toman, todayKey, weekday, weekdayShort } from '../../data'
 import { chime, haptic } from '../../fx'
 import { coachLimits, coachRun, isFree, openHours, useStore } from '../../store'
 import { dk, inPeriod, jDateFa, period, shiftPeriod } from '../../jalali'
@@ -13,7 +13,7 @@ import '../../coach.css'
 
 const TABS = [['home', 'خانه', 'home'], ['plan', 'برنامه', 'cal'], ['book', 'رزرو زمین', 'court'], ['students', 'شاگردها', 'users'], ['income', 'درآمد', 'wallet']]
 const startOf = (b) => fromKey(b.date).getTime() + b.start * 36e5
-const done = (b) => startOf(b) + b.dur * 36e5 <= Date.now()
+const done = (b) => startOf(b) + b.dur * 36e5 <= clubNowMs()
 const fromPack = (b) => b.method === 'package' || b.method === 'coach-pack'
 const dayTxt = (k) => (k === todayKey() ? 'امروز' : k === addDays(todayKey(), 1) ? 'فردا' : `${weekday(fromKey(k))} ${dayMonth(fromKey(k))}`)
 const REQ = { pending: ['در انتظار تأیید مدیر', 'wait'], ok: ['تأیید شد', 'ok'], rejected: ['رد شد', 'bad'], cancelled: ['لغو شد', 'mute'] }
@@ -75,7 +75,7 @@ function build(club, c, user) {
   }
   const reqs = (club.coachReqs || []).filter((r) => r.coach === c.id)
   const open = openHours(club, c.id)
-  const pend = reqs.filter((r) => r.status === 'pending')
+  const pend = reqs.filter(reqLive)
   const recent = Date.now() - 3 * 864e5
   const due = dueOf(bk, c)
   const todo = [
@@ -88,7 +88,7 @@ function build(club, c, user) {
   return {
     todo, c, due,
     f, bk, nth, share, income, reqs, open,
-    pending: reqs.filter((r) => r.status === 'pending').length,
+    pending: reqs.filter(reqLive).length,
     today: bk.filter((b) => b.date === t),
     next: bk.filter((b) => !done(b)),
     week: bk.filter((b) => !done(b) && fromKey(b.date) < fromKey(addDays(t, 7))),
@@ -118,6 +118,7 @@ function Ses({ b, d, showDay }) {
       {!b.players.length && b.block && !done(b)
         ? <button className="co-tag add" onClick={() => d.assign(b.block)}>+ شاگرد</button>
         : st[1] === 'due' && b.block ? <button className="co-tag add" onClick={() => d.assign(b.block)}>پرداخت</button>
+        : st[1] === 'wait' && b.block && !done(b) ? <button className={"co-tag wait"} onClick={() => d.assign(b.block)} title="باز کردن جلسه برای عوض کردن شاگرد یا پرداخت توسط خودتان">{st[0]} ›</button>
         : <em className={`co-tag ${st[1]}`}>{st[0]}</em>}
     </div>
   )
@@ -214,7 +215,7 @@ function Book({ c, d }) {
   const lim = coachLimits(club, c, date)
   const cap = Math.min(lim.day, lim.week)
   const { open, close } = hoursOf(club)
-  const nowH = new Date().getHours() + new Date().getMinutes() / 60
+  const nowH = clubHour()
   // درخواست منتظر هر مربی جا را نگه می‌دارد تا دو نفر یک ساعت را نخواهند
   const held = (ct, h) => (club.coachReqs || []).some((r) => r.status === 'pending' && r.date === date && r.court === ct && h >= r.start && h < r.start + r.dur)
   const mineAt = (h) => d.bk.some((b) => b.date === date && h >= b.start && h < b.start + b.dur) || d.reqs.some((r) => r.status === 'pending' && r.date === date && h >= r.start && h < r.start + r.dur)

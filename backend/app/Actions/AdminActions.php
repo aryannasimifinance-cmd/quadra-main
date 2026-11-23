@@ -32,7 +32,7 @@ class AdminActions
         'adminOrder', 'adminProduct', 'adminAdjust', 'adminReceive', 'adminPos', 'adminApPay',
         'adminCafeItem', 'adminCafeIng', 'adminCafeReceive', 'adminCafeAdjust', 'adminCafeOrder', 'adminCafePos',
         'adminEventSave', 'adminEventDel', 'adminEventSet', 'adminEventReg', 'adminEventUnreg',
-        'adminHours', 'adminPricing', 'adminCourtEdit', 'adminCourt', 'adminWelcome',
+        'adminHours', 'adminPricing', 'adminCourtEdit', 'adminCourt', 'adminWelcome', 'adminQuest',
         'adminExpense', 'adminExpenseDel', 'adminJournal', 'adminJournalDel',
         'adminStaff', 'adminShift', 'adminAttend', 'adminLeave', 'adminLeaveStatus', 'adminAdvance', 'adminHrCfg',
         'adminPayroll', 'adminPayrollPay', 'adminPayrollUndo', 'adminWalletAdjust', 'adminDemoReset',
@@ -222,6 +222,7 @@ class AdminActions
             }
             Audit::log('wallet.adjust', $id, ['amount' => $amount, 'note' => $note]);
         });
+        Sync::touch('members'); // موجودی تازه در پرونده‌ی عضو پنل مدیر
 
         return ['ok' => true];
     }
@@ -366,6 +367,10 @@ class AdminActions
                 return ['ok' => true];
             }
             $c = DB::table('coaches')->where('id', $r->coach)->first();
+            // درخواست گذشته دیگر قابل تأیید نیست (رزرو در گذشته نمی‌سازد)
+            if (Availability::started($r->date, (float) $r->start)) {
+                Fail::with('past');
+            }
             if (! Availability::isFree($r->date, (int) $r->court, (float) $r->start, (float) $r->dur) || Availability::coachBusy($r->coach, $r->date, (float) $r->start, (float) $r->dur)) {
                 Fail::with('busy');
             }
@@ -848,6 +853,57 @@ class AdminActions
         Sync::touch('settings');
 
         return ['ok' => true];
+    }
+
+    /**
+     * چالش‌ها و امتیاز: ساخت یا ویرایش یک چالش با شناسه‌اش؛ $q = null یعنی حذف.
+     * فهرست کامل در تنظیمات (کلید quests) ذخیره می‌شود.
+     */
+    public function adminQuest($id, $q = null): array
+    {
+        if (! is_string($id) || ! preg_match('/^[A-Za-z0-9_-]{2,20}$/', $id)) {
+            Fail::with('bad');
+        }
+        $val = null;
+        if ($q !== null) {
+            if (! is_array($q)) {
+                Fail::with('bad');
+            }
+            $pick = fn (string $k, array $list) => in_array($q[$k] ?? null, $list, true) ? $q[$k] : Fail::with('bad');
+            $val = [
+                'id' => $id,
+                'icon' => self::str($q['icon'] ?? '', 8, 1, false),
+                'name' => self::str($q['name'] ?? '', 40, 2, false),
+                'desc' => self::str($q['desc'] ?? '', 160) ?? '',
+                'metric' => $pick('metric', Catalog::QUEST_METRICS),
+                'goal' => self::int($q['goal'] ?? null, 1, 100),
+                'xp' => self::int($q['xp'] ?? null, 5, 1000),
+                'period' => $pick('period', Catalog::QUEST_PERIODS),
+                'active' => (bool) ($q['active'] ?? true),
+            ];
+        }
+
+        return Locks::run(['quests'], function () use ($id, $val) {
+            Settings::forget();
+            $list = array_values(array_filter(\App\Domain\Quests::all(), fn ($x) => is_array($x) && ($x['id'] ?? null) !== $id));
+            $at = array_search($id, array_column(\App\Domain\Quests::all(), 'id'), true);
+            if ($val) {
+                // جای چالش در فهرست حفظ می‌شود؛ چالش تازه آخر فهرست می‌آید
+                if ($at === false) {
+                    if (count($list) >= \App\Domain\Quests::MAX) {
+                        Fail::with('full');
+                    }
+                    $list[] = $val;
+                } else {
+                    array_splice($list, $at, 0, [$val]);
+                }
+            }
+            Settings::put('quests', $list);
+            Audit::log('settings.quest', $id, $val ?? ['deleted' => true]);
+            Sync::touch('settings');
+
+            return ['ok' => true];
+        });
     }
 
     public function adminCourtEdit($id, $edit): array

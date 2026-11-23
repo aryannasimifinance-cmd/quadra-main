@@ -249,6 +249,12 @@ final class PlayerActions
     {
         $plan = $this->bookPlan($a);
         $desc = $plan['type'] === 'coach' ? 'کلاس مربی' : ($plan['type'] === 'open' ? 'بازی باز' : 'رزرو زمین');
+        // پیش از فرستادن به درگاه: ساعت پر یا گذشته را همین‌جا رد کن تا کاربر برای زمینی که نمی‌گیرد پول ندهد
+        // (بررسی قطعی دوباره داخل قفل انجام می‌شود)
+        if (! $prepaid && (Availability::started($plan['date'], $plan['start']) || ! Availability::isFree($plan['date'], $plan['court'], $plan['start'], $plan['dur'])
+            || ($plan['type'] === 'coach' && Availability::coachBusy($plan['coach']->id, $plan['date'], $plan['start'], $plan['dur'])))) {
+            Fail::with('busy');
+        }
         if ($go = $this->gate('book', $a, $prepaid, $plan['amount'], $desc)) {
             return $go;
         }
@@ -565,6 +571,15 @@ final class PlayerActions
     public function bookSeries(array $a, bool $prepaid = false): array
     {
         $plan = $this->seriesPlan($a);
+        // پیش از درگاه: اگر جلسه‌ای پر یا گذشته است همین‌جا رد شود (بررسی قطعی داخل قفل)
+        if (! $prepaid) {
+            foreach ($plan['sessions'] as $s) {
+                if (Availability::started($s['date'], $s['start']) || ! Availability::isFree($s['date'], $s['court'], $s['start'], $s['dur'])
+                    || ($plan['coach'] && Availability::coachBusy($plan['coach']->id, $s['date'], $s['start'], $s['dur']))) {
+                    Fail::with('busy', ['at' => Dates::key($s['date'])]);
+                }
+            }
+        }
         if ($go = $this->gate('bookSeries', $a, $prepaid, $plan['total'], $plan['name'])) {
             return $go;
         }
@@ -806,35 +821,29 @@ final class PlayerActions
         return PaymentService::start($this->me, (int) $n, 'topup', ['action' => 'topup', 'args' => []], 'شارژ کیف پول');
     }
 
-    // ---------- چالش هفتگی ----------
+    // ---------- چالش‌ها (هفتگی، ماهانه، یک‌باره) ----------
     public function claimQuest(array $a): array
     {
-        $q = Catalog::QUESTS[$a['id'] ?? ''] ?? null;
+        $id = $a['id'] ?? '';
+        $q = is_string($id) ? \App\Domain\Quests::find($id) : null;
         if (! $q) {
             Fail::with('bad');
         }
 
-        return DB::transaction(function () use ($a, $q) {
+        return DB::transaction(function () use ($id, $q) {
             DB::table('members')->where('id', $this->id())->lockForUpdate()->first(['id']);
-            $week = Dates::weekStart();
-            if (DB::table('quest_claims')->where(['member_id' => $this->id(), 'week' => $week, 'quest' => $a['id']])->exists()) {
+            // کلید بازه: شنبه‌ی هفته، اول ماه شمسی، یا کلید ثابت چالش یک‌باره
+            $key = \App\Domain\Quests::periodKey($q['period']);
+            if (DB::table('quest_claims')->where(['member_id' => $this->id(), 'week' => $key, 'quest' => $id])->exists()) {
                 Fail::with('done');
             }
             $me = $this->id();
-            $mine = DB::table('bookings')->where('status', 'ok')->where('created_at', '>=', $week.' 00:00:00')
-                ->where(fn ($x) => $x->where('by', $me)->orWhereExists(fn ($s) => $s->from('booking_players')->whereColumn('booking_players.booking_id', 'bookings.id')->where('booking_players.player', $me)))
-                ->get(['type']);
-            $have = match ($a['id']) {
-                'play2' => $mine->count(),
-                'social' => $mine->where('type', 'open')->count(),
-                'coach' => $mine->where('type', 'coach')->count(),
-            };
-            if ($have < $q['goal']) {
+            if (\App\Domain\Quests::progress($me, $q['metric'], \App\Domain\Quests::from($q['period'])) < (int) $q['goal']) {
                 Fail::with('notyet');
             }
-            DB::table('quest_claims')->insert(['member_id' => $me, 'week' => $week, 'quest' => $a['id'], 'created_at' => now()]);
+            DB::table('quest_claims')->insert(['member_id' => $me, 'week' => $key, 'quest' => $id, 'created_at' => now()]);
 
-            return Members::reward($me, $q['xp'], [], 'quest:'.$a['id']);
+            return Members::reward($me, (int) $q['xp'], [], 'quest:'.$id);
         }, 3);
     }
 

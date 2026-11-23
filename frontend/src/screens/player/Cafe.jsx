@@ -1,7 +1,7 @@
 // کافه‌ی باشگاه در اپ: منو، سفارش و تحویل در کافه یا سر زمین در حین بازی
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
-import { courtById, fa, hourLabel, range, toman, todayKey } from '../../data'
+import { courtById, fa, hourLabel, range, toman, todayKey, clubNowMs } from '../../data'
 import { CAFE_CATS, DRINKS, NOTES, ORDER_FLOW, ORDER_ST, available, cafeCat, fits, moreOf, priceOf, shortage } from '../../cafe'
 import { myBookings, startsAt } from '../../select'
 import { celebrate, chime, haptic } from '../../fx'
@@ -12,7 +12,7 @@ import { Loading, BrandBar } from '../../components/Logo'
 
 // بازی‌های امروز کاربر که هنوز تمام نشده‌اند — برای تحویل سر زمین
 export function courtTargets(club) {
-  return myBookings(club).filter((b) => b.date === todayKey() && b.type !== 'block' && startsAt(b) + b.dur * 36e5 > Date.now() && startsAt(b) - 3 * 36e5 < Date.now())
+  return myBookings(club).filter((b) => b.date === todayKey() && b.type !== 'block' && startsAt(b) + b.dur * 36e5 > clubNowMs() && startsAt(b) - 3 * 36e5 < clubNowMs())
 }
 
 export default function Cafe({ nav }) {
@@ -165,7 +165,11 @@ function Cart({ onClose }) {
   const payOn = !!config?.pay
   const targets = courtTargets(club)
   const [to, setTo] = useState(() => targets[0]?.court || 0)
-  const [method, setMethod] = useState('wallet')
+  // مثل سبد فروشگاه: اگر کیف پول کم است و درگاه فعال است، پیش‌فرض کارت بانکی باشد
+  const [method, setMethod] = useState(() => {
+    const sum = cafeCart.reduce((s, x) => { const it = club.cafeItems.find((y) => y.id === x.iid); return s + (it ? x.qty * priceOf(it, x.big) : 0) }, 0)
+    return wallet >= sum || !payOn ? 'wallet' : 'online'
+  })
   const [busy, setBusy] = useState(false)
   const lines = useMemo(() => cafeCart.map((x) => ({ ...x, it: club.cafeItems.find((y) => y.id === x.iid) })).filter((x) => x.it), [cafeCart, club.cafeItems])
   const total = lines.reduce((s, x) => s + x.qty * priceOf(x.it, x.big), 0)

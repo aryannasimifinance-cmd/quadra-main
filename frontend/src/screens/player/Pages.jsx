@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { BADGES, COACHES, COACH_PACKS, coachesRanked, ratingOf, shownReviews, EVENT_KIND, LEVELS, PACKAGES, RANKS, XP_GUIDE, rankOf, coachPackPrice, coachPacks, dayLabel, dayMonth, fa, fromKey, hourLabel, levelById, short, toman } from '../../data'
+import { BADGES, COACHES, COACH_PACKS, coachesRanked, ratingOf, shownReviews, EVENT_KIND, LEVELS, PACKAGES, RANKS, rankOf, coachPackPrice, coachPacks, dayLabel, dayMonth, fa, fromKey, hourLabel, levelById, levelsText, short, toman } from '../../data'
 import { celebrate, chime, haptic } from '../../fx'
 import { ME, myPoints, useStore } from '../../store'
-import { activeMembership, quests } from '../../select'
+import { activeMembership, quests, xpGuide } from '../../select'
 import { Avatar, Button, Chips, Icon, LevelPill, Photo, Sheet, Stars, TopBar, rise, stagger } from '../../components/ui'
 import { leaderboard } from './Home'
 import { Loading } from '../../components/Logo'
@@ -200,7 +200,7 @@ export function Events({ nav, onBack, kind: initial = 'friday' }) {
                 <div className="ev-txt">
                   <span className={`pill-q ${e.kind === 'official' ? 'gold' : ''}`}>{dayLabel(e.date)} {dayMonth(fromKey(e.date))}، {hourLabel(e.start)}</span>
                   <b>{e.title}</b>
-                  <small>{e.format}، سطح {e.levels.join(' / ')}، جایزه: {e.prize}</small>
+                  <small>{e.format}، سطح {levelsText(e.levels)}، جایزه: {e.prize}</small>
                   <div className="ev-cap"><div className="bar"><i style={{ width: `${Math.min(100, (e.taken / e.cap) * 100)}%` }} /></div><span>{e.taken >= e.cap ? 'تکمیل' : `${fa(e.cap - e.taken)} جای خالی`}</span></div>
                 </div>
                 <em>{mine ? '✓ ثبت‌نام' : short(e.fee)}</em>
@@ -244,7 +244,7 @@ function EventInfo({ ev, onJoin }) {
     <div className="ev-info">
       <div className="ev-meta">
         <span>{dayLabel(ev.date)} {dayMonth(fromKey(ev.date))}، {hourLabel(ev.start)} تا {hourLabel(ev.start + ev.dur)}</span>
-        <span>{ev.desc || EV_FORMAT[ev.format]}، سطح {ev.levels.join(' / ')}</span>
+        <span>{ev.desc || EV_FORMAT[ev.format]}، سطح {levelsText(ev.levels)}</span>
         <span>ورودی {toman(ev.fee)} هر نفر، تیم دونفره؛ جایزه: {ev.prize}</span>
         {ev.note && <span>{ev.note}</span>}
       </div>
@@ -260,7 +260,7 @@ function EventInfo({ ev, onJoin }) {
       {tab === 'teams' && <Teams ev={ev} />}
       {tab === 'groups' && <Groups ev={ev} />}
       {tab === 'ko' && <Bracket ev={ev} />}
-      {isLive(ev) && <div className="ev-cta"><Button full variant="q" disabled={!can} onClick={onJoin}>{mine ? '✓ ثبت‌نام کرده‌اید' : ev.status !== 'open' ? 'ثبت‌نام بسته شد' : ev.regs.length + 2 > ev.cap ? 'ظرفیت تکمیل است' : why === 'level' ? `فقط سطح ${ev.levels.join(' / ')}؛ سطح شما ${user?.level}` : why ? (why === 'age' && !user?.birth ? 'سال تولدتان را در پروفایل وارد کنید' : why === 'gender' && !user?.gender ? 'جنسیت‌تان را در پروفایل وارد کنید' : whyText(ev, why)) : `ثبت‌نام تیم دونفره، ${toman(ev.fee * 2)}`}</Button></div>}
+      {isLive(ev) && <div className="ev-cta"><Button full variant="q" disabled={!can} onClick={onJoin}>{mine ? '✓ ثبت‌نام کرده‌اید' : ev.status !== 'open' ? 'ثبت‌نام بسته شد' : ev.regs.length + 2 > ev.cap ? 'ظرفیت تکمیل است' : why === 'level' ? `فقط سطح ${levelsText(ev.levels)}؛ سطح شما ${user?.level}` : why ? (why === 'age' && !user?.birth ? 'سال تولدتان را در پروفایل وارد کنید' : why === 'gender' && !user?.gender ? 'جنسیت‌تان را در پروفایل وارد کنید' : whyText(ev, why)) : `ثبت‌نام تیم دونفره، ${toman(ev.fee * 2)}`}</Button></div>}
     </div>
   )
 }
@@ -323,16 +323,31 @@ export function Journey({ onBack }) {
           })}
         </div>
 
-        <p className="label">چالش‌های این هفته</p>
-        <div className="jr-quests">
-          {qs.map((q) => (
-            <div key={q.id} className={`jr-q ${q.claimed ? 'done' : ''}`}>
-              <span>{q.icon}</span>
-              <div className="grow"><b>{q.name}</b><small>{q.desc}</small></div>
-              <em>{q.claimed ? '✓' : `+${fa(q.xp)}`}</em>
-            </div>
-          ))}
-        </div>
+        {qs.length > 0 && <>
+          <p className="label">چالش‌ها</p>
+          {/* خلاصه: چند چالش گرفته شده و چقدر XP هنوز مانده */}
+          <div className="jr-qsum">
+            <div><b>{fa(qs.filter((q) => q.claimed).length)}</b><small>از {fa(qs.length)} انجام شده</small></div>
+            <div><b>{fa(qs.filter((q) => q.claimed).reduce((n, q) => n + q.xp, 0))}</b><small>XP گرفته‌اید</small></div>
+            <div><b>{fa(qs.filter((q) => !q.claimed).reduce((n, q) => n + q.xp, 0))}</b><small>XP مانده</small></div>
+          </div>
+          <div className="jr-quests">
+            {[...qs].sort((a, b) => a.claimed - b.claimed || b.ready - a.ready).map((q) => (
+              <div key={q.id} className={`jr-q ${q.claimed ? 'done' : ''} ${q.ready ? 'ready' : ''}`}>
+                <span>{q.icon}</span>
+                <div className="grow">
+                  <b>{q.name}</b><small>{q.desc}</small>
+                  <div className="jr-q-prog">
+                    <i className="jr-q-when">{q.when}</i>
+                    <div className="bar"><motion.i initial={{ width: 0 }} animate={{ width: `${Math.min(1, q.have / q.goal) * 100}%` }} transition={{ duration: 0.8 }} /></div>
+                    <small>{fa(Math.min(q.have, q.goal))}/{fa(q.goal)}</small>
+                  </div>
+                </div>
+                <em>{q.claimed ? '✓ گرفته شد' : q.ready ? <>آماده‌ی دریافت <bdi>+{fa(q.xp)}</bdi></> : <bdi>+{fa(q.xp)} XP</bdi>}</em>
+              </div>
+            ))}
+          </div>
+        </>}
 
         <p className="label">نشان‌ها، هر نشان ۱۵ XP</p>
         <div className="badges">
@@ -350,7 +365,7 @@ export function Journey({ onBack }) {
 
         <div className="xp-guide open">
           <b>چطور XP بگیرم؟</b>
-          {XP_GUIDE.map(([k, v]) => <div key={k}><span>{k}</span><b>{v}</b></div>)}
+          {xpGuide(s.club).map(([k, v]) => <div key={k}><span>{k}</span><b>{v}</b></div>)}
           <p>جدا از رتبه، «سطح بازی» شما (A تا D) فقط برای پیدا کردن هم‌سطح در مچ‌هاست و با XP عوض نمی‌شود.</p>
         </div>
       </div>

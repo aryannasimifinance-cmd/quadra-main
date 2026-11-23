@@ -203,15 +203,36 @@ export function hourLabel(h) {
 }
 export const range = (s, d) => `${hourLabel(s)}–${hourLabel(s + d)}`
 
+// «ساعت باشگاه»: همه‌ی تاریخ‌ها و ساعت‌های رزرو به وقت تهران است، نه ساعت گوشی.
+// clubNow یک Date می‌دهد که فیلدهای محلی‌اش (ساعت، روز…) همان ساعت دیواری تهران است؛
+// clubNowMs همان را به عدد می‌دهد تا با fromKey(…) + ساعت مقایسه شود. اگر گوشی خودش روی وقت ایران باشد اختلاف صفر است.
+let tzShift = 0, tzAt = -1
+const clubShift = () => {
+  const n = Date.now()
+  if (n - tzAt > 60e3) {
+    tzAt = n
+    try { const d = new Date(n); d.setMilliseconds(0); tzShift = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Tehran' })).getTime() - d.getTime() } catch { tzShift = 0 }
+  }
+  return tzShift
+}
+export const clubNowMs = () => Date.now() + clubShift()
+export const clubNow = () => new Date(clubNowMs())
+export const clubHour = () => { const n = clubNow(); return n.getHours() + n.getMinutes() / 60 }
+
 export function nextDays(n = 14, from = 0) {
   const out = []
-  const base = new Date(); base.setHours(0, 0, 0, 0)
+  const base = clubNow(); base.setHours(0, 0, 0, 0)
   for (let i = from; i < from + n; i++) { const d = new Date(base); d.setDate(base.getDate() + i); out.push(d) }
   return out
 }
 export const dayKey = (d) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
-export const todayKey = () => dayKey(new Date())
+export const todayKey = () => dayKey(clubNow())
 export const fromKey = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d) }
+// درخواست مربی که زمانش گذشته دیگر «منتظر تأیید» حساب نمی‌شود (منقضی)
+export const reqExpired = (r) => r.status === 'pending' && fromKey(r.date).getTime() + r.start * 36e5 <= clubNowMs()
+export const reqLive = (r) => r.status === 'pending' && !reqExpired(r)
+// برچسب سطح‌ها (B-، C+) در متن فارسی برعکس نشود: هر کدام جدا چپ‌به‌راست
+export const levelsText = (arr, sep = ' / ') => (arr || []).map((l) => '⁦' + l + '⁩').join(sep)
 export const addDays = (k, n) => { const d = fromKey(k); d.setDate(d.getDate() + n); return dayKey(d) }
 const wd = new Intl.DateTimeFormat('fa-IR', { weekday: 'long' })
 const wds = new Intl.DateTimeFormat('fa-IR', { weekday: 'short' })
@@ -476,7 +497,7 @@ export const RANKS = [
 export const XP_GUIDE = [
   ['رزرو زمین', '۵۰'], ['ساختن بازی باز', '۷۰'], ['پیوستن به بازی باز', '۴۰'], ['جلسه با مربی', '۴۰'],
   ['خرید پکیج ۵ یا ۱۰ جلسه', '۴۰ + ۱۵ برای هر جلسه'], ['ثبت‌نام در مسابقه', '۸۰'], ['هر نشان جدید', '۱۵'],
-  ['چالش‌های هفتگی', '۴۰ تا ۶۰'], ['خرید از فروشگاه', 'از ۱۰ به بالا'], ['عضویت طلایی یا بلک', 'XP دو برابر'],
+  ['چالش‌ها', 'بسته به چالش'], ['خرید از فروشگاه', 'از ۱۰ به بالا'], ['عضویت طلایی یا بلک', 'XP دو برابر'],
 ]
 export function rankOf(xp) {
   let i = 0

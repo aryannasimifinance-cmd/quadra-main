@@ -17,7 +17,7 @@ final class StateBuilder
 {
     /** کلیدهای club که هر بخش همگام‌سازی می‌سازد */
     public const PARTS = [
-        'settings' => ['pricing', 'hours', 'limits', 'hrCfg', 'off', 'courtEdits', 'opening', 'suppliers', 'welcome'],
+        'settings' => ['pricing', 'hours', 'limits', 'hrCfg', 'off', 'courtEdits', 'opening', 'suppliers', 'welcome', 'quests'],
         'members' => ['members', 'memberEdits', 'logins'],
         'coaches' => ['coaches'],
         'bookings' => ['bookings'],
@@ -80,6 +80,8 @@ final class StateBuilder
             'pricing' => Settings::pricing(), 'hours' => Settings::hours(), 'limits' => Settings::limits(),
             'off' => (object) $off, 'courtEdits' => (object) $edits, 'hrCfg' => (object) [], 'opening' => null, 'suppliers' => [],
             'welcome' => Settings::welcome(),
+            // تعریف چالش‌ها برای همه (غیرفعال‌ها را اپ بازیکن نشان نمی‌دهد)
+            'quests' => \App\Domain\Quests::all(),
         ];
         if ($this->role === 'admin') {
             $out['hrCfg'] = Settings::hr();
@@ -460,7 +462,7 @@ final class StateBuilder
         }
         $ms = Members::membership($m->id);
         $quests = [];
-        foreach (DB::table('quest_claims')->where('member_id', $m->id)->where('week', '>=', now()->subDays(60)->format('Y-m-d'))->get() as $q) {
+        foreach (DB::table('quest_claims')->where('member_id', $m->id)->where(fn ($w) => $w->where('week', '>=', now()->subDays(60)->format('Y-m-d'))->orWhere('week', Catalog::QUEST_ONCE))->get() as $q) {
             $quests[$q->week][] = $q->quest;
         }
 
