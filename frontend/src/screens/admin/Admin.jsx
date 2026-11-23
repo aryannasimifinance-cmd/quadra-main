@@ -45,13 +45,13 @@ const NAV = [
   ] },
   { group: 'افراد', items: [
     { id: 'members', name: 'اعضا', icon: 'users', tip: 'بازیکن‌ها، سطح و سابقه‌ی بازی' },
+    { id: 'quests', name: 'چالش‌ها و امتیاز', icon: 'target', tip: 'چالش‌هایی که بازیکن‌ها در اپ می‌بینند و با آن XP می‌گیرند' },
     { id: 'coaches', name: 'مربی‌ها و پکیج‌ها', icon: 'coach', tip: 'کلاس‌ها، امتیاز و درآمد هر مربی' },
     { id: 'coachpanel', name: 'پنل مربی‌ها', icon: 'lock', tip: 'نام کاربری و رمز مربی‌ها، تأیید دسترسی و درخواست‌های رزرو زمین' },
     { id: 'hr', name: 'منابع انسانی', icon: 'shield', tip: 'پرسنل، شیفت، حضور و غیاب، مرخصی و حقوق' },
   ] },
   { group: 'باشگاه', items: [
     { id: 'settings', name: 'تنظیمات', icon: 'cog', tip: 'قیمت ساعت‌ها و فعال یا غیرفعال کردن زمین' },
-    { id: 'quests', name: 'چالش‌ها و امتیاز', icon: 'target', tip: 'چالش‌هایی که بازیکن‌ها در اپ می‌بینند و با آن XP می‌گیرند' },
   ] },
 ]
 const ITEMS = NAV.flatMap((g) => g.items)

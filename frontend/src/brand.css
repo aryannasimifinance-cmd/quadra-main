@@ -196,3 +196,35 @@ body, .sting-word { font-family: 'QFont', system-ui, sans-serif; }
   .tl { -webkit-mask-image: linear-gradient(to left, #000 85%, rgba(0,0,0,.35)); mask-image: linear-gradient(to left, #000 85%, rgba(0,0,0,.35)); }
   .tl::before { content: '← برای ساعت‌های بعد بکشید'; font-size: 11px; color: var(--muted); position: sticky; right: 0; }
 }
+
+/* ============================================================
+   فروشگاه و کافه: زمینه‌ی کرم ملایم به‌جای خط‌های زمین؛ هر کالا داخل یک باکس
+   ============================================================ */
+.app .main:has(.shop, .cafe)::before { display: none; }
+.app .app-scroll:has(.shop, .cafe) { background: #F6F2EA; }
+.app :is(.shop, .cafe) .search { background: #fff !important; box-shadow: inset 0 0 0 1px var(--line) !important; }
+.app .p-card { background: #fff; border: 1px solid #E6E0D4; border-radius: 10px !important; padding: 8px; box-shadow: var(--lift-sm); }
+.app .p-img { border-radius: 6px !important; background: #F3EFE7; }
+.app .p-info { padding: 8px 4px 2px; }
+.app .p-card:active { transform: translateY(1px); box-shadow: none; }
+.app .p-low { top: 46px; right: 16px; z-index: 1; }
+.app :is(.cafe) .menu-row { background: #fff !important; border: 1px solid #E6E0D4; box-shadow: var(--lift-sm) !important; }
+
+/* ============================================================
+   نوار پایین: تب فعال رنگی (کاشی فیروزه‌ای پشت آیکون + میله‌ی رنگی)
+   ============================================================ */
+.app .nav-i .nav-ic { width: 46px; height: 32px; border-radius: 8px !important; transition: background .2s, color .2s, transform .15s; }
+.app .nav-i.on .nav-ic { background: var(--q); color: var(--ink) !important; }
+.app .nav-i.on small { color: var(--q-ink) !important; }
+.app .nav-pill { background: var(--q) !important; }
+.app .nav-i:active .nav-ic { background: var(--q-soft); }
+
+/* ============================================================
+   صفحه‌ی «من»: هر بخش کادر و سایه دارد و با پس‌زمینه قاطی نمی‌شود
+   ============================================================ */
+.app .me2 .page-body > :not(.label):not(p):not(.me-tiles):not(.pc-card):not(.wallet2):not(h1):not(h2):not(h3):not(h4):not(.sec-head):not(details):not(.credits) { background: var(--card); border: 1.5px solid var(--line-strong) !important; border-radius: 10px !important; box-shadow: var(--lift) !important; }
+.app .me2 .page-body > .wallet2 { border: 1.5px solid var(--ink) !important; border-radius: 10px !important; box-shadow: var(--lift) !important; }
+.app .me2 .pc-card { box-shadow: var(--lift) !important; }
+.app .me2 .me-tiles > * { border: 1.5px solid var(--line-strong) !important; box-shadow: var(--lift-sm) !important; }
+.app .me2 .pc-stats { padding: 6px 4px; }
+.app .me2 .me-acts { padding: 4px 10px; }
