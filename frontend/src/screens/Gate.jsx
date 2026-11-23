@@ -5,11 +5,12 @@ import { LEVELS, SIDES, fa, USER_RE, todayKey } from '../data'
 import { celebrate, chime, haptic } from '../fx'
 import { useStore } from '../store'
 import { errText } from '../api'
-import { Button, Icon, LevelPill, TopBar } from '../components/ui'
+import { Button, Icon, LevelPill, Ring } from '../components/ui'
 import { Emblem, Loading, QuadraMark } from '../components/Logo'
 
 const toLatin = (s) => s.replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
 const fa0 = (s) => s.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d])
+
 
 export default function Gate() {
   const { requestOtp, verifyOtp, register, loginWithPass, loginTaken, toast } = useStore()
@@ -53,6 +54,8 @@ export default function Gate() {
     return false
   }
   const progress = { phone: 0, otp: 1, name: 2, about: 3, level: 4, side: 5, cred: 6 }[step]
+  const numbered = progress != null
+  const isLogin = step === 'userlogin' || (mode === 'login' && ['phone', 'otp'].includes(step))
 
   return (
     <div className="auth">
@@ -65,8 +68,19 @@ export default function Gate() {
           {step === 'admin' && <AdminLogin onBack={back} />}
           {step === 'coach' && <AdminLogin coach onBack={back} />}
           {!['welcome', 'done', 'admin', 'coach'].includes(step) && (
-            <div className="auth-card">
-              <TopBar onBack={back} total={step === 'userlogin' ? 0 : 7} step={progress} title={step === 'userlogin' || (mode === 'login' && step === 'phone') ? 'ورود' : 'عضویت در کوادرا'} transparent />
+            <div className="auth-flow">
+              <div className="auth-brand">
+                <QuadraMark size={34} tone="light" />
+                <b>{isLogin ? 'ورود به کوادرا' : 'عضویت در کوادرا'}</b>
+              </div>
+              <div className="auth-card">
+              <div className="auth-head">
+                {numbered ? (
+                  <Ring value={(progress + 1) / 7} size={46} stroke={3.5} track="var(--line)" color="var(--q-ink)"><b className="ah-n">{fa(progress + 1)}</b></Ring>
+                ) : <span className="ah-ic"><Icon name="lock" size={20} /></span>}
+                {numbered ? <div className="ah-track grow">{Array.from({ length: 7 }, (_, i) => <i key={i} className={i < progress ? 'done' : i === progress ? 'on' : ''} />)}</div> : <span className="grow" />}
+                <button className="ah-back" onClick={back} aria-label="بازگشت"><Icon name="back" size={20} /></button>
+              </div>
               {step === 'phone' && <PhoneStep value={form.phone} onChange={(phone) => set({ phone })} onNext={async () => { if (await sendCode()) go('otp') }} mode={mode} onPass={() => go('userlogin')} />}
               {step === 'userlogin' && <UserLogin onLogin={loginWithPass} onPhone={() => go('phone')} />}
               {step === 'otp' && <OtpStep phone={form.phone} debug={otp?.debug} sentAt={otp?.at} onResend={sendCode} onNext={afterOtp} />}
@@ -75,6 +89,7 @@ export default function Gate() {
               {step === 'level' && <LevelStep value={form.level} onChange={(level) => set({ level })} onNext={() => go('side')} />}
               {step === 'side' && <SideStep value={form.side} onChange={(side) => set({ side })} onNext={() => go('cred')} />}
               {step === 'cred' && <CredStep form={form} set={set} taken={(u) => loginTaken(u)} onNext={finish} />}
+              </div>
             </div>
           )}
           {step === 'done' && <Done form={form} onEnter={enter} />}
@@ -186,7 +201,7 @@ function PhoneStep({ value, onChange, onNext: send, mode, onPass }) {
   const pretty = value.replace(/^(\d{4})(\d{0,3})(\d{0,4}).*/, (_, a, b, c) => [a, b, c].filter(Boolean).join(' '))
   return (
     <div className="step-body">
-      <h2>{mode === 'login' ? 'خوش برگشتید 👋' : 'شماره موبایلتون؟'}</h2>
+      <h2>{mode === 'login' ? 'شماره‌ای که با آن عضو شدید' : 'شماره موبایلتون؟'}</h2>
       <p className="muted">یک کد ۴ رقمی براتون پیامک می‌کنیم.</p>
       <label className={`field phone ${valid ? 'ok' : ''}`}>
         <Icon name="phone" />

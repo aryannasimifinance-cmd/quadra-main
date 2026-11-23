@@ -1,6 +1,6 @@
 // اجزای مشترک پنل مدیر
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { fa, todayKey } from '../../data'
 import { PERIODS, ord, period, shiftPeriod } from '../../jalali'
 import { Icon } from '../../components/ui'
@@ -17,31 +17,37 @@ export function Card({ title, sub, right, children, className = '', tip }) {
 export const Status = ({ s }) => <span className={`badge-st ${STATUS[s].cls}`}><i />{STATUS[s].name}</span>
 export const Badge = ({ tone = 'mute', children }) => <span className={`badge-st ${tone}`}><i />{children}</span>
 
-// مبلغ پنهان: ستاره نشان داده می‌شود تا با زدن چشم دیده شود
+// مبلغ‌ها پنهان‌اند تا مدیر با یک دکمه‌ی چشم بالای صفحه همه را با هم نشان دهد
 export const MASK = '✱✱✱✱✱✱'
-export const Eye = ({ on, set }) => (
-  <span role="button" tabIndex={0} className={`eye ${on ? 'on' : ''}`} onClick={(e) => { e.stopPropagation(); set(!on) }} onKeyDown={(e) => e.key === 'Enter' && (e.stopPropagation(), set(!on))} data-tip={on ? 'پنهان کردن مبلغ' : 'نمایش مبلغ'} aria-label={on ? 'پنهان کردن مبلغ' : 'نمایش مبلغ'}>
-    <Icon name={on ? 'eye' : 'eyeOff'} size={16} />
-  </span>
-)
+let revealed = false
+const subs = new Set()
+export const setReveal = (v) => { revealed = v; subs.forEach((f) => f()) }
+export const useReveal = () => useSyncExternalStore((f) => { subs.add(f); return () => subs.delete(f) }, () => revealed)
 
-// یک مبلغ پنهان با چشم کنارش
-export function Secret({ value }) {
-  const [on, set] = useState(false)
-  return <span className={`secret ${on ? 'on' : ''}`}>{on ? value : MASK}<Eye on={on} set={set} /></span>
+// تنها دکمه‌ی نمایش/پنهان مبلغ‌ها، در نوار بالای پنل
+export function RevealToggle() {
+  const on = useReveal()
+  return (
+    <button type="button" className={`reveal-all ${on ? 'on' : ''}`} onClick={() => setReveal(!on)} aria-pressed={on} data-tip={on ? 'همه‌ی مبلغ‌ها پنهان شود' : 'همه‌ی مبلغ‌ها نمایش داده شود'}>
+      <Icon name={on ? 'eye' : 'eyeOff'} size={17} /><span>{on ? 'مبلغ‌ها نمایان' : 'مبلغ‌ها پنهان'}</span>
+    </button>
+  )
 }
-export const EyeMid = ({ set }) => (
-  <button type="button" className="eye-mid" onClick={(e) => { e.stopPropagation(); set(true) }}><span className="eye on"><Icon name="eye" size={18} /></span>نمایش مبلغ‌ها</button>
-)
+
+// یک مبلغ که با دکمه‌ی بالای صفحه نمایان می‌شود
+export function Secret({ value }) {
+  const on = useReveal()
+  return <span className={`secret ${on ? 'on' : ''}`}>{on ? value : MASK}</span>
+}
 
 export function Kpi({ label, value, delta, spark, icon, tone, sub, onClick, tip, secret }) {
   const T = onClick ? 'button' : 'div'
-  const [show, setShow] = useState(false)
+  const show = useReveal()
   const hid = secret && !show
   return (
     <T className={`kpi ${tone || ''} ${onClick ? 'link' : ''} ${secret ? 'kpi-secret' : ''}`} onClick={onClick} data-tip={tip}>
       <div className="kpi-h"><span><Icon name={icon} size={16} />{label}</span>{delta != null && !hid && <em className={delta >= 0 ? 'up' : 'down'}>{delta >= 0 ? '▲' : '▼'} {fa(Math.abs(Math.round(delta)))}٪</em>}</div>
-      {secret ? <div className="kpi-sec"><b className={hid ? 'masked' : ''}>{hid ? MASK : value}</b><Eye on={show} set={setShow} /></div> : <b>{value}</b>}
+      {secret ? <div className="kpi-sec"><b className={hid ? 'masked' : ''}>{hid ? MASK : value}</b></div> : <b>{value}</b>}
       {sub && <small className="kpi-sub">{hid && secret !== 'value' ? MASK : sub}</small>}
       {spark}
     </T>

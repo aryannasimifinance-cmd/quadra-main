@@ -1496,3 +1496,89 @@ input.pb-cell.at:focus { background: var(--card); box-shadow: 0 0 0 1.5px var(--
   .seg-adm button { min-height: 40px; }
 }
 .pb-res { position: absolute; bottom: 100%; left: 0; right: 0; margin-bottom: 1px; text-align: center; font-size: 9.5px; line-height: 1.1; color: #9A978E; font-weight: 500; white-space: nowrap; pointer-events: none; direction: ltr; }
+
+/* ---------- طراحی تازه (سبک): یک چشم برای همه‌ی مبلغ‌ها، منوی کناری و کارت‌ها ---------- */
+.reveal-all { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 14px; border-radius: 12px 12px 12px 4px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; font-weight: 700; color: var(--ink2); white-space: nowrap; transition: background .15s, color .15s, box-shadow .15s; }
+.reveal-all svg { color: var(--muted); }
+.reveal-all:hover { box-shadow: inset 0 0 0 1px var(--ink2); }
+.reveal-all.on { background: var(--q-soft); color: var(--q-ink); box-shadow: inset 0 0 0 1px rgba(0,133,127,.25); }
+.reveal-all.on svg { color: var(--q-ink); }
+@media (max-width: 640px) { .reveal-all span { display: none; } .reveal-all { width: 42px; padding: 0; justify-content: center; } }
+.masked-note { display: flex; align-items: center; gap: 8px; padding: 18px 4px; color: var(--muted); font-size: 13px; }
+.kpi.kpi-secret, .kpi.kpi-secret .kpi-sub { text-align: right; }
+.kpi-sec { justify-content: flex-start; min-height: 0; }
+.kpi b.masked { letter-spacing: 3px; font-size: 16px; color: #B5B0A4; }
+.secret { white-space: nowrap; }
+
+/* کارت‌ها: خط نازک به‌جای سایه، عنوان KPI با نشانگر رنگی */
+.adm-card { box-shadow: inset 0 0 0 1px var(--line); }
+.kpi { box-shadow: inset 0 0 0 1px var(--line); position: relative; overflow: hidden; }
+.kpi.link:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+
+/* منوی کناری: نشانگر باریک به‌جای پس‌زمینه‌ی پررنگ */
+.adm-nav-bg { background: rgba(5,224,218,.1); border-radius: 10px 10px 10px 3px; box-shadow: inset -3px 0 0 var(--q); }
+.adm-side nav button.on { color: #fff; }
+.adm-side nav button.on svg { color: var(--q); }
+.adm-side nav button.on em { background: var(--q); color: var(--ink); }
+.adm-top h1 { font-weight: 700; font-size: 22px; }
+
+/* ============================================================
+   داشبورد مدیر: کمی رنگ و جان، همان ساختار
+   ============================================================ */
+.adm-main { background:
+  radial-gradient(900px 380px at 100% -80px, rgba(5,224,218,.10), transparent 70%),
+  radial-gradient(700px 320px at 0% 0%, rgba(124,108,240,.06), transparent 70%), var(--paper); }
+.adm-top { background: color-mix(in srgb, #fff 72%, transparent); }
+.adm-top h1 { display: flex; align-items: center; gap: 10px; }
+.adm-top h1::before { content: ''; width: 10px; height: 10px; border-radius: 4px 4px 4px 1px; background: var(--q); box-shadow: 0 0 0 4px rgba(5,224,218,.18); }
+
+/* منوی کناری */
+.adm-side { background: linear-gradient(180deg, #121316 0%, #0D0E10 100%); overflow: hidden; }
+.adm-side::before { content: ''; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(5,224,218,.16), transparent 65%); pointer-events: none; }
+.adm-nav-bg { background: linear-gradient(270deg, rgba(5,224,218,.2), rgba(5,224,218,.04)); box-shadow: inset -3px 0 0 var(--q), 0 0 24px rgba(5,224,218,.08); }
+.adm-side nav button { transition: color .2s, transform .2s; }
+.adm-side nav button:hover:not(.on) { transform: translateX(-3px); }
+.adm-av { box-shadow: 0 0 0 3px rgba(5,224,218,.2); }
+
+/* کارت‌ها */
+.adm-card { box-shadow: inset 0 0 0 1px var(--line), 0 1px 2px rgba(20,20,19,.03); transition: box-shadow .25s; }
+.adm-card:hover { box-shadow: inset 0 0 0 1px var(--line), 0 10px 30px rgba(20,20,19,.06); }
+.adm-card-h h3 { display: flex; align-items: center; gap: 8px; }
+.adm-card-h h3::before { content: ''; width: 4px; height: 16px; border-radius: 4px; background: var(--q); }
+
+/* KPI: آیکون رنگی، هاله‌ی ملایم، بالا آمدن با هاور */
+.kpis > .kpi { --tint: #05E0DA; --tint-ink: #00857F; }
+.kpis > .kpi:nth-child(5n+2) { --tint: #F0A040; --tint-ink: #A6620F; }
+.kpis > .kpi:nth-child(5n+3) { --tint: #7C6CF0; --tint-ink: #5243C2; }
+.kpis > .kpi:nth-child(5n+4) { --tint: #E8735A; --tint-ink: #B4462F; }
+.kpis > .kpi:nth-child(5n+5) { --tint: #3E8EDE; --tint-ink: #2466A8; }
+.kpi { transition: transform .2s var(--ease), box-shadow .2s; background: var(--card); }
+.kpi::after { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--tint, var(--q)) 70%, transparent)); opacity: .8; pointer-events: none; }
+.kpi.link:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tint, var(--q)) 45%, transparent), 0 12px 28px rgba(20,20,19,.08); }
+.kpi-h span svg { box-sizing: content-box; padding: 6px; border-radius: 9px 9px 9px 3px; color: var(--tint-ink, var(--q-ink)); background: color-mix(in srgb, var(--tint, var(--q)) 15%, transparent); }
+.kpi b { font-size: 21px; }
+.kpi.warn { background: var(--card); }
+.kpi.warn b { color: #A6620F; }
+
+/* راهنمای بالای هر بخش */
+.guide { background: linear-gradient(90deg, rgba(5,224,218,.05), rgba(5,224,218,.14)); box-shadow: inset 0 0 0 1px rgba(0,133,127,.12); border-radius: 14px 14px 14px 4px; }
+.guide svg { color: var(--q-ink); }
+
+/* دریافت‌های امروز: سه کاشی با رنگ خودشان */
+.ti-ch > div { transition: transform .2s var(--ease); }
+.ti-ch > div:nth-child(1) { background: linear-gradient(160deg, #EEF0FF, #F7F7FF); }
+.ti-ch > div:nth-child(2) { background: linear-gradient(160deg, #E3FAF8, #F4FCFB); }
+.ti-ch > div:nth-child(3) { background: linear-gradient(160deg, #FFF3DF, #FFFAF1); }
+.ti-ch > div:hover { transform: translateY(-2px); }
+
+/* کارهای مانده */
+.alert { transition: background .2s, transform .2s; background: var(--paper); }
+.alert:hover { background: #fff; transform: translateX(-3px); box-shadow: inset 0 0 0 1px var(--line); }
+.al-ic.b { background: #EEF0FF; color: #5243C2; }
+
+/* دکمه‌ها */
+.adm-btn { transition: transform .15s, box-shadow .2s, filter .15s; }
+.adm-btn.primary { background: linear-gradient(180deg, #232320, var(--ink)); box-shadow: 0 6px 16px rgba(20,20,19,.18); }
+.adm-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(20,20,19,.24); }
+.adm-tabs button.on::after { box-shadow: 0 0 10px rgba(5,224,218,.5); }
+.seg-adm button.on { box-shadow: 0 2px 8px rgba(0,0,0,.08); color: var(--q-ink); }

@@ -1,0 +1,266 @@
+/* ============================================================
+   لایه‌ی طراحی تازه‌ی کوادرا — فقط ظاهر؛ رفتار و فلوها دست نخورده
+   امضای شکل: باکس‌ها گرد با یک گوشه‌ی تیز (پایین چپ)
+   ============================================================ */
+:root {
+  --leaf: 20px 20px 20px 5px;
+  --leaf-sm: 13px 13px 13px 4px;
+  --line-strong: #D8D3C7;
+}
+body { letter-spacing: 0; }
+
+/* ---------- چیپ‌ها: از قرص به مستطیل نرم ---------- */
+.chip, .chip-bg { border-radius: var(--leaf-sm); }
+.chip { height: 38px; font-weight: 500; }
+.chip.on .chip-t { font-weight: 700; }
+.crumbs span { border-radius: 8px 8px 8px 3px; }
+.pill-q, .pill-ink { border-radius: 7px 7px 7px 2px; }
+
+/* دکمه‌ها کمی پهن‌تر و با وزن خط بیشتر */
+.btn { letter-spacing: 0; }
+.btn-ghost { box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+
+/* نوار مراحل بالای صفحه: یک خط پیوسته به‌جای تکه‌ها */
+.steps { gap: 0; padding-inline: 18px; }
+.step-seg { height: 3px; border-radius: 0; background: var(--line); }
+.step-seg:first-child { border-radius: 0 3px 3px 0; }
+.step-seg:last-child { border-radius: 3px 0 0 3px; }
+.step-fill { background: var(--q-ink); }
+
+/* ============================================================
+   رزرو: مرحله‌ی «کِی؟»
+   ============================================================ */
+.when { display: grid; gap: 6px; }
+
+/* مراحل: یک خط باریک شماره‌دار */
+.process { display: flex; align-items: center; gap: 0; padding: 0 2px; margin: 2px 0 4px; }
+.pr-step { display: flex; align-items: center; gap: 6px; flex: 1 1 auto; position: relative; color: var(--muted); }
+.pr-step span { width: 20px; height: 20px; border-radius: 6px 6px 6px 2px; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--paper2); color: var(--muted); flex-shrink: 0; }
+.pr-step b { font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+.pr-step:last-child { flex: 0 0 auto; }
+.pr-step:not(:last-child)::after { content: ''; flex: 1; height: 1px; min-width: 6px; margin-inline: 6px; background: var(--line-strong); }
+.pr-step.on { color: var(--ink); }
+.pr-step.on span { background: var(--ink); color: var(--q); }
+.pr-step.on b { font-weight: 700; }
+
+/* کارت تاریخ: تیره، روز انتخاب‌شده بزرگ، نوار روزها زیرش */
+.date-deck { position: relative; margin-top: 8px; padding: 18px 0 14px; border-radius: 26px 26px 26px 6px; background: var(--ink); color: #F2F2F0; overflow: hidden; }
+.dd-head { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0 18px 14px; }
+.dd-big { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.dd-big > b { font-size: 58px; line-height: .9; font-weight: 700; color: var(--q); letter-spacing: -1px; }
+.dd-big > div { display: grid; line-height: 1.35; }
+.dd-big span { font-size: 19px; font-weight: 700; }
+.dd-big span em { font-style: normal; font-weight: 300; opacity: .65; margin-inline-start: 6px; font-size: 15px; }
+.dd-big small { font-size: 12.5px; opacity: .55; }
+.cal-btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: var(--leaf-sm); background: rgba(255,255,255,.08); color: #fff; font-size: 12px; font-weight: 700; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); flex-shrink: 0; }
+.cal-btn svg { color: var(--q); }
+
+.days { position: relative; display: flex; gap: 4px; overflow-x: auto; padding: 0 14px; scrollbar-width: none; }
+.days::-webkit-scrollbar { display: none; }
+.day { position: relative; flex: 0 0 46px; height: 76px; border-radius: 14px 14px 14px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: rgba(255,255,255,.88); }
+.day small { position: relative; font-size: 11px; font-weight: 700; opacity: .45; }
+.day b { position: relative; font-size: 19px; font-weight: 500; line-height: 1.1; }
+.day i { position: relative; width: 4px; height: 4px; border-radius: 50%; background: transparent; margin-top: 3px; }
+.day.we i { background: var(--clay); }
+.day-bg { position: absolute; inset: 0; border-radius: 14px 14px 14px 4px; background: var(--q); }
+.day.on { color: var(--ink); }
+.day.on small { opacity: .7; }
+.day.on b { font-weight: 700; }
+.day.on.we i { background: var(--ink); }
+
+/* بازه‌های روز: کاشی با ساعت و تعداد آزاد */
+.dparts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.dpart { position: relative; display: grid; justify-items: start; gap: 1px; padding: 12px 10px 10px; border-radius: 16px 16px 16px 4px; background: var(--card); box-shadow: inset 0 0 0 1.5px var(--line); text-align: right; transition: background .2s, box-shadow .2s, color .2s; }
+.dpart svg { color: var(--muted); margin-bottom: 4px; }
+.dpart b { font-size: 14px; }
+.dpart small { font-size: 10.5px; color: var(--muted); }
+.dpart em { font-style: normal; font-size: 10.5px; font-weight: 700; color: var(--q-ink); margin-top: 6px; }
+.dpart.none em { color: var(--muted); font-weight: 500; }
+.dpart.any { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; }
+.dpart.any em { margin: 0; }
+.dpart.on { background: var(--ink); color: #fff; box-shadow: none; }
+.dpart.on svg { color: var(--q); }
+.dpart.on small { color: rgba(255,255,255,.55); }
+.dpart.on em { color: var(--q); }
+
+/* تقویم ماه داخل شیت */
+.mcal-m { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.mcal-m::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.mcal-grid { gap: 6px; }
+.mcal-grid button { height: 44px; border-radius: 12px 12px 12px 3px; box-shadow: none; background: var(--card); font-weight: 500; }
+.mcal-grid button.on { background: var(--q); color: var(--ink); font-weight: 700; }
+.mcal-grid button.full { opacity: .3; text-decoration: line-through; }
+
+/* ============================================================
+   ورود و عضویت
+   ============================================================ */
+.auth-pane:not(.welcome) { padding: 0; }
+.auth-flow { display: flex; flex-direction: column; min-height: 100%; }
+
+.auth-card { margin: 0; border-radius: 30px 30px 0 0; padding: 4px 22px calc(28px + env(safe-area-inset-bottom)); box-shadow: 0 -24px 60px rgba(0,0,0,.35); }
+
+.step-body { gap: 16px; padding-top: 4px; }
+.step-body h2 { font-size: 25px; font-weight: 700; line-height: 1.4; }
+.step-body > .muted { margin-top: -10px; font-size: 13.5px; }
+
+/* فیلدها: خط زیرین به‌جای جعبه */
+.field { height: 60px; padding: 0 2px; background: transparent; border-radius: 0; box-shadow: inset 0 -2px 0 var(--line-strong); }
+.field:focus-within { box-shadow: inset 0 -2px 0 var(--ink); }
+.field.ok { box-shadow: inset 0 -2px 0 var(--q-ink); }
+.field.bad { box-shadow: inset 0 -2px 0 var(--danger); }
+.field input { font-size: 18px; }
+.field.phone input { font-size: 24px; letter-spacing: 3px; font-weight: 500; }
+.field-ok { border-radius: 8px 8px 8px 2px; }
+.field.dark { background: transparent; box-shadow: inset 0 -1.5px 0 rgba(255,255,255,.2); }
+.field.dark:focus-within { box-shadow: inset 0 -2px 0 var(--q); }
+
+/* کد تأیید: خانه‌های خط‌دار */
+.otp { gap: 14px; margin: 6px 0; }
+.otp input { border: 0; outline: none; -webkit-appearance: none; width: 58px; height: 72px; border-radius: 0; background: transparent; box-shadow: inset 0 -3px 0 var(--line-strong); font-size: 34px; }
+.otp input:focus { box-shadow: inset 0 -3px 0 var(--ink); }
+.otp input.filled { box-shadow: inset 0 -3px 0 var(--q-ink); color: var(--ink); }
+
+/* انتخاب‌ها در ثبت‌نام */
+.level-row, .quiz-a, .side-opt, .gender-pick button { box-shadow: inset 0 0 0 1.5px var(--line); }
+.level-row.on, .quiz-a.on, .side-opt.on, .gender-pick button.on { box-shadow: inset 0 0 0 2px var(--ink), 0 6px 18px rgba(20,20,19,.08); }
+.quiz-cta { background: var(--ink); color: #fff; }
+.quiz-cta svg { color: var(--q); }
+.quiz-bar { height: 3px; }
+.lvl-check { border-radius: 8px 8px 8px 2px; background: var(--q); color: var(--ink); }
+
+/* پنل ورود مدیر و مربی */
+.admin-card { border-radius: 28px 28px 28px 6px; }
+
+/* ============================================================
+   ناوبری پایین
+   ============================================================ */
+.fab { border-radius: 20px 20px 20px 6px; }
+.sheet { border-radius: 28px 28px 0 0; }
+.sheet-grip { width: 36px; height: 4px; }
+
+/* ---------- چیدمان ورود و عضویت: برند بالا، کارت روشن شناور، حلقه‌ی پیشرفت ---------- */
+.auth-flow { padding: 22px 16px calc(16px + env(safe-area-inset-bottom)); gap: 14px; }
+.auth-brand { flex: 1; display: flex; align-items: flex-end; gap: 12px; padding: 0 8px 4px; color: #fff; }
+.auth-brand b { font-size: 19px; font-weight: 700; }
+.auth-card { background: #FBFAF6; border-radius: 28px 28px 28px 8px; padding: 16px 18px 22px; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+.auth-head { display: flex; align-items: center; gap: 14px; }
+.ah-n { font-size: 17px; font-weight: 700; color: var(--ink); }
+.ah-ic { width: 46px; height: 46px; border-radius: 14px 14px 14px 4px; display: grid; place-items: center; background: var(--q-soft); color: var(--q-ink); flex-shrink: 0; }
+.ah-back { width: 40px; height: 40px; border-radius: 12px 12px 12px 4px; display: grid; place-items: center; color: var(--ink2); background: var(--paper2); flex-shrink: 0; }
+.ah-back:hover { background: var(--line); }
+.ah-track { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.ah-track i { height: 4px; border-radius: 4px; background: var(--line); transition: background .3s; }
+.ah-track i.done { background: rgba(0,133,127,.4); }
+.ah-track i.on { background: var(--q-ink); }
+.auth-card .step-body { padding-top: 18px; }
+.auth-card .step-body h2 { font-size: 22px; }
+
+/* ---------- پس‌زمینه‌ی ملایم صفحه‌ی رزرو ---------- */
+.wizard { position: relative; isolation: isolate; }
+.wz-bg { position: absolute; left: 0; right: 0; bottom: -110px; height: 600px; z-index: -1; pointer-events: none; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 55%); mask-image: linear-gradient(180deg, transparent 0%, #000 55%); }
+.wz-bg img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 70%; filter: blur(3px) grayscale(.5) contrast(.9); opacity: .2; transform: scale(1.08); }
+.wz-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, var(--paper) 0%, transparent 45%); }
+
+/* ============================================================
+   صفحه‌ی «من»: کارت بازیکن
+   ============================================================ */
+.me2 .pc { padding: 14px 16px 0; }
+.pc-card { position: relative; overflow: hidden; padding: 20px 18px 16px; border-radius: 26px 26px 26px 6px; background: #FBFAF6; box-shadow: inset 0 0 0 1px var(--line), 0 14px 40px rgba(20,20,19,.07);
+  background-image: linear-gradient(90deg, transparent calc(50% - .5px), rgba(0,133,127,.08) calc(50% - .5px), rgba(0,133,127,.08) calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(0deg, transparent calc(62% - .5px), rgba(0,133,127,.08) calc(62% - .5px), rgba(0,133,127,.08) calc(62% + .5px), transparent calc(62% + .5px)); }
+.pc-card::before { content: ''; position: absolute; top: 0; right: 0; left: 0; height: 5px; background: var(--q); }
+.pc-jersey { position: absolute; left: 14px; top: 8px; font-size: 92px; line-height: 1; font-weight: 700; color: transparent; -webkit-text-stroke: 1.5px rgba(0,133,127,.22); direction: ltr; pointer-events: none; }
+.pc-top { position: relative; display: flex; align-items: center; gap: 14px; }
+.pc-top .avatar { border-radius: 18px 18px 18px 5px !important; box-shadow: 0 0 0 3px #FBFAF6, 0 0 0 4.5px var(--q); }
+.pc-top small { font-size: 11px; color: var(--q-ink); font-weight: 700; letter-spacing: .2px; }
+.pc-top h2 { font-size: 24px; font-weight: 700; line-height: 1.3; }
+.pc-tags { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.pc-tags > span { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 9px 9px 9px 3px; background: var(--paper2); font-size: 12px; font-weight: 500; color: var(--ink2); }
+.pc-tags .pc-lvl { padding-inline-start: 3px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
+.pc-tags .pc-rank { color: var(--rc); background: transparent; box-shadow: inset 0 0 0 1.5px var(--rc); font-weight: 700; }
+.pc-xp { position: relative; margin-top: 16px; }
+.pc-xp-bar { height: 8px; border-radius: 8px; background: var(--paper2); overflow: hidden; }
+.pc-xp-bar i { display: block; height: 100%; border-radius: 8px; background: repeating-linear-gradient(-45deg, var(--q) 0 6px, #3DE9E4 6px 12px); }
+.pc-xp-t { display: flex; align-items: baseline; justify-content: space-between; margin-top: 6px; }
+.pc-xp-t b { font-size: 13px; } .pc-xp-t small { font-size: 11.5px; color: var(--muted); }
+
+.pc-stats { display: grid; grid-template-columns: repeat(4, 1fr); margin: 14px 4px 4px; }
+.pc-stats button { display: grid; justify-items: center; gap: 0; padding: 6px 0; position: relative; }
+.pc-stats button:not(:last-child)::after { content: ''; position: absolute; left: 0; top: 18%; bottom: 18%; width: 1px; background: var(--line-strong); }
+.pc-stats b { font-size: 22px; font-weight: 700; line-height: 1.3; }
+.pc-stats small { font-size: 11px; color: var(--muted); }
+
+.me2 .page-body { gap: 12px; padding-top: 10px; }
+
+/* کیف پول: بلیت دوتکه */
+.wallet2 { position: relative; display: flex; align-items: stretch; border-radius: 20px 20px 20px 5px; background: var(--ink); color: #fff; overflow: hidden; }
+.wallet2 .grow { padding: 14px 18px; display: grid; gap: 2px; }
+.wallet2 small { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,.55); }
+.wallet2 small svg { color: var(--q); }
+.wallet2 b { font-size: 22px; font-weight: 700; }
+.w2-top { position: relative; width: 92px; display: grid; place-items: center; align-content: center; gap: 2px; background: var(--q); color: var(--ink); font-size: 12px; font-weight: 700; }
+.w2-top::before { content: ''; position: absolute; right: -1px; top: 8px; bottom: 8px; border-right: 2px dashed var(--ink); }
+
+/* دارایی‌ها: یک کارت با سه ردیف */
+.assets2 { display: grid; border-radius: 18px 18px 18px 5px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.assets2 button { display: flex; align-items: center; gap: 10px; padding: 12px 16px; font-size: 13.5px; text-align: right; }
+.assets2 button + button { border-top: 1px solid var(--line); }
+.assets2 svg { color: var(--q-ink); flex-shrink: 0; }
+.assets2 span { flex: 1; color: var(--ink2); }
+.assets2 b { font-size: 16px; min-width: 28px; text-align: center; padding: 2px 8px; border-radius: 8px 8px 8px 2px; background: var(--paper2); }
+.assets2 button.gold svg { color: #B8860B; } .assets2 button.gold b { background: #FBEBC0; color: #8A6400; }
+
+/* مسیر باشگاه: نردبان رتبه‌ها */
+.jr2 { display: grid; gap: 12px; padding: 14px 16px 16px; border-radius: 18px 18px 18px 5px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); text-align: right; }
+.jr2-h { display: flex; align-items: baseline; justify-content: space-between; }
+.jr2-h b { font-size: 15px; } .jr2-h small { font-size: 12px; color: var(--muted); }
+.jr2-ladder { display: flex; align-items: flex-end; gap: 4px; height: 44px; }
+.jr2-ladder i { position: relative; flex: 1; border-radius: 5px 5px 5px 2px; background: var(--paper2); }
+.jr2-ladder i:nth-child(1) { height: 30%; } .jr2-ladder i:nth-child(2) { height: 42%; } .jr2-ladder i:nth-child(3) { height: 54%; } .jr2-ladder i:nth-child(4) { height: 66%; } .jr2-ladder i:nth-child(5) { height: 78%; } .jr2-ladder i:nth-child(6) { height: 90%; } .jr2-ladder i:nth-child(n+7) { height: 100%; }
+.jr2-ladder i.done { background: color-mix(in srgb, var(--c) 45%, transparent); }
+.jr2-ladder i.on { background: var(--c); box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--c); }
+.jr2-ladder em { position: absolute; bottom: calc(100% + 4px); right: 50%; transform: translateX(50%); font-style: normal; font-size: 10.5px; font-weight: 700; white-space: nowrap; color: var(--ink); }
+
+/* میان‌برها: کاشی‌های دوستونه */
+.me-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.me-tiles button { display: grid; justify-items: start; gap: 10px; padding: 14px 12px; border-radius: 16px 16px 16px 4px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); text-align: right; font-size: 12.5px; font-weight: 700; color: var(--ink2); }
+.me-tiles svg { color: var(--q-ink); }
+.me-acts { display: grid; gap: 2px; margin-top: 4px; }
+.me-acts button { display: flex; align-items: center; gap: 10px; padding: 12px 6px; font-size: 14px; color: var(--ink2); }
+.me-acts button span { flex: 1; text-align: right; }
+.me-acts button.danger { color: var(--danger); }
+
+/* بازه‌های روز: هر کدام رنگ آسمان همان ساعت */
+.dp-morning { --sky: #F6C945; --sky-ink: #3D2F00; --sky-sub: rgba(61,47,0,.6); }
+.dp-noon    { --sky: #F08A3C; --sky-ink: #fff;    --sky-sub: rgba(255,255,255,.75); }
+.dp-evening { --sky: #4C8FD6; --sky-ink: #fff;    --sky-sub: rgba(255,255,255,.75); }
+.dp-night   { --sky: #1C2B52; --sky-ink: #fff;    --sky-sub: rgba(255,255,255,.6); }
+.dpart:not(.any) svg { color: var(--sky); }
+.dp-night:not(.on) svg { color: #3A5598; }
+.dpart:not(.any).on { background: var(--sky); color: var(--sky-ink); box-shadow: 0 10px 24px color-mix(in srgb, var(--sky) 40%, transparent); }
+.dpart:not(.any).on svg, .dpart:not(.any).on em { color: var(--sky-ink); }
+.dpart:not(.any).on small { color: var(--sky-sub); }
+.dp-night.on { background: linear-gradient(160deg, #24386A, #121C38); }
+
+/* محتوای مرحله‌ی «کِی؟» وسط فضای خالی صفحه */
+.app-scroll { container-type: size; }
+.wz-body:has(> .when) { padding-bottom: 60px; }
+.when { min-height: calc(100cqh - 265px); align-content: center; }
+
+/* ---------- لوگو بالای صفحه‌ها ---------- */
+.brand-bar { display: flex; align-items: center; gap: 10px; color: var(--ink); }
+.brand-bar::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.brand-bar .logo-word { font-size: 12px; letter-spacing: .3em; }
+.me2 .brand-bar { padding: 4px 4px 12px; }
+.topbar-logo { width: 42px; height: 42px; display: grid; place-items: center; flex-shrink: 0; opacity: .9; }
+
+/* ---------- نوار پایین: دکمه‌ی فعال کاملاً مشخص ---------- */
+.nav-i { transition: color .2s; }
+.nav-i:active .nav-ic { transform: scale(.9); }
+.nav-ic { transition: transform .15s, color .2s; }
+.nav-pill { top: 0; width: 54px; height: 32px; border-radius: 99px; background: var(--q-soft); box-shadow: none; }
+.nav-i.on .nav-ic { color: var(--q-ink); }
+.nav-i.on small { color: var(--q-ink); font-weight: 700; }
+.nav-i:not(.on):hover { color: var(--ink2); }
+.fab.on { box-shadow: 0 12px 30px rgba(5,224,218,.45), 0 0 0 6px var(--paper); }

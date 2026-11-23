@@ -6,7 +6,7 @@ import { celebrate, chime, haptic } from '../../fx'
 import { useStore } from '../../store'
 import { Button, Chips, Icon, Sheet, Stepper } from '../../components/ui'
 import { MerchArt, ProductImage } from '../../components/Merch'
-import { Loading } from '../../components/Logo'
+import { Loading, BrandBar } from '../../components/Logo'
 import { ShopSwitch } from './Cafe'
 
 const PRICES = [
@@ -50,6 +50,7 @@ export default function Shop({ nav }) {
   return (
     <div className="page shop">
       <header className="page-head">
+        <BrandBar />
         <ShopSwitch value="shop" nav={nav} />
         <div className="row-between">
           <h1>فروشگاه</h1>

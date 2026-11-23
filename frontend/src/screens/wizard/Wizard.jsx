@@ -56,6 +56,7 @@ export default function Wizard({ preset = {}, onClose, onDone, onStep }) {
   return (
     <div className={`wizard ${step === 'intent' ? 'fit' : ''}`}>
       <TopBar onBack={i > 0 ? back : null} title={TITLES[step]} step={i} total={flow.length} />
+      {step !== 'intent' && <div className="wz-bg" aria-hidden="true"><img src="./img/court-blue.jpg" alt="" /></div>}
       {i > 0 && <Crumbs w={w} step={step} />}
       <AnimatePresence mode="wait" custom={dir}>
         <motion.div key={step} className={`wz-body ${step === 'intent' ? 'fit' : ''}`} custom={dir}
@@ -112,6 +113,8 @@ function StepIntent({ onPick }) {
   )
 }
 
+const WD1 = ['ی', 'د', 'س', 'چ', 'پ', 'ج', 'ش']
+// نوار روزها: ستون‌های باریک مثل خط‌کش، روز انتخاب‌شده با رنگ برند
 function DayPicker({ value, onChange }) {
   const days = useMemo(() => {
     const d = nextDays(14)
@@ -122,10 +125,11 @@ function DayPicker({ value, onChange }) {
       {days.map((d) => {
         const k = dayKey(d), on = value === k
         return (
-          <motion.button key={k} className={`day ${on ? 'on' : ''} ${d.getDay() === 4 || d.getDay() === 5 ? 'we' : ''}`} whileTap={{ scale: 0.9 }} onClick={() => { haptic(6); onChange(k) }}>
+          <motion.button key={k} className={`day ${on ? 'on' : ''} ${isWeekend(d) ? 'we' : ''}`} whileTap={{ scale: 0.9 }} onClick={() => { haptic(6); onChange(k) }}>
             {on && <motion.span layoutId="day-bg" className="day-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
-            <small>{dayLabel(d)}</small>
+            <small>{WD1[d.getDay()]}</small>
             <b>{dayNum(d)}</b>
+            <i />
           </motion.button>
         )
       })}
@@ -133,13 +137,13 @@ function DayPicker({ value, onChange }) {
   )
 }
 
-// مراحل رزرو زمین — توضیح ساده‌ی فرایند
+// مراحل رزرو زمین — یک خط باریک بالای صفحه
 function Process() {
   const steps = [['روز و ساعت', 'یک یا چند ساعت پشت هم'], ['زمین', 'از بین ۴ زمین'], ['یارها', 'از اعضا یا با لینک دعوت'], ['پرداخت', 'کل مبلغ یا سهم خودتان']]
   return (
     <div className="process">
       {steps.map(([t, d], i) => (
-        <div key={t} className={`pr-step ${i === 0 ? 'on' : ''}`}><span>{fa(i + 1)}</span><b>{t}</b><small>{d}</small></div>
+        <div key={t} className={`pr-step ${i === 0 ? 'on' : ''}`} title={d}><span>{fa(i + 1)}</span><b>{t}</b></div>
       ))}
     </div>
   )
@@ -189,26 +193,47 @@ function MonthCal({ value, onPick }) {
   )
 }
 
+const DP_ICON = { morning: 'sun', noon: 'sun', evening: 'sun', night: 'moon' }
 function StepWhen({ w, set, onNext }) {
   const { club, user } = useStore()
   const [cal, setCal] = useState(false)
-  const dp = DAYPARTS.find((d) => d.id === w.daypart)
-  const count = useMemo(() => {
-    if (w.intent === 'match') return openGames(club, user.level, { date: w.date }).filter((g) => !g.mine && g.start >= dp.from && g.start < dp.to).length
-    return COURTS.reduce((n, c) => n + freeStarts(club, w.date, c.id, 1, dp.from, dp.to).length, 0)
-  }, [w.date, w.daypart, w.intent, club])
+  // تعداد ساعت آزاد (یا بازی باز) در هر بازه‌ی روز، برای نمایش روی کاشی‌ها
+  const counts = useMemo(() => Object.fromEntries(DAYPARTS.map((dp) => [dp.id, w.intent === 'match'
+    ? openGames(club, user.level, { date: w.date }).filter((g) => !g.mine && g.start >= dp.from && g.start < dp.to).length
+    : COURTS.reduce((n, c) => n + freeStarts(club, w.date, c.id, 1, dp.from, dp.to).length, 0)])), [w.date, w.intent, club])
+  const count = counts[w.daypart]
+  const d = fromKey(w.date)
+  const unit = w.intent === 'match' ? 'بازی' : 'ساعت'
   return (
     <div className="when">
       {w.intent === 'court' && <Process />}
-      <section>
-        <div className="label-row">
-          <p className="label">روز</p>
-          <button className="cal-btn" onClick={() => { haptic(6); setCal(true) }}><Icon name="cal" size={16} /> تقویم هفته‌ی بعد و ماه</button>
+      <section className="date-deck">
+        <div className="dd-head">
+          <AnimatePresence mode="wait">
+            <motion.div key={w.date} className="dd-big" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.16 }}>
+              <b>{dayNum(d)}</b>
+              <div><span>{dayLabel(d)}{dayLabel(d) !== weekday(d) && <em>{weekday(d)}</em>}</span><small>{pMonth.format(d)}</small></div>
+            </motion.div>
+          </AnimatePresence>
+          <button className="cal-btn" onClick={() => { haptic(6); setCal(true) }}><Icon name="cal" size={16} /><span>ماه کامل</span></button>
         </div>
         <DayPicker value={w.date} onChange={(date) => set({ date, start: null })} />
       </section>
-      <section><p className="label">چه ساعتی؟</p>
-        <Chips id="dp" options={DAYPARTS.map((d) => ({ id: d.id, name: d.name }))} value={w.daypart} onChange={(daypart) => set({ daypart, start: null })} />
+      <section>
+        <p className="label">چه ساعتی؟</p>
+        <div className="dparts">
+          {DAYPARTS.map((dp) => {
+            const on = w.daypart === dp.id, n = counts[dp.id]
+            return (
+              <motion.button key={dp.id} className={`dpart dp-${dp.id} ${dp.id === 'any' ? 'any' : ''} ${on ? 'on' : ''} ${n ? '' : 'none'}`} whileTap={{ scale: 0.95 }} onClick={() => { haptic(6); set({ daypart: dp.id, start: null }) }}>
+                {dp.id !== 'any' && <Icon name={DP_ICON[dp.id]} size={18} />}
+                <b>{dp.name}</b>
+                {dp.id !== 'any' && <small>{fa(dp.from)} تا {fa(dp.to)}</small>}
+                <em>{n ? `${fa(n)} ${unit}` : 'پر'}</em>
+              </motion.button>
+            )
+          })}
+        </div>
       </section>
       {w.intent !== 'court' && <p className="hint">{w.intent === 'match' ? '⚡ بازی‌هایی که نزدیک به سطح شما هستند اول نمایش داده می‌شوند.' : '🧢 جلسه‌ی مربی ۶۰ دقیقه است.'}</p>}
       <CtaBar>
@@ -272,12 +297,12 @@ function StepSlot({ w, set, onNext }) {
 
   return (
     <div className="slot">
-      <p className="slot-help">{isCoach ? 'یک ساعت آزاد را انتخاب کنید.' : `روی یک ساعت بزنید. برای بیشتر، ساعت قبل یا بعدش را هم بزنید (تا ${fa(maxRun)} ساعت). با زدن دوباره، آن ساعت برداشته می‌شود.`}</p>
+      <p className="slot-help"><Icon name="bolt" size={14} />{isCoach ? 'یک ساعت آزاد را انتخاب کنید.' : `روی یک ساعت بزنید. برای بیشتر، ساعت قبل یا بعدش را هم بزنید (تا ${fa(maxRun)} ساعت). با زدن دوباره، آن ساعت برداشته می‌شود.`}</p>
       <div className="slot-courts">
         <span />
         {COURTS.map((c) => (
           <div key={c.id} className={`sc-head ${w.court === c.id && w.start != null ? 'on' : ''} ${club.off[c.id] ? 'off' : ''}`}>
-            <img src={c.img} alt="" loading="lazy" /><b>{fa(c.id)}</b><small>زمین</small>
+            <img src={c.img} alt="" loading="lazy" /><small>زمین</small><b>{fa(c.id)}</b>
           </div>
         ))}
       </div>
@@ -293,14 +318,14 @@ function StepSlot({ w, set, onNext }) {
               const cls = sel ? `sel ${inSel(c.id, h - 1) ? 'jt' : ''} ${inSel(c.id, h + 1) ? 'jb' : ''}` : ok ? 'free' : `busy ${bk || ''}`
               return (
                 <button key={c.id} className={`cell ${cls}`} disabled={!ok} onClick={() => tap(c.id, h)}>
-                  {sel ? <Icon name="check" size={16} stroke={3} /> : ok ? <span>{fa(isCoach ? coachById(w.coachId).price : priceFor(w.date, h, 1, club.pricing))}</span> : bk === 'friday' ? <span>آدینه</span> : bk === 'fix' ? <span>تعمیرات</span> : null}
+                  {sel ? <Icon name="check" size={16} stroke={3} /> : ok ? <span>{fa((isCoach ? coachById(w.coachId).price : priceFor(w.date, h, 1, club.pricing)) / 1000)}</span> : bk === 'friday' ? <span>آدینه</span> : bk === 'fix' ? <span>تعمیرات</span> : null}
                 </button>
               )
             })}
           </div>
         ))}
       </div>
-      <p className="slot-legend"><i className="lg free" /> آزاد، {isCoach ? 'قیمت جلسه (تومان)' : 'قیمت هر ساعت زمین (تومان)'} <i className="lg sel" /> انتخاب شما <i className="lg busy" /> رزرو شده <i className="lg friday" /> آدینه <i className="lg fix" /> تعمیرات{showPeak && <> <i className="lg peak" /> پیک</>}</p>
+      <p className="slot-legend"><i className="lg free" /> آزاد، {isCoach ? 'قیمت جلسه (هزار تومان)' : 'قیمت هر ساعت (هزار تومان)'} <i className="lg sel" /> انتخاب شما <i className="lg busy" /> رزرو شده <i className="lg friday" /> آدینه <i className="lg fix" /> تعمیرات{showPeak && <> <i className="lg peak" /> پیک</>}</p>
       <AnimatePresence>
         {w.start != null && (
           <motion.div className="sel-sum" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>

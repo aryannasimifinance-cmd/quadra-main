@@ -26,6 +26,11 @@ export function QuadraMark({ size = 40, tone = 'light', style }) {
   )
 }
 
+// نوار باریک لوگو بالای صفحه‌های اپ
+export function BrandBar() {
+  return <div className="brand-bar"><Logo size={12} tone="dark" /></div>
+}
+
 export function Logo({ size = 22, tone = 'dark', word = true }) {
   return (
     <span className={`logo ${tone}`} style={{ fontSize: size }}>

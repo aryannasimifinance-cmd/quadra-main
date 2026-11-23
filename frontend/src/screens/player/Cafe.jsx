@@ -8,7 +8,7 @@ import { celebrate, chime, haptic } from '../../fx'
 import { ME, useStore } from '../../store'
 import { Button, Chips, Icon, Sheet, Stepper } from '../../components/ui'
 import { Dish } from '../../components/Dish'
-import { Loading } from '../../components/Logo'
+import { Loading, BrandBar } from '../../components/Logo'
 
 // بازی‌های امروز کاربر که هنوز تمام نشده‌اند — برای تحویل سر زمین
 export function courtTargets(club) {
@@ -30,6 +30,7 @@ export default function Cafe({ nav }) {
   return (
     <div className="page shop cafe">
       <header className="page-head">
+        <BrandBar />
         <ShopSwitch value="cafe" nav={nav} />
         <div className="row-between">
           <h1>کافه</h1>

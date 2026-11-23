@@ -5,6 +5,7 @@ import { chime, haptic } from '../../fx'
 import { ME, useStore } from '../../store'
 import { isUpcoming, myBookings, myInvites, openGames, startsAt } from '../../select'
 import { Avatar, Button, Chips, Icon, LevelPill, Photo, Sheet } from '../../components/ui'
+import { BrandBar } from '../../components/Logo'
 import { GameCard } from '../wizard/Wizard'
 
 export default function Games({ nav }) {
@@ -21,6 +22,7 @@ export default function Games({ nav }) {
   return (
     <div className="page">
       <header className="page-head">
+        <BrandBar />
         <h1>بازی‌ها</h1>
         <div className="seg">
           {[['mine', `بازی‌های من${up.length ? '، ' + fa(up.length) : ''}`], ['inv', `دعوت‌ها${invites.length ? '، ' + fa(invites.length) : ''}`], ['open', 'بازی‌های باز']].map(([id, n]) => (

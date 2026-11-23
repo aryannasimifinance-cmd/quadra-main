@@ -22,7 +22,7 @@ import { Events } from './Events'
 import { Accounting } from './Accounting'
 import { Hr } from './Hr'
 import { LiveCourts, TYPE_CLS, Timeline } from './Live'
-import { Card, Eye, EyeMid, Guide, Kpi, MASK, Money, Status, TipLayer } from './kit'
+import { Card, Guide, Kpi, MASK, Money, RevealToggle, Status, TipLayer, setReveal, useReveal } from './kit'
 import { upcoming } from '../../events'
 import { TodayIn } from './Payins'
 import { refCode } from '../player/Games'
@@ -79,7 +79,7 @@ class Guard extends Component {
 export default function Admin() {
   const { logout, club } = useStore()
   plainMoney(true)
-  useEffect(() => () => plainMoney(false), [])
+  useEffect(() => () => { plainMoney(false); setReveal(false) }, [])
   const [sec, setSec] = useState('overview')
   const [menu, setMenu] = useState(false)
   const [drawer, setDrawer] = useState(null) // {kind:'booking', id} | {kind:'new', court, date, start}
@@ -116,6 +116,7 @@ export default function Admin() {
         <header className="adm-top">
           <button className="adm-burger" onClick={() => setMenu(true)} aria-label="منو"><Icon name="menu" /></button>
           <div className="grow"><h1>{ITEMS.find((n) => n.id === sec).name}</h1><small>{new Intl.DateTimeFormat('fa-IR', { dateStyle: 'full' }).format(new Date()).replace(/,/g, '،')}</small></div>
+          <RevealToggle />
           {BOOKING_SECS.includes(sec) && <button className="adm-btn primary" onClick={() => setDrawer({ kind: 'new', date: todayKey() })} data-tip="ثبت رزرو تلفنی یا حضوری در پذیرش"><Icon name="plus" size={18} />رزرو دستی</button>}
         </header>
         <AnimatePresence mode="wait">
@@ -133,7 +134,7 @@ export default function Admin() {
 
 // داشبورد: فقط مهم‌ترین‌ها — عددهای امروز، زمین‌های زنده، کارهای مانده و نتیجه‌ی ماه
 function Overview({ ctx }) {
-  const [plShow, setPlShow] = useState(false)
+  const plShow = useReveal()
   const { club, user } = useStore()
   const V = useMemo(() => ledger(club), [club])
   const today = todayKey()
@@ -209,8 +210,8 @@ function Overview({ ctx }) {
           ) : <div className="all-good"><Icon name="check" size={20} /><b>همه‌چیز مرتب است</b><small>کاری منتظر شما نیست.</small></div>}
         </Card>
         <Card title="این ماه، بخش به بخش" sub={plShow ? `درآمد ${short(segMonth.R)}، هزینه ${short(segMonth.D + segMonth.O)}` : 'مبلغ‌ها پنهان است'} tip="سود هر بخش باشگاه پس از کم کردن هزینه‌ی مستقیم همان بخش"
-          right={<div className="row-btns">{plShow && <Eye on={plShow} set={setPlShow} />}<button className="adm-btn ghost sm" onClick={() => ctx.go('accounting')} data-tip="جزئیات در حسابداری">جزئیات</button></div>}>
-          {!plShow ? <EyeMid set={setPlShow} /> : <div className="mini-pl">
+          right={<div className="row-btns"><button className="adm-btn ghost sm" onClick={() => ctx.go('accounting')} data-tip="جزئیات در حسابداری">جزئیات</button></div>}>
+          {!plShow ? <p className="masked-note"><Icon name="eyeOff" size={16} />مبلغ‌ها پنهان است؛ از دکمه‌ی چشم بالای صفحه نمایان کنید.</p> : <div className="mini-pl">
             {segMonth.units.filter((u) => u.revenue).map((u) => (
               <div key={u.id} data-tip={u.tip}>
                 <span><Icon name={u.icon} size={15} />{u.name}</span>

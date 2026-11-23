@@ -5,9 +5,9 @@ import { BADGES, COACHES, CREDITS, RANKS, XP_GUIDE, fa, levelById, productById, 
 import { celebrate, chime, haptic } from '../../fx'
 import { ME, myPoints, useStore } from '../../store'
 import { activeMembership, myBookings, isUpcoming } from '../../select'
-import { Avatar, Button, CountUp, Icon, LevelPill, Ring, SectionHead, Sheet } from '../../components/ui'
+import { Avatar, Button, CountUp, Icon, LevelPill, SectionHead, Sheet } from '../../components/ui'
 import { leaderboard } from './Home'
-import { Loading } from '../../components/Logo'
+import { Loading, BrandBar } from '../../components/Logo'
 
 export default function Me({ nav }) {
   const s = useStore()
@@ -34,55 +34,61 @@ export default function Me({ nav }) {
   }
 
   return (
-    <div className="page me">
-      <section className="me-head">
-        <div className="me-bg" style={{ backgroundImage: "radial-gradient(circle at 85% 0%, rgba(5,224,218,.35), transparent 50%), url(./img/tiles.jpg)" }} />
-        <div className="me-row">
-          <Ring value={rank.progress} size={84} stroke={5} track="rgba(255,255,255,.15)"><Avatar name={user.name} size={64} me /></Ring>
-          <div className="grow">
-            <h2>{user.name}</h2>
-            <p><LevelPill id={user.level} /> {levelById(user.level).title}{user.side ? `، ${sideById(user.side).name}` : ''}، <span style={{ color: rank.c === '#141413' ? '#fff' : rank.c }}>{rank.name}</span></p>
+    <div className="page me me2">
+      {/* کارت بازیکن: مثل کارت عضویت باشگاه */}
+      <section className="pc">
+        <BrandBar />
+        <div className="pc-card">
+          <span className="pc-jersey" aria-hidden="true">{user.level}</span>
+          <div className="pc-top">
+            <Avatar name={user.name} size={58} me />
+            <div className="grow">
+              <small>کارت بازیکن کوادرا</small>
+              <h2>{user.name}</h2>
+            </div>
+          </div>
+          <div className="pc-tags">
+            <span className="pc-lvl"><LevelPill id={user.level} />{levelById(user.level).title}</span>
+            {user.side && <span>{sideById(user.side).name}</span>}
+            <span style={{ '--rc': rank.c === '#141413' ? 'var(--ink)' : rank.c }} className="pc-rank">{rank.name}</span>
+          </div>
+          <div className="pc-xp">
+            <div className="pc-xp-bar"><motion.i initial={{ width: 0 }} animate={{ width: `${rank.progress * 100}%` }} transition={{ duration: 1 }} /></div>
+            <div className="pc-xp-t"><b>{fa(xp)} XP</b>{rank.next && <small>{fa(rank.next.xp - xp)} تا {rank.next.name}</small>}</div>
           </div>
         </div>
-        <div className="me-xp">
-          <div className="bar"><motion.i initial={{ width: 0 }} animate={{ width: `${rank.progress * 100}%` }} transition={{ duration: 1 }} /></div>
-          <small>{fa(xp)} XP {rank.next && `، ${fa(rank.next.xp - xp)} تا ${rank.next.name}`}</small>
-        </div>
-        <div className="me-stats">
+        <div className="pc-stats">
           <button onClick={() => nav.tab('games')}><b><CountUp to={games} /></b><small>بازی</small></button>
-          <button onClick={() => nav.open('ranking')}><b>#<CountUp to={pos} /></b><small>رنکینگ در باشگاه</small></button>
+          <button onClick={() => nav.open('ranking')}><b>#<CountUp to={pos} /></b><small>رنکینگ</small></button>
           <button onClick={() => nav.open('ranking')}><b><CountUp to={pts} /></b><small>امتیاز</small></button>
-          <button><b><CountUp to={badges.length} /></b><small>نشان</small></button>
+          <button onClick={() => nav.open('journey')}><b><CountUp to={badges.length} /></b><small>نشان</small></button>
         </div>
       </section>
 
       <div className="page-body">
-        <div className="wallet-card">
-          <div><small>کیف پول</small><b><CountUp to={wallet} format={(v) => toman(v)} /></b></div>
-          <Button small variant="q" icon="plus" onClick={() => setTop(true)}>شارژ</Button>
+        {/* کیف پول: بلیت با خط برش */}
+        <div className="wallet2">
+          <div className="grow"><small><Icon name="wallet" size={15} />کیف پول</small><b><CountUp to={wallet} format={(v) => toman(v)} /></b></div>
+          <button className="w2-top" onClick={() => setTop(true)}><Icon name="plus" size={20} stroke={2.4} /><span>شارژ</span></button>
         </div>
 
-        <div className="assets">
-          <button className="asset" onClick={() => nav.open('packages')}>
-            <Icon name="ticket" /><b>{fa(upcoming.filter((b) => b.series && b.type !== 'coach').length)}</b><small>جلسه‌ی پکیج زمین</small>
+        <div className="assets2">
+          <button onClick={() => nav.open('packages')}>
+            <Icon name="ticket" size={18} /><span>جلسه‌ی پکیج زمین</span><b>{fa(upcoming.filter((b) => b.series && b.type !== 'coach').length)}</b>
           </button>
-          <button className="asset" onClick={() => nav.open('coaches')}>
-            <Icon name="coach" /><b>{fa(upcoming.filter((b) => b.type === 'coach').length)}</b><small>جلسه‌ی مربی پیش رو</small>
+          <button onClick={() => nav.open('coaches')}>
+            <Icon name="coach" size={18} /><span>جلسه‌ی مربی پیش رو</span><b>{fa(upcoming.filter((b) => b.type === 'coach').length)}</b>
           </button>
-          <button className={`asset ${mem ? 'gold' : ''}`} onClick={() => nav.open('packages')}>
-            <Icon name="crown" /><b>{mem ? mem.name.replace('عضویت ', '') : '—'}</b><small>{mem ? `${fa(Math.ceil((s.membership.until - Date.now()) / 864e5))} روز مانده` : 'عضویت'}</small>
+          <button className={mem ? 'gold' : ''} onClick={() => nav.open('packages')}>
+            <Icon name="crown" size={18} /><span>{mem ? `عضویت، ${fa(Math.ceil((s.membership.until - Date.now()) / 864e5))} روز مانده` : 'عضویت'}</span><b>{mem ? mem.name.replace('عضویت ', '') : '—'}</b>
           </button>
         </div>
 
-        <motion.button className="jr-teaser" whileTap={{ scale: 0.98 }} onClick={() => nav.open('journey')}>
-          <div className="jr-steps">
-            {RANKS.map((r, i) => <i key={r.name} className={i <= rank.index ? 'on' : ''} style={{ '--c': r.c }} />)}
+        <motion.button className="jr2" whileTap={{ scale: 0.98 }} onClick={() => nav.open('journey')}>
+          <div className="jr2-h"><b>مسیر باشگاه</b><small>{fa(badges.length)} از {fa(BADGES.length)} نشان</small></div>
+          <div className="jr2-ladder">
+            {RANKS.map((r, i) => <i key={r.name} className={i < rank.index ? 'done' : i === rank.index ? 'on' : ''} style={{ '--c': r.c }} title={r.name}><em>{i === rank.index ? r.name : ''}</em></i>)}
           </div>
-          <div className="grow">
-            <b>مسیر باشگاه</b>
-            <small>{rank.name}، {fa(badges.length)} از {fa(BADGES.length)} نشان، چالش‌های هفته</small>
-          </div>
-          <Icon name="fwd" size={18} />
         </motion.button>
 
         {orders.length > 0 && (<>
@@ -95,12 +101,15 @@ export default function Me({ nav }) {
           ))}
         </>)}
 
-        <div className="menu-list">
-          {[['sparkle', 'مسیر باشگاه: رتبه‌ها و نشان‌ها', 'journey'], ['trophy', 'رنکینگ باشگاه', 'ranking'], ['ticket', 'پکیج‌ها و عضویت', 'packages'], ['coach', 'مربی‌ها و کلاس‌ها', 'coaches'], ['star', 'مسابقه‌ها و تورنمنت‌ها', 'events'], ['bell', 'اعلان‌ها', 'notifs']].map(([ic, n, pg]) => (
-            <button key={pg} onClick={() => nav.open(pg)}><Icon name={ic} /><span>{n}</span><Icon name="fwd" size={16} /></button>
+        <div className="me-tiles">
+          {[['sparkle', 'رتبه‌ها و نشان‌ها', 'journey'], ['trophy', 'رنکینگ', 'ranking'], ['ticket', 'پکیج و عضویت', 'packages'], ['coach', 'مربی‌ها و کلاس‌ها', 'coaches'], ['star', 'مسابقه‌ها', 'events'], ['bell', 'اعلان‌ها', 'notifs']].map(([ic, n, pg]) => (
+            <motion.button key={pg} whileTap={{ scale: 0.95 }} onClick={() => nav.open(pg)}><Icon name={ic} size={20} /><span>{n}</span></motion.button>
           ))}
-          <button onClick={() => setAcc(true)}><Icon name="lock" /><span>مشخصات و ورود با رمز</span>{!user?.username && <em className="menu-dot">تنظیم نشده</em>}<Icon name="fwd" size={16} /></button>
-          <button className="danger" onClick={() => { haptic(10); logout() }}><Icon name="logout" /><span>خروج از حساب</span></button>
+        </div>
+
+        <div className="me-acts">
+          <button onClick={() => setAcc(true)}><Icon name="lock" size={18} /><span>مشخصات و ورود با رمز</span>{!user?.username && <em className="menu-dot">تنظیم نشده</em>}<Icon name="fwd" size={16} /></button>
+          <button className="danger" onClick={() => { haptic(10); logout() }}><Icon name="logout" size={18} /><span>خروج از حساب</span></button>
         </div>
         <details className="credits"><summary>منابع تصاویر</summary>{CREDITS.map((c) => <small key={c}>{c}</small>)}</details>
       </div>

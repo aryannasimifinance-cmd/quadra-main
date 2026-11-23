@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { COACHES, EVENT_KIND, coachById, weekday, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, hourLabel, levelById, range, rankOf, short, toman } from '../../data'
+import { COACHES, EVENT_KIND, coachById, weekday, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, levelById, range, rankOf, short, toman } from '../../data'
 import { celebrate, chime } from '../../fx'
 import { ME, myPoints, useStore } from '../../store'
-import { myBookings, openGames, quests, streak, upcomingSlots } from '../../select'
-import { Avatar, Button, Icon, LevelPill, Photo, Ring, SectionHead, Sheet, Tilt, rise, stagger } from '../../components/ui'
+import { myBookings, openGames, quests, streak } from '../../select'
+import { Avatar, Button, Icon, LevelPill, Photo, Ring, SectionHead, Sheet, Tilt } from '../../components/ui'
 import { Logo } from '../../components/Logo'
 import { ProductImage } from '../../components/Merch'
 import { Dish } from '../../components/Dish'
@@ -19,7 +19,6 @@ export default function Home({ nav }) {
   const unread = notifications.filter((n) => !n.read).length
   const mine = myBookings(club).filter((b) => fromKey(b.date).getTime() + (b.start + b.dur) * 36e5 > Date.now())
   const games = openGames(club, user.level).filter((g) => !g.mine).slice(0, 6)
-  const slots = upcomingSlots(club, 10)
   const qs = quests(s)
   const st = streak(s)
   const evs = appEvents(club)
@@ -75,20 +74,32 @@ export default function Home({ nav }) {
       <div className="home-body">
         <CoachDue />
         <section className="h-sec">
-          <SectionHead title="رزرو سریع" sub="نزدیک‌ترین ساعت‌های آزاد، ۱ ساعت" action="همه‌ی ساعت‌ها" onAction={() => nav.start({ intent: 'court' })} />
-          <motion.div className="slot-row-q" variants={stagger} initial="hidden" animate="show">
-            {slots.length === 0 && <div className="empty-card">تا فردا شب ساعت آزادی نمانده — روزهای دیگر را ببینید.</div>}
-            {slots.map((x) => (
-              <motion.button key={x.court + x.date + x.start} variants={rise} className="qslot" whileTap={{ scale: 0.95 }}
-                onClick={() => nav.start({ intent: 'court', court: x.court, date: x.date, start: x.start, dur: 1 })}>
-                <small className={x.peak ? 'peak' : ''}>{dayLabel(x.date)}{x.peak ? '، پیک' : ''}</small>
-                <b>{hourLabel(x.start)}</b>
-                <span className="qs-court"><CourtGlyph n={x.court} />{courtById(x.court).name}</span>
-                <em>{fa(x.price)} <small>تومان</small></em>
+          <SectionHead title="کافه‌ی کوادرا" sub={courtTargets(club).length ? 'سفارش بدید، سر زمینتون میاریم' : 'قهوه، نوشیدنی، ماکتل و غذا'} action="منوی کامل" onAction={() => nav.tab('cafe')} />
+          {club.cafeOrders.filter((o) => o.by === ME && o.status !== 'delivered').slice(0, 1).map((o) => <Tracker key={o.id} o={o} onClick={() => nav.tab('cafe')} />)}
+          <div className="shop-peek">
+            {club.cafeItems.filter((it) => it.tag && available(it, club.cafeIngs)).slice(0, 8).map((it) => (
+              <motion.button key={it.id} className="peek cafe-peek" whileTap={{ scale: 0.95 }} onClick={() => nav.tab('cafe')}>
+                <Dish it={it} big />
+                <small>{it.name}</small>
+                <b>{toman(it.price)}</b>
               </motion.button>
             ))}
-          </motion.div>
+          </div>
         </section>
+
+        {nextEv.length > 0 && <section className="h-sec"><SectionHead title="مسابقه‌ها" action="همه" onAction={() => nav.open('events')} />
+        {nextEv.map((ev) => (
+          <motion.button key={ev.id} className="event-banner" whileTap={{ scale: 0.98 }} onClick={() => nav.open('events', { kind: ev.kind })}>
+            <Photo src={ev.img} />
+            <div className="event-shade" />
+            <div className="event-txt">
+              <span className={`pill-q ${ev.kind === 'official' ? 'gold' : ''}`}>{EVENT_KIND[ev.kind].name}، {dayLabel(ev.date)} {dayMonth(fromKey(ev.date))}</span>
+              <h3>{ev.title}</h3>
+              <p>{ev.format}، {fa(ev.cap - ev.taken)} جای خالی</p>
+            </div>
+            <span className="event-go"><Icon name="fwd" /></span>
+          </motion.button>
+        ))}</section>}
 
         {mine.length > 0 && (
           <section className="h-sec">
@@ -141,20 +152,6 @@ export default function Home({ nav }) {
             </div>
           </motion.button></section>}
 
-        {nextEv.length > 0 && <section className="h-sec"><SectionHead title="مسابقه‌ها" action="همه" onAction={() => nav.open('events')} />
-        {nextEv.map((ev) => (
-          <motion.button key={ev.id} className="event-banner" whileTap={{ scale: 0.98 }} onClick={() => nav.open('events', { kind: ev.kind })}>
-            <Photo src={ev.img} />
-            <div className="event-shade" />
-            <div className="event-txt">
-              <span className={`pill-q ${ev.kind === 'official' ? 'gold' : ''}`}>{EVENT_KIND[ev.kind].name}، {dayLabel(ev.date)} {dayMonth(fromKey(ev.date))}</span>
-              <h3>{ev.title}</h3>
-              <p>{ev.format}، {fa(ev.cap - ev.taken)} جای خالی</p>
-            </div>
-            <span className="event-go"><Icon name="fwd" /></span>
-          </motion.button>
-        ))}</section>}
-
         <section className="h-sec">
           <SectionHead title="مربی‌ها" action="کلاس‌ها و پکیج‌ها" onAction={() => nav.open('coaches')} />
           <div className="coach-row">
@@ -178,20 +175,6 @@ export default function Home({ nav }) {
             {PACKAGES.slice(0, 3).map((p, i) => <motion.span key={p.id} style={{ backgroundImage: `url(${p.img})` }} animate={{ rotate: (i - 1) * 8, y: i === 1 ? -6 : 0 }} whileHover={{ rotate: 0 }} />)}
           </div>
         </motion.button>
-
-        <section className="h-sec">
-          <SectionHead title="کافه‌ی کوادرا" sub={courtTargets(club).length ? 'سفارش بدید، سر زمینتون میاریم' : 'قهوه، نوشیدنی، ماکتل و غذا'} action="منوی کامل" onAction={() => nav.tab('cafe')} />
-          {club.cafeOrders.filter((o) => o.by === ME && o.status !== 'delivered').slice(0, 1).map((o) => <Tracker key={o.id} o={o} onClick={() => nav.tab('cafe')} />)}
-          <div className="shop-peek">
-            {club.cafeItems.filter((it) => it.tag && available(it, club.cafeIngs)).slice(0, 8).map((it) => (
-              <motion.button key={it.id} className="peek cafe-peek" whileTap={{ scale: 0.95 }} onClick={() => nav.tab('cafe')}>
-                <Dish it={it} big />
-                <small>{it.name}</small>
-                <b>{toman(it.price)}</b>
-              </motion.button>
-            ))}
-          </div>
-        </section>
 
         <section className="h-sec">
           <SectionHead title="از فروشگاه" action="همه" onAction={() => nav.tab('shop')} />
@@ -239,18 +222,6 @@ export function NextTicket({ b, onClick }) {
 }
 
 // نقشه‌ی ساده‌ی زمین پدل از بالا
-function CourtGlyph({ n }) {
-  return (
-    <svg className="ct-glyph" viewBox="0 0 40 64" aria-hidden="true">
-      <rect x="2" y="2" width="36" height="60" rx="4" />
-      <line x1="2" y1="32" x2="38" y2="32" className="net" />
-      <line x1="2" y1="12" x2="38" y2="12" /><line x1="2" y1="52" x2="38" y2="52" />
-      <line x1="20" y1="12" x2="20" y2="52" />
-      <text x="20" y="25" textAnchor="middle">{fa(n)}</text>
-    </svg>
-  )
-}
-
 function Quest({ q }) {
   const { claimQuest, toast } = useStore()
   const p = Math.min(1, q.have / q.goal)

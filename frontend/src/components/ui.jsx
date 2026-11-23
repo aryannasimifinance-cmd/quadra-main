@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import { fa, levelById } from '../data'
 import { chime, haptic } from '../fx'
 import { useStore } from '../store'
+import { QuadraMark } from './Logo'
 
 const P = {
   back: 'M9 6l6 6-6 6',
@@ -154,7 +155,7 @@ export function TopBar({ title, onBack, right, step, total, transparent, sub }) 
           </motion.div>
         </AnimatePresence>
       </div>
-      {right || <span style={{ width: 42 }} />}
+      {right || (total ? <span style={{ width: 42 }} /> : <span className="topbar-logo" aria-hidden="true"><QuadraMark size={30} tone="dark" /></span>)}
     </div>
   )
 }
