@@ -249,3 +249,16 @@ body, .sting-word { font-family: 'QFont', system-ui, sans-serif; }
 .app .home .peek { flex-basis: 150px; background: #fff; border: 1px solid #E6E0D4; border-radius: 10px !important; padding: 8px 8px 10px; box-shadow: var(--lift-sm); }
 .app .home .peek small, .app .home .peek b { padding-inline: 2px; }
 .app .home .cafe-peek .dish.big, .app .home .cafe-peek .dish.has-img { width: 100%; height: 124px; border-radius: 6px !important; }
+
+/* صفحه‌ی خانه: تصویر زمین بالای صفحه کمی کوتاه‌تر تا بخش‌های بعدی بالاتر بیایند */
+.app .hero { min-height: 440px; }
+.app .home-body { margin-top: -6px; }
+
+/* بازی‌های باز (تب بازی‌ها و ساخت مچ): هر بازی یک باکس با کادر و سایه */
+.app .og-list { gap: 14px; }
+.app :is(.og-wide, .og-card) { background: #fff !important; border: 1.5px solid var(--line-strong) !important; border-radius: 10px !important; box-shadow: var(--lift) !important; overflow: hidden; }
+.app .og-wide { padding: 0 !important; align-items: stretch; }
+.app .og-wide-body { padding: 14px 14px 12px; }
+.app .og-wide > .photo, .app .og-wide > :first-child:not(.og-wide-body) { border-radius: 0 !important; }
+.app :is(.og-wide, .og-card):active { transform: translateY(1px); box-shadow: var(--lift-sm) !important; }
+.app .og-wide.on { border-color: var(--ink) !important; box-shadow: 0 0 0 2px var(--ink), var(--lift) !important; }

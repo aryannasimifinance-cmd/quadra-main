@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { COACHES, EVENT_KIND, coachById, weekday, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, levelById, range, rankOf, short, toman, clubNow, clubNowMs } from '../../data'
+import { COACHES, EVENT_KIND, coachById, weekday, coachesRanked, MEMBERS, PACKAGES, PRODUCTS, courtById, dayLabel, dayMonth, fa, fromKey, range, rankOf, short, toman, clubNow, clubNowMs } from '../../data'
 import { celebrate, chime } from '../../fx'
 import { ME, myPoints, useStore } from '../../store'
-import { myBookings, openGames, quests, streak } from '../../select'
+import { myBookings, quests, streak } from '../../select'
 import { Avatar, Button, Icon, LevelPill, Photo, Ring, SectionHead, Sheet, Tilt } from '../../components/ui'
 import { Logo } from '../../components/Logo'
 import { ProductImage } from '../../components/Merch'
@@ -18,7 +18,6 @@ export default function Home({ nav }) {
   const rank = rankOf(xp)
   const unread = notifications.filter((n) => !n.read).length
   const mine = myBookings(club).filter((b) => fromKey(b.date).getTime() + (b.start + b.dur) * 36e5 > clubNowMs())
-  const games = openGames(club, user.level).filter((g) => !g.mine).slice(0, 6)
   const qs = quests(s)
   const st = streak(s)
   const evs = appEvents(club)
@@ -108,33 +107,6 @@ export default function Home({ nav }) {
           </motion.button>
         ))}</section>}
 
-        <section className="h-sec">
-          <SectionHead title="بازی‌های باز هم‌سطح شما" sub={`سطح ${user.level}، ${levelById(user.level).title}`} action="همه" onAction={() => nav.start({ intent: 'match' })} />
-          <div className="og-row">
-            {games.length === 0 && <div className="empty-card">فعلاً بازی بازی نیست — خودتون یکی بسازید!</div>}
-            {games.map((g, i) => (
-              <motion.button key={g.id} className="og-card" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
-                whileTap={{ scale: 0.97 }} onClick={() => nav.start({ intent: 'match', gameId: g.id })}>
-                <div className="og-top">
-                  <span className={`og-fit ${g.gap === 0 ? 'hot' : ''}`}>{g.gap === 0 ? 'دقیقاً هم‌سطح' : g.gap === 1 ? 'نزدیک به سطح شما' : 'سطح دیگر'}</span>
-                  <small>{courtById(g.court).name}</small>
-                </div>
-                <b>{dayLabel(g.date)}، {range(g.start, g.dur)}</b>
-                <div className="og-names">
-                  <span>سازنده: <b>{memberName(g.by)}</b></span>
-                  {g.players.length > 1 && <span>بازیکن‌ها: {g.players.filter((p) => p !== g.by).map((p) => memberName(p).split(' ')[0]).join('، ')}</span>}
-                </div>
-                <div className="og-levels">{g.levels.map((l) => <LevelPill key={l} id={l} />)}</div>
-                <div className="og-ppl">
-                  {[0, 1, 2, 3].map((k) => g.players[k] ? <Avatar key={k} name={MEMBERS.find((m) => m.id === g.players[k])?.name || 'ش'} size={30} /> : <span key={k} className="og-empty" />)}
-                  <em>{fa(4 - g.players.length)} جای خالی</em>
-                </div>
-                <div className="og-foot"><span>سهم هر نفر</span><b>{toman((g.full ?? g.price) / 4)}</b></div>
-              </motion.button>
-            ))}
-          </div>
-        </section>
-
         {qs.length > 0 && <section className="h-sec">
           <SectionHead title="چالش‌ها" sub="جایزه: XP؛ چالش‌های هفتگی هر شنبه تازه می‌شوند" />
           <div className="quests">
@@ -200,7 +172,6 @@ export default function Home({ nav }) {
   )
 }
 
-const memberName = (id) => id?.startsWith('f:') ? id.slice(2) : MEMBERS.find((m) => m.id === id)?.name || 'بازیکن'
 
 export function NextTicket({ b, onClick }) {
   const c = courtById(b.court)
