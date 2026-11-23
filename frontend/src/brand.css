@@ -1,0 +1,166 @@
+/* ============================================================
+   زبان طراحی کوادرا — «زمین مسابقه»
+   فقط ظاهر؛ فلوها، متن‌ها و منطق دست نخورده.
+   امضا: گوشه‌های تیز، خط‌های ضخیم، تب با خط زیرین، لبه‌ی مورب
+   قانون‌های قطعه‌ها فقط داخل .app (اپ بازیکن/مربی/ورود) — پنل مدیر جداست
+   ============================================================ */
+/* فونت صمیم — صابر راستی‌کردار، مجوز SIL OFL 1.1 */
+@font-face { font-family: 'QFont'; src: url('./fonts/Samim.woff2') format('woff2'); font-weight: 100 400; font-display: swap; }
+@font-face { font-family: 'QFont'; src: url('./fonts/Samim-Medium.woff2') format('woff2'); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: 'QFont'; src: url('./fonts/Samim-Bold.woff2') format('woff2'); font-weight: 700 900; font-display: swap; }
+
+:root {
+  --paper: #FFFFFF; --paper2: #F1F3F2; --card: #FFFFFF;
+  --ink: #0F1412; --ink2: #3A413E; --muted: #78827E;
+  --line: #E2E7E5; --line-strong: #C7D0CC;
+  --q: #17C3B2; --q-ink: #08776E; --q-soft: #E1F5F2;
+  --hot: #FF5A2C;
+  --cut: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+.app { --r: 8px; --r-sm: 6px; --leaf: 8px; --leaf-sm: 6px; --shadow: none; }
+
+body, .sting-word { font-family: 'QFont', system-ui, sans-serif; }
+
+/* ---------- گوشه‌ها: همه تیز؛ فقط نقطه‌ها و حلقه‌ها گرد می‌مانند ---------- */
+/* :where تا اولویت صفر بماند و استثناهای پایین (با !important) برنده شوند */
+:where(.main, .auth, .app > #portal, .toasts, .sting) :where(*:not(svg *):not([class*="dot"]):not(.ripple):not(.ring):not(.ring *)) { border-radius: var(--r-sm) !important; }
+
+/* ---------- فیلدها: پهنا درست، بدون زردی پرکردن خودکار ---------- */
+.app .step-body, .app .admin-card { grid-template-columns: minmax(0, 1fr); }
+.app .step-body > *, .app .admin-card > * { min-width: 0; }
+.app .field { width: 100%; min-width: 0; }
+.app .field input { width: 100%; min-width: 0; }
+.app .field input:-webkit-autofill,
+.app .field input:-webkit-autofill:hover,
+.app .field input:-webkit-autofill:focus { -webkit-text-fill-color: currentColor; caret-color: currentColor; transition: background-color 99999s ease 0s; }
+.app .field.dark input:-webkit-autofill { -webkit-text-fill-color: #fff; }
+.app .field-ok { flex-shrink: 0; background: var(--q); }
+.app .admin-gate { padding: 16px; }
+.app .admin-card { gap: 14px; }
+.app .admin-card-head b { font-weight: 800; }
+
+/* ---------- تیترها ---------- */
+.app .page-head h1 { font-weight: 900 !important; font-size: 30px; line-height: 1.2; letter-spacing: -.4px; }
+.app .page-head h1::after { content: ''; display: block; width: 32px; height: 4px; margin-top: 10px; background: var(--hot); }
+.app .sec-head h3, .app .h-sec h3 { font-weight: 800; }
+.app .wz-h { font-weight: 900; letter-spacing: -.3px; }
+.app .wz-h small { font-weight: 400; letter-spacing: 0; margin-top: 4px; }
+.app .hero h1 { font-weight: 800 !important; }
+.app .step-body h2 { font-weight: 800; }
+
+/* ---------- دکمه‌ها: بلوک تیز با گوشه‌ی بریده ---------- */
+.app .btn { height: 52px; font-weight: 800; box-shadow: none !important; }
+.app .btn-q { background: var(--q); color: var(--ink); clip-path: var(--cut); }
+.app .btn-dark, .app .btn-primary { background: var(--ink); color: #fff; clip-path: var(--cut); }
+.app .btn-ghost { background: transparent; box-shadow: inset 0 0 0 2px var(--ink) !important; }
+.app .icon-btn { box-shadow: inset 0 0 0 1.5px var(--line) !important; background: var(--card); }
+.app .icon-btn.glass, .app .icon-btn.ghost { box-shadow: inset 0 0 0 1px rgba(255,255,255,.25) !important; background: rgba(15,20,18,.35); }
+.app .icon-btn .dot { background: var(--hot); }
+.app .link { color: var(--ink); }
+.app .cta-main { box-shadow: none !important; clip-path: var(--cut); }
+
+/* ---------- کارت‌ها: صاف با کادر ---------- */
+.app :is(.empty-card, .og-card, .my-game, .h-sec, .search, .mini-board, .quest, .cart-item, .notif, .coach-card, .rk-row, .due-card, .invite-card) { box-shadow: none !important; border: 1px solid var(--line); }
+.app .h-sec { background: var(--card) !important; border-top: 3px solid var(--ink); }
+.app .my-game.past { border-style: dashed; }
+.app .mg-date { background: var(--ink) !important; color: #fff; }
+.app .empty-card { text-align: right; border: 1.5px dashed var(--line-strong); background: var(--paper2); padding: 20px 18px; }
+
+/* ---------- تب‌ها: متن با خط زیرین ---------- */
+.app .seg { padding: 0 !important; background: transparent !important; border-bottom: 1px solid var(--line); border-radius: 0 !important; gap: 4px; }
+.app .seg button { height: 46px; flex: 0 0 auto; padding: 0 14px; font-size: 15px; color: var(--muted); border-radius: 0 !important; }
+.app .seg button.on { color: var(--ink); font-weight: 800; }
+.app .seg .seg-bg { inset: auto 0 -1px 0 !important; height: 3px; background: var(--ink) !important; box-shadow: none !important; border-radius: 0 !important; }
+.app .shop-switch { display: flex; gap: 22px; padding: 0 !important; background: transparent !important; box-shadow: none !important; border-bottom: 1px solid var(--line); border-radius: 0 !important; }
+.app .shop-switch button { height: 46px; padding: 0 4px; font-size: 16px; font-weight: 800; color: var(--muted); border-radius: 0 !important; }
+.app .shop-switch button.on { color: var(--ink); }
+.app .shop-switch .ss-bg { inset: auto 0 -1px 0 !important; height: 4px; background: var(--q) !important; box-shadow: none !important; border-radius: 0 !important; }
+
+/* ---------- چیپ‌ها ---------- */
+.app .chip { height: 36px; padding: 0 14px; background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); font-weight: 600; }
+.app .chip-bg { background: var(--ink) !important; }
+.app .pill-q { font-weight: 800; }
+
+/* ---------- آواتار: مربع ---------- */
+.app .avatar { border-radius: var(--r-sm) !important; }
+.app .pc-top .avatar { box-shadow: none !important; outline: 3px solid var(--ink); outline-offset: 2px; }
+
+/* ---------- نوار پایین ---------- */
+.app .nav { background: var(--paper); border-top: 1px solid var(--line); padding-top: 0; align-items: stretch; box-shadow: none; }
+.app .nav-i { padding: 10px 0 4px; color: #9AA39F; }
+.app .nav-i.on .nav-ic, .app .nav-i.on small { color: var(--ink) !important; }
+.app .nav-i.on small { font-weight: 800; }
+.app .nav svg { stroke-linecap: square; stroke-linejoin: miter; }
+.app .nav-pill { top: 0 !important; width: 34px !important; height: 4px !important; background: var(--ink) !important; box-shadow: none !important; border-radius: 0 !important; }
+.app .nav-badge { background: var(--hot) !important; color: #fff; }
+.app .fab { width: 52px; height: 52px; margin-top: 8px; align-self: flex-start; background: var(--ink); color: var(--q); box-shadow: none !important; clip-path: var(--cut); }
+.app .fab.on { background: var(--q); color: var(--ink); }
+
+/* ---------- هیروی خانه: لبه‌ی پایینی مورب ---------- */
+.app .hero { border-radius: 0 !important; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 34px)); padding-bottom: 26px; }
+.app .hero-me { background: rgba(15,20,18,.55) !important; border: 1px solid rgba(255,255,255,.14); box-shadow: none !important; }
+
+/* ---------- انتخاب روز: خط‌کش ---------- */
+.app .date-deck { border-radius: 0 !important; clip-path: var(--cut); }
+.app .dd-big > b { font-weight: 900; }
+.app .days { gap: 0; }
+.app .day { flex: 0 0 50px; height: 70px; border-inline-start: 1px solid rgba(255,255,255,.12); border-radius: 0 !important; }
+.app .day:first-child { border-inline-start: 0; }
+.app .day-bg { border-radius: 0 !important; }
+.app .day.we i { background: var(--hot); }
+
+/* ---------- کارت بازیکن و کیف پول ---------- */
+.app .pc-card { background: var(--card) !important; border: 2px solid var(--ink); box-shadow: none !important; }
+.app .pc-card::before { height: 8px; background: repeating-linear-gradient(-45deg, var(--ink) 0 8px, var(--q) 8px 16px); }
+.app .pc-jersey { -webkit-text-stroke: 1.5px rgba(15,20,18,.12); }
+.app .pc-xp-bar { height: 6px; }
+.app .pc-xp-bar i { background: var(--q) !important; }
+.app .wallet2 { clip-path: var(--cut); }
+.app .w2-top::before { border-right-style: solid; }
+
+/* ---------- شیت، توست، مراحل ---------- */
+.app .sheet { border-radius: 14px 14px 0 0 !important; }
+.app .sheet-grip { width: 36px; height: 4px; }
+.app .search { background: var(--paper2) !important; border: 0 !important; }
+.toast { background: var(--ink); border-inline-start: 4px solid var(--q); }
+.app .step-fill { background: var(--q) !important; }
+.app :is(.intent-card, .ticket, .empty-hero, .event-banner) { box-shadow: none !important; }
+.app :is(.intent-card.big, .empty-hero) { clip-path: var(--cut); }
+
+/* ============================================================
+   پنل مدیر — داشبورد: باکس‌های بالا یک‌دست و مرتب
+   ============================================================ */
+.ov .kpis { gap: 12px; align-items: stretch; }
+.ov .kpis.four { margin-top: 14px !important; }
+.ov .kpis.three { grid-template-columns: repeat(3, 1fr); }
+.ov .kpi { display: grid !important; grid-template-rows: auto 1fr auto; align-content: start; gap: 8px; min-height: 118px; padding: 16px 18px; border-radius: 12px !important; text-align: right !important; box-shadow: inset 0 0 0 1px var(--line) !important; text-decoration: none !important; transform: none !important; }
+.ov .kpi::after { display: none !important; }
+.ov .kpi.link:hover { box-shadow: inset 0 0 0 1.5px var(--ink) !important; }
+.ov .kpi .kpi-sec { justify-content: flex-start !important; min-height: 0; }
+.ov .kpi b { font-size: 30px; line-height: 1.2; align-self: center; }
+.ov .kpi b.masked { font-size: 22px; }
+.ov .kpi .kpi-h { font-size: 15px; font-weight: 700; color: var(--ink2); }
+.ov .kpi .kpi-h em { font-size: 13px; }
+.ov .kpi .kpi-sub { text-align: right !important; font-size: 13px !important; }
+.ov .kpi { min-height: 136px; padding: 18px 20px; }
+
+/* پنل مدیر: تیتر صفحه و تیتر کارت‌ها درشت‌تر */
+.adm-top h1 { font-size: 30px !important; font-weight: 800 !important; }
+.adm-top small { font-size: 14px; }
+.adm-card-h h3 { font-size: 19px !important; font-weight: 800; }
+.adm-card-h h3::before { height: 20px !important; }
+.adm-card-h small { font-size: 13.5px; }
+@media (max-width: 1100px) { .ov .kpis.four { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .ov .kpis.four, .ov .kpis.three { grid-template-columns: 1fr 1fr; } .ov .kpis.three > :first-child { grid-column: 1 / -1; } }
+
+/* ============================================================
+   پس‌زمینه‌ی اپ بازیکن: زمین پدل کم‌رنگ با پرسپکتیو + علامت کوادرا
+   ============================================================ */
+.app .main::before {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 78px; height: 62%;
+  pointer-events: none; z-index: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 520' preserveAspectRatio='xMidYMax meet'%3E%3Cg fill='none' stroke='%23DFE5E2' stroke-width='2'%3E%3Cpath d='M-40 520L90 120H310L440 520'/%3E%3Cpath d='M64 200H336M12 360H388M200 200V360'/%3E%3Cpath d='M30 260H370' stroke='%23D0D8D4' stroke-width='3' stroke-dasharray='2 5'/%3E%3Cpath d='M30 244V262M370 244V262' stroke='%23D0D8D4' stroke-width='3'/%3E%3C/g%3E%3Cg transform='translate(130 344) scale(.24)' opacity='.55'%3E%3Cpath d='M322 487H163A73 73 0 0 1 90 414V217.5A73 73 0 0 1 163 144.5H420.5A73 73 0 0 1 493.5 217.5V335' fill='none' stroke='%23C9D3CF' stroke-width='40'/%3E%3Cpath d='M470 388H517V510.5H470Z' fill='%23C9D3CF'/%3E%3Cpath d='M358 251H421L284 388H470V432H177Z' fill='%2317C3B2' opacity='.6'/%3E%3C/g%3E%3C/svg%3E") center bottom / 100% auto no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+}
+.app .app-scroll { z-index: 1; }

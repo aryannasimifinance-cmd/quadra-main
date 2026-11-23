@@ -14,11 +14,11 @@ import { Coaches, Events, Journey, Notifications, Packages, Ranking } from './Pa
 import Wizard from '../wizard/Wizard'
 
 const TABS = [
-  { id: 'home', name: 'خانه', icon: 'home' },
-  { id: 'games', name: 'بازی‌ها', icon: 'cal' },
+  { id: 'home', name: 'خانه', icon: 'n-club' },
+  { id: 'games', name: 'بازی‌ها', icon: 'n-games' },
   { id: 'new', name: '', icon: 'plus' },
-  { id: 'shop', name: 'فروشگاه', icon: 'bag' },
-  { id: 'me', name: 'من', icon: 'user' },
+  { id: 'shop', name: 'فروشگاه', icon: 'n-shop' },
+  { id: 'me', name: 'من', icon: 'n-me' },
 ]
 const PAGES = { coaches: Coaches, packages: Packages, ranking: Ranking, events: Events, notifs: Notifications, journey: Journey }
 
@@ -77,7 +77,7 @@ export default function Main() {
               <button key={t.id} className={`nav-i ${on(t.id) ? 'on' : ''}`} onClick={() => nav.tab(t.id === 'shop' && tab === 'cafe' ? 'cafe' : t.id)}>
                 {on(t.id) && <motion.span layoutId="nav-pill" className="nav-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
                 <span className="nav-ic">
-                  <Icon name={t.id === 'shop' && tab === 'cafe' ? 'cup' : t.icon} size={22} stroke={on(t.id) ? 2.5 : 1.8} />
+                  <Icon name={t.id === 'shop' && tab === 'cafe' ? 'n-cafe' : t.icon} size={22} stroke={on(t.id) ? 2.5 : 1.8} />
                   {t.id === 'shop' && cartN > 0 && <motion.i key={cartN} className="nav-badge" initial={{ scale: 0 }} animate={{ scale: 1 }}>{fa(cartN)}</motion.i>}
                 </span>
                 <small>{t.id === 'shop' && tab === 'cafe' ? 'کافه' : t.name}</small>

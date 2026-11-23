@@ -194,8 +194,16 @@ function AdminLogin({ onBack, coach }) {
 }
 
 function PhoneStep({ value, onChange, onNext: send, mode, onPass }) {
-  const { config } = useStore()
+  const { config, loginWithPass, toast } = useStore()
   const [busy, setBusy] = useState(false)
+  // فقط نسخه‌ی نمایشی: ورود یک‌ضربه‌ای با اکانت بازیکن نمایشی، بدون پیامک
+  const quick = async () => {
+    if (busy) return
+    setBusy(true)
+    const r = await loginWithPass('aryan', '123456')
+    setBusy(false)
+    if (r?.error) toast({ icon: '⛔', title: errText(r) })
+  }
   const onNext = async () => { if (busy) return; setBusy(true); await send(); setBusy(false) }
   const valid = /^09\d{9}$/.test(value) && !busy
   const pretty = value.replace(/^(\d{4})(\d{0,3})(\d{0,4}).*/, (_, a, b, c) => [a, b, c].filter(Boolean).join(' '))
@@ -212,6 +220,7 @@ function PhoneStep({ value, onChange, onNext: send, mode, onPass }) {
       </label>
       <Button full variant="q" disabled={!valid} onClick={onNext}>{busy ? 'در حال ارسال…' : 'ارسال کد'}</Button>
       {config.demo && <button className="link center" onClick={() => onChange('09120000000')}>شماره‌ی نمایشی</button>}
+      {mode === 'login' && config.demo && <Button full variant="dark" icon="bolt" disabled={busy} onClick={quick}>ورود سریع نمایشی</Button>}
       {mode === 'login' && <button className="link center pass-link" onClick={onPass}><Icon name="lock" size={15} /> پیامک نمی‌رسد؟ ورود با نام کاربری و رمز</button>}
     </div>
   )
