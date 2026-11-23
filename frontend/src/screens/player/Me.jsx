@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { jParts } from '../../jalali'
+import { J_MONTHS, faDigits, jParts } from '../../jalali'
 import { useState } from 'react'
 import { BADGES, COACHES, CREDITS, RANKS, XP_GUIDE, fa, levelById, productById, rankOf, sideById, toman, USER_RE, todayKey } from '../../data'
 import { celebrate, chime, haptic } from '../../fx'
@@ -94,9 +94,23 @@ export default function Me({ nav }) {
         {orders.length > 0 && (<>
           <SectionHead title="سفارش‌های من" />
           {orders.map((o) => (
-            <div key={o.id} className="order-row">
-              <div className="grow"><b dir="ltr">{o.id}</b><small>{o.items.map((x) => productById(x.pid).name).join('، ')}</small></div>
-              <span className={`st st-${o.status}`}>{{ new: 'در حال آماده‌سازی', ready: 'آماده‌ی تحویل', delivered: 'تحویل شد' }[o.status]}</span>
+            <div key={o.id} className="order-card">
+              <div className="oc-top">
+                <div><small>سفارش</small><b dir="ltr">{o.id}</b></div>
+                <span className={`st st-${o.status}`}>{{ new: 'در حال آماده‌سازی', ready: 'آماده‌ی تحویل', delivered: 'تحویل شد' }[o.status]}</span>
+              </div>
+              <ul className="oc-items">
+                {o.items.map((x, i) => {
+                  const p = productById(x.pid)
+                  const v = p?.variants?.find((y) => y.sku === x.sku)
+                  const opt = v ? [v.size, v.color].filter(Boolean).join(' / ') : ''
+                  return <li key={i}><span>{p?.name || 'کالا'}{opt && <em>{opt}</em>}</span><small>× {fa(x.qty)}</small></li>
+                })}
+              </ul>
+              <div className="oc-foot">
+                <small>{o.at ? (() => { const d = new Date(o.at); const k = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; const j = jParts(k); return `${fa(j.d)} ${J_MONTHS[j.m - 1]} ${faDigits(j.y)}` })() : ''}</small>
+                <b>{toman(o.total)}</b>
+              </div>
             </div>
           ))}
         </>)}

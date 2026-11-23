@@ -73,6 +73,13 @@ export default function Home({ nav }) {
 
       <div className="home-body">
         <CoachDue />
+        {mine.length > 0 && (
+          <section className="h-sec">
+            <SectionHead title="بازی بعدی شما" action="همه" onAction={() => nav.tab('games')} />
+            <NextTicket b={mine[0]} onClick={() => nav.tab('games')} />
+          </section>
+        )}
+
         <section className="h-sec">
           <SectionHead title="کافه‌ی کوادرا" sub={courtTargets(club).length ? 'سفارش بدید، سر زمینتون میاریم' : 'قهوه، نوشیدنی، ماکتل و غذا'} action="منوی کامل" onAction={() => nav.tab('cafe')} />
           {club.cafeOrders.filter((o) => o.by === ME && o.status !== 'delivered').slice(0, 1).map((o) => <Tracker key={o.id} o={o} onClick={() => nav.tab('cafe')} />)}
@@ -100,13 +107,6 @@ export default function Home({ nav }) {
             <span className="event-go"><Icon name="fwd" /></span>
           </motion.button>
         ))}</section>}
-
-        {mine.length > 0 && (
-          <section className="h-sec">
-            <SectionHead title="بازی بعدی شما" action="همه" onAction={() => nav.tab('games')} />
-            <NextTicket b={mine[0]} onClick={() => nav.tab('games')} />
-          </section>
-        )}
 
         <section className="h-sec">
           <SectionHead title="بازی‌های باز هم‌سطح شما" sub={`سطح ${user.level}، ${levelById(user.level).title}`} action="همه" onAction={() => nav.start({ intent: 'match' })} />

@@ -228,3 +228,24 @@ body, .sting-word { font-family: 'QFont', system-ui, sans-serif; }
 .app .me2 .me-tiles > * { border: 1.5px solid var(--line-strong) !important; box-shadow: var(--lift-sm) !important; }
 .app .me2 .pc-stats { padding: 6px 4px; }
 .app .me2 .me-acts { padding: 4px 10px; }
+
+/* صفحه‌ی «من»: کارت سفارش مرتب (شماره و وضعیت، اقلام، تاریخ و مبلغ) */
+.app .order-card { display: grid; gap: 10px; padding: 14px 16px; }
+.app .oc-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.app .oc-top > div { display: grid; line-height: 1.3; }
+.app .oc-top small { font-size: 11px; color: var(--muted); }
+.app .oc-top b { font-size: 15px; font-weight: 800; letter-spacing: .5px; }
+.app .oc-items { list-style: none; margin: 0; padding: 10px 0; display: grid; gap: 6px; border-top: 1px dashed var(--line-strong); border-bottom: 1px dashed var(--line-strong); }
+.app .oc-items li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 13.5px; }
+.app .oc-items li span { min-width: 0; }
+.app .oc-items em { font-style: normal; font-size: 11.5px; color: var(--muted); margin-inline-start: 6px; }
+.app .oc-items small { color: var(--ink2); font-weight: 700; white-space: nowrap; }
+.app .oc-foot { display: flex; align-items: baseline; justify-content: space-between; }
+.app .oc-foot small { font-size: 12px; color: var(--muted); }
+.app .oc-foot b { font-size: 16px; font-weight: 800; }
+
+/* صفحه‌ی خانه: هر آیتم کافه (و پیش‌نمایش فروشگاه) یک کارت جدا با سایه */
+.app .home .shop-peek { gap: 12px; padding-top: 6px; padding-bottom: 14px; }
+.app .home .peek { flex-basis: 150px; background: #fff; border: 1px solid #E6E0D4; border-radius: 10px !important; padding: 8px 8px 10px; box-shadow: var(--lift-sm); }
+.app .home .peek small, .app .home .peek b { padding-inline: 2px; }
+.app .home .cafe-peek .dish.big, .app .home .cafe-peek .dish.has-img { width: 100%; height: 124px; border-radius: 6px !important; }
